@@ -1,0 +1,119 @@
+@import url('https://fonts.googleapis.com/css2?family=Gotu&family=Noto+Serif+Devanagari:wght@400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700&family=Rozha+One&family=Tiro+Devanagari+Hindi:ital@0;1&family=Yatra+One&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: 'Noto Serif Devanagari', 'Rozha One', serif;
+}
+
+/* Print Specific Rules for Precision Millimeter Card Output */
+@media print {
+  html, body {
+    width: 100% !important;
+    height: 100% !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .print-container {
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+    background: transparent !important;
+  }
+
+  /* Reset outer container padding so no unwanted margins exist on paper */
+  .print-container > div {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .wedding-card-print-target,
+  .wedding-envelope-print-target {
+    box-shadow: none !important;
+    margin: 0 auto !important;
+    transform: none !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  img {
+    max-width: 100% !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}
+
+/* Custom Scrollbar for editor side */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* Authentic Paper Texture */
+.wedding-card-parchment {
+  background-color: #fffef9;
+  background-image: 
+    radial-gradient(#d4af3718 1px, transparent 1px),
+    radial-gradient(#a615150a 1px, #fffdf7 1px);
+  background-size: 24px 24px, 12px 12px;
+  background-position: 0 0, 6px 6px;
+}
+
+/* 🖨️ Screen Printing & Butter Paper Tracing Utilities */
+.screen-print-active {
+  color: #000000 !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+.screen-print-active * {
+  border-color: #000000 !important;
+  text-shadow: none !important;
+}
+
+/* 100% Solid Jet Black Silhouette Filter for HD Motifs (Zero Light Leakage for Screen Exposure) */
+.screen-print-motif-silhouette img,
+img.screen-print-motif-silhouette {
+  filter: brightness(0) saturate(100%) !important;
+}
+
+/* Crisp Line-Art / High Contrast Filter */
+.screen-print-motif-lineart img,
+img.screen-print-motif-lineart {
+  filter: grayscale(100%) contrast(500%) brightness(0.1) !important;
+}
+
+/* Extra Dark Toner Density Boost (Prevents Pinholes in 120/140 mesh screen) */
+.screen-print-toner-boost {
+  -webkit-text-stroke: 0.2px #000000;
+}
+
+/* Negative Film Mode */
+.screen-print-negative {
+  filter: invert(1) hue-rotate(180deg) !important;
+  background-color: #000000 !important;
+}
+
