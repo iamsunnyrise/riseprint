@@ -1,13 +1,35 @@
 import React from 'react';
+import ganeshaWatermarkImg from '../../assets/ganesha-watermark-hd.png';
+import radhaKrishnaWatermarkImg from '../../assets/radha-krishna-watermark-hd.png';
+
+/**
+ * Helper to compute CSS filter for watermark image based on selected color tint
+ */
+function getImageFilter(tint, inkColor = '#a61515') {
+  switch (tint) {
+    case 'full-color':
+    case 'original':
+      return 'none';
+    case 'sindoor-tint':
+      return 'sepia(100%) hue-rotate(330deg) saturate(380%) contrast(110%)';
+    case 'monochrome':
+      return 'grayscale(100%) contrast(120%)';
+    case 'ink-tint':
+      return 'sepia(100%) hue-rotate(330deg) saturate(320%) contrast(110%)';
+    case 'gold-tint':
+    default:
+      return 'sepia(100%) hue-rotate(5deg) saturate(220%) contrast(110%)';
+  }
+}
 
 /**
  * 🕉️ CardBackgroundWatermark
  * Sacred subtle background watermark for Indian wedding cards.
- * Renders pure vector SVGs or custom uploaded monogram/photo with customizable opacity & scale.
+ * Renders user-provided divine HD images or vector SVGs with customizable opacity, tint & scale.
  * 
  * Presets:
- * 1. radha-krishna: Divine Radha & Krishna with Flute & Morpankh
- * 2. ganesha: Auspicious Lord Ganesha Line-art
+ * 1. radha-krishna: Divine Radha & Krishna Yugal (HD Divine Color Image)
+ * 2. ganesha: Auspicious Lord Shree Ganesha (HD Divine Color Image)
  * 3. swastik-sun: Vedic Surya Mandala & Swastik
  * 4. flute-morpankh: Krishna's Flute & Peacock Feather
  * 5. mandap-kalash: Sacred Wedding Mandap & Mangal Kalash
@@ -20,10 +42,11 @@ export default function CardBackgroundWatermark({ data, isScreenPrint = false })
   }
 
   const preset = data.watermarkPreset || 'radha-krishna';
-  const opacity = typeof data.watermarkOpacity === 'number' ? data.watermarkOpacity : 0.06;
+  const opacity = typeof data.watermarkOpacity === 'number' ? data.watermarkOpacity : 0.08;
   const scale = (data.watermarkScale ?? 100) / 100;
+  const imageFilter = getImageFilter(data.watermarkColor || 'full-color', data.inkColor);
 
-  // Determine stroke & fill color
+  // Determine stroke & fill color for SVG motifs
   let watermarkColor = '#cda339'; // default gold-tint
   if (data.watermarkColor === 'sindoor-tint') {
     watermarkColor = '#a61515';
@@ -46,7 +69,7 @@ export default function CardBackgroundWatermark({ data, isScreenPrint = false })
       aria-hidden="true"
     >
       <div
-        className="w-[420px] h-[420px] max-w-[85%] max-h-[75%] flex items-center justify-center"
+        className="w-[430px] h-[430px] max-w-[88%] max-h-[78%] flex items-center justify-center"
         style={containerStyle}
       >
         {preset === 'custom' && data.watermarkCustomUrl ? (
@@ -59,7 +82,15 @@ export default function CardBackgroundWatermark({ data, isScreenPrint = false })
             }}
           />
         ) : preset === 'ganesha' ? (
-          <GaneshaWatermarkSvg color={watermarkColor} />
+          <img
+            src={ganeshaWatermarkImg}
+            alt="भगवान श्री गणेश पावन वॉटरमार्क"
+            className="w-full h-full object-contain"
+            style={{
+              filter: imageFilter,
+              mixBlendMode: 'multiply'
+            }}
+          />
         ) : preset === 'swastik-sun' ? (
           <SwastikSunWatermarkSvg color={watermarkColor} />
         ) : preset === 'flute-morpankh' ? (
@@ -67,7 +98,15 @@ export default function CardBackgroundWatermark({ data, isScreenPrint = false })
         ) : preset === 'mandap-kalash' ? (
           <MandapKalashWatermarkSvg color={watermarkColor} />
         ) : (
-          <RadhaKrishnaWatermarkSvg color={watermarkColor} />
+          <img
+            src={radhaKrishnaWatermarkImg}
+            alt="श्री राधा-कृष्ण युगल पावन वॉटरमार्क"
+            className="w-full h-full object-contain"
+            style={{
+              filter: imageFilter,
+              mixBlendMode: 'multiply'
+            }}
+          />
         )}
       </div>
     </div>

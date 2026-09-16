@@ -19,6 +19,8 @@ import {
   PAPER_TEXTURE_PRESETS,
   WATERMARK_PRESETS
 } from '../../utils/defaultData';
+import ganeshaWatermarkImg from '../../assets/ganesha-watermark-hd.png';
+import radhaKrishnaWatermarkImg from '../../assets/radha-krishna-watermark-hd.png';
 
 export default function StyleSettings({ data, onChange }) {
   const watermarkFileInputRef = useRef(null);
@@ -76,6 +78,7 @@ export default function StyleSettings({ data, onChange }) {
   ];
 
   const watermarkTintOptions = [
+    { id: 'full-color', name: 'दिव्य सजीव रंग', color: '#e11d48', subtitle: 'Divine Natural Color' },
     { id: 'gold-tint', name: 'शाही स्वर्ण', color: '#cda339', subtitle: 'Royal Gold' },
     { id: 'sindoor-tint', name: 'सिन्दूरी लाल', color: '#a61515', subtitle: 'Sindoor Red' },
     { id: 'ink-tint', name: 'इंक मैचिंग', color: data.inkColor || '#a61515', subtitle: 'Card Ink' },
@@ -281,7 +284,17 @@ export default function StyleSettings({ data, onChange }) {
                     }`}
                   >
                     <div className="flex items-center justify-between w-full mb-1">
-                      <span className="text-base">{wm.icon}</span>
+                      {wm.id === 'ganesha' ? (
+                        <div className="w-6 h-6 rounded-full overflow-hidden border border-amber-400 bg-amber-50 flex items-center justify-center shadow-xs">
+                          <img src={ganeshaWatermarkImg} alt="गणेश जी" className="w-full h-full object-cover" />
+                        </div>
+                      ) : wm.id === 'radha-krishna' ? (
+                        <div className="w-6 h-6 rounded-full overflow-hidden border border-amber-400 bg-amber-50 flex items-center justify-center shadow-xs">
+                          <img src={radhaKrishnaWatermarkImg} alt="राधा कृष्ण" className="w-full h-full object-cover" />
+                        </div>
+                      ) : (
+                        <span className="text-base">{wm.icon}</span>
+                      )}
                       {isSelected && <CheckCircle className="w-3.5 h-3.5 text-red-600" />}
                     </div>
                     <div>

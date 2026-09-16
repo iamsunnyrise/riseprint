@@ -466,9 +466,9 @@ export const DEFAULT_CARD_DATA = {
   enableWatermark: true,              // पृष्ठभूमि वॉटरमार्क ऑन/ऑफ
   watermarkPreset: 'radha-krishna',   // 'radha-krishna', 'ganesha', 'swastik-sun', 'flute-morpankh', 'mandap-kalash', 'custom'
   watermarkCustomUrl: null,           // यूज़र द्वारा अपलोड किया गया कस्टम वॉटरमार्क
-  watermarkOpacity: 0.06,             // 0.03 to 0.15 (डिफ़ॉल्ट 6%)
+  watermarkOpacity: 0.08,             // 0.03 to 0.15 (डिफ़ॉल्ट 8%)
   watermarkScale: 100,                // 60% to 140%
-  watermarkColor: 'gold-tint',        // 'gold-tint', 'sindoor-tint', 'monochrome'
+  watermarkColor: 'full-color',       // 'full-color' (दिव्य सजीव रंग), 'gold-tint' (शाही स्वर्ण), 'sindoor-tint' (सिन्दूरी लाल), 'monochrome' (चारकोल)
   syncTextureToEnvelope: true         // लिफाफे पर भी यही पेपर टेक्सचर लागू करें
 };
 
@@ -520,13 +520,13 @@ export const WATERMARK_PRESETS = [
   {
     id: 'radha-krishna',
     name: 'श्री राधा-कृष्ण युगल',
-    subtitle: 'पावन युगल प्रेम व बांसुरी',
+    subtitle: 'पावन युगल प्रेम व बांसुरी (सजीव दिव्य चित्र)',
     icon: '🦚'
   },
   {
     id: 'ganesha',
     name: 'भगवान श्री गणेश',
-    subtitle: 'विघ्नहर्ता मंगल स्वरूप',
+    subtitle: 'विघ्नहर्ता मंगल स्वरूप (सजीव दिव्य चित्र)',
     icon: '🐘'
   },
   {
