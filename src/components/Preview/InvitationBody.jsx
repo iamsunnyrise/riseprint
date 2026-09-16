@@ -40,7 +40,7 @@ export default function InvitationBody({ data }) {
   return (
     <div className="w-full flex flex-col justify-between flex-1 py-1">
       {/* 1. Top Formal Salutation & Center Sacred Shloka */}
-      <div className="grid grid-cols-12 items-start gap-2 px-3">
+      <div className="grid grid-cols-12 items-center gap-2 px-3">
         {/* Left Formal Salutation (Personalized if guest selected) */}
         {(() => {
           const activeGuest = data.activeGuestId && data.guestList
@@ -64,15 +64,61 @@ export default function InvitationBody({ data }) {
         })()}
 
 
-        {/* Center/Right Sacred Shloka with Om */}
-        <div className="col-span-7 text-center" style={{ color: inkColor }}>
-          <div className="flex items-center justify-center gap-2 text-xs sm:text-[12.5px] font-bold tracking-tight">
-            <span className="text-base sm:text-lg font-black select-none">ॐ</span>
-            <div className="leading-snug">
-              <div>{middleShlokaLine1}</div>
-              <div>{middleShlokaLine2}</div>
-            </div>
-            <span className="text-base sm:text-lg font-black select-none">ॐ</span>
+        {/* Center/Right Sacred Shloka with Om (Professionally Aligned Symmetrical Hemistichs) */}
+        <div className="col-span-7 flex items-center justify-center" style={{ color: inkColor }}>
+          <div className="flex items-center justify-center gap-2 sm:gap-2.5 text-xs sm:text-[12.5px] font-bold tracking-tight">
+            <span className="text-base sm:text-lg font-black select-none leading-none">ॐ</span>
+            
+            {(() => {
+              // Parse shloka into balanced padas (left & right halves)
+              const parseShlokaPadas = (line) => {
+                if (!line) return { left: '', right: '' };
+                const trimmed = line.trim();
+                const sepMatch = trimmed.match(/[,;|/]/);
+                if (sepMatch) {
+                  const idx = sepMatch.index;
+                  return {
+                    left: trimmed.slice(0, idx + 1).trim(),
+                    right: trimmed.slice(idx + 1).trim()
+                  };
+                }
+                const words = trimmed.split(/\s+/);
+                if (words.length >= 4) {
+                  const mid = Math.ceil(words.length / 2);
+                  return {
+                    left: words.slice(0, mid).join(' '),
+                    right: words.slice(mid).join(' ')
+                  };
+                }
+                return { left: trimmed, right: '' };
+              };
+
+              const p1 = parseShlokaPadas(middleShlokaLine1);
+              const p2 = parseShlokaPadas(middleShlokaLine2);
+              const alignment = data.middleShlokaAlignment || 'balanced';
+              const isTwoColumn = alignment !== 'center' && (p1.right || p2.right);
+
+              if (isTwoColumn) {
+                const rightColClass = alignment === 'column-left' ? 'text-left' : 'text-right';
+                return (
+                  <div className="inline-grid grid-cols-[auto_auto] gap-x-2.5 sm:gap-x-3.5 leading-snug">
+                    <span className="text-left whitespace-nowrap">{p1.left}</span>
+                    <span className={`${rightColClass} whitespace-nowrap`}>{p1.right}</span>
+                    <span className="text-left whitespace-nowrap">{p2.left}</span>
+                    <span className={`${rightColClass} whitespace-nowrap`}>{p2.right}</span>
+                  </div>
+                );
+              }
+
+              return (
+                <div className="leading-snug text-center">
+                  <div>{middleShlokaLine1}</div>
+                  <div>{middleShlokaLine2}</div>
+                </div>
+              );
+            })()}
+
+            <span className="text-base sm:text-lg font-black select-none leading-none">ॐ</span>
           </div>
         </div>
       </div>

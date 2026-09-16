@@ -1,6 +1,6 @@
 import React from 'react';
 import { BookOpen, Sparkles } from 'lucide-react';
-import { SHLOKA_PRESETS, SHAYARI_PRESETS } from '../../utils/defaultData';
+import { SHLOKA_PRESETS, SHAYARI_PRESETS, MIDDLE_SHLOKA_PRESETS } from '../../utils/defaultData';
 import HindiInput from '../Controls/HindiInput';
 import HindiTextarea from '../Controls/HindiTextarea';
 
@@ -153,22 +153,107 @@ export default function ShlokaShayariForm({ data, onChange }) {
       </div>
 
       {/* Middle Shloka (सर्व मंगल मांगल्ये...) */}
-      <div className="bg-stone-50 p-4 rounded-xl border border-stone-200 space-y-2">
-        <label className="block text-xs font-bold text-stone-700">
-          मध्य श्लोक (Middle Shloka - सर्व मंगल मांगल्ये...)
-        </label>
-        <HindiInput
-          type="text"
-          value={data.middleShlokaLine1}
-          onChange={(e) => updateField('middleShlokaLine1', e.target.value)}
-          className="w-full px-2.5 py-1.5 text-xs border rounded-md focus:ring-1 focus:ring-red-500 focus:outline-none"
-        />
-        <HindiInput
-          type="text"
-          value={data.middleShlokaLine2}
-          onChange={(e) => updateField('middleShlokaLine2', e.target.value)}
-          className="w-full px-2.5 py-1.5 text-xs border rounded-md focus:ring-1 focus:ring-red-500 focus:outline-none"
-        />
+      <div className="bg-white p-4 rounded-xl border border-stone-200 shadow-sm space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2 text-red-900 font-bold text-sm">
+            <span className="text-base font-black text-amber-600 select-none">ॐ</span>
+            <span>मध्य पावन श्लोक (Middle Shloka)</span>
+          </div>
+          <div className="flex items-center gap-1.5 text-xs">
+            <span className="text-stone-500">प्रीसेट:</span>
+            <select
+              className="text-xs bg-stone-50 border rounded px-2 py-1 focus:ring-1 focus:ring-red-500 focus:outline-none"
+              onChange={(e) => {
+                const selected = MIDDLE_SHLOKA_PRESETS.find((p) => p.title === e.target.value);
+                if (selected) {
+                  onChange({
+                    ...data,
+                    middleShlokaLine1: selected.line1,
+                    middleShlokaLine2: selected.line2
+                  });
+                }
+              }}
+            >
+              <option value="">श्लोक चुनें...</option>
+              {MIDDLE_SHLOKA_PRESETS.map((p) => (
+                <option key={p.title} value={p.title}>
+                  {p.title}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* Alignment Controls */}
+        <div className="bg-stone-50 p-2.5 rounded-lg border border-stone-200 space-y-1.5">
+          <div className="flex items-center justify-between text-xs">
+            <span className="font-semibold text-stone-700">श्लोक अलाइनमेंट (Alignment):</span>
+            <div className="flex items-center gap-1">
+              <button
+                type="button"
+                onClick={() => updateField('middleShlokaAlignment', 'balanced')}
+                className={`px-2.5 py-1 rounded text-xs font-semibold transition-all ${
+                  (data.middleShlokaAlignment || 'balanced') === 'balanced'
+                    ? 'bg-red-700 text-white shadow-sm'
+                    : 'bg-white text-stone-700 hover:bg-stone-100 border border-stone-300'
+                }`}
+                title="दोनों तरफ बराबर चौड़ाई व सममित ॐ"
+              >
+                सममित (Balanced)
+              </button>
+              <button
+                type="button"
+                onClick={() => updateField('middleShlokaAlignment', 'column-left')}
+                className={`px-2.5 py-1 rounded text-xs font-semibold transition-all ${
+                  data.middleShlokaAlignment === 'column-left'
+                    ? 'bg-red-700 text-white shadow-sm'
+                    : 'bg-white text-stone-700 hover:bg-stone-100 border border-stone-300'
+                }`}
+                title="दोनों चरण बाएँ संरेखित"
+              >
+                दो कॉलम बायाँ
+              </button>
+              <button
+                type="button"
+                onClick={() => updateField('middleShlokaAlignment', 'center')}
+                className={`px-2.5 py-1 rounded text-xs font-semibold transition-all ${
+                  data.middleShlokaAlignment === 'center'
+                    ? 'bg-red-700 text-white shadow-sm'
+                    : 'bg-white text-stone-700 hover:bg-stone-100 border border-stone-300'
+                }`}
+                title="मध्य में केंद्रित"
+              >
+                केंद्रित
+              </button>
+            </div>
+          </div>
+          <p className="text-[11px] text-stone-500">
+            * <b>सममित (Balanced)</b>: प्रेस मानकों के अनुसार दोनों लाइनें बाएँ और दाएँ से बिल्कुल सीध में रहती हैं तथा दोनों 'ॐ' बराबर दूरी पर दिखते हैं।
+          </p>
+        </div>
+
+        <div>
+          <label className="block text-xs font-medium text-stone-600 mb-1">
+            प्रथम पंक्ति (Line 1 - कोमा लगाकर दो चरण अलग करें)
+          </label>
+          <HindiInput
+            type="text"
+            value={data.middleShlokaLine1}
+            onChange={(e) => updateField('middleShlokaLine1', e.target.value)}
+            className="w-full px-2.5 py-1.5 text-xs border rounded-md focus:ring-1 focus:ring-red-500 focus:outline-none"
+          />
+        </div>
+        <div>
+          <label className="block text-xs font-medium text-stone-600 mb-1">
+            द्वितीय पंक्ति (Line 2 - कोमा लगाकर दो चरण अलग करें)
+          </label>
+          <HindiInput
+            type="text"
+            value={data.middleShlokaLine2}
+            onChange={(e) => updateField('middleShlokaLine2', e.target.value)}
+            className="w-full px-2.5 py-1.5 text-xs border rounded-md focus:ring-1 focus:ring-red-500 focus:outline-none"
+          />
+        </div>
       </div>
     </div>
   );
