@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Calendar, Plus, Trash2, Sparkles, Check, Clock } from 'lucide-react';
 import { getPanchangDetails } from '../../utils/panchang';
+import HindiInput from '../Controls/HindiInput';
+import HindiTextarea from '../Controls/HindiTextarea';
 
 export default function EventScheduleForm({ data, onChange }) {
   const [useTraditionalMonth, setUseTraditionalMonth] = useState(true);
@@ -26,9 +28,9 @@ export default function EventScheduleForm({ data, onChange }) {
     const newEvents = [...data.events];
     newEvents[index] = {
       ...newEvents[index],
-      tithi: panchang.tithiText, // e.g. "अगहन शुक्ल पक्ष अष्टमी"
-      date: panchang.dateText,   // e.g. "दिनांक 28-11-2025"
-      day: panchang.dayText,     // e.g. "( शुक्रवार )"
+      tithi: panchang.tithiText,
+      date: panchang.dateText,
+      day: panchang.dayText,
       isoDate: isoDateStr
     };
 
@@ -72,12 +74,12 @@ export default function EventScheduleForm({ data, onChange }) {
           <Calendar className="w-5 h-5 text-amber-700" />
           <span>कार्यक्रम शीर्षक (Program Title)</span>
         </div>
-        <input
+        <HindiInput
           type="text"
           value={data.programTitle}
           onChange={(e) => updateField('programTitle', e.target.value)}
           className="w-full px-3 py-2 text-base font-bold border rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none"
-          placeholder="वैवाहिक कार्यक्रम"
+          placeholder="vaivahik karyakram -> वैवाहिक कार्यक्रम"
         />
       </div>
 
@@ -182,7 +184,7 @@ export default function EventScheduleForm({ data, onChange }) {
                   <span>तिथि / पक्ष (Tithi)</span>
                   <span className="text-[10px] text-amber-700 font-normal">पंचांग स्वतः</span>
                 </label>
-                <input
+                <HindiInput
                   type="text"
                   value={item.tithi}
                   onChange={(e) => handleEventChange(index, 'tithi', e.target.value)}
@@ -196,7 +198,7 @@ export default function EventScheduleForm({ data, onChange }) {
                   <span>तारीख (Date)</span>
                   <span className="text-[10px] text-amber-700 font-normal">कैलेंडर से</span>
                 </label>
-                <input
+                <HindiInput
                   type="text"
                   value={item.date}
                   onChange={(e) => handleEventChange(index, 'date', e.target.value)}
@@ -212,7 +214,7 @@ export default function EventScheduleForm({ data, onChange }) {
                 <label className="block text-[11px] font-bold text-stone-700 mb-0.5">
                   दिन (Day)
                 </label>
-                <input
+                <HindiInput
                   type="text"
                   value={item.day}
                   onChange={(e) => handleEventChange(index, 'day', e.target.value)}
@@ -225,12 +227,12 @@ export default function EventScheduleForm({ data, onChange }) {
                 <label className="block text-[11px] font-bold text-stone-700 mb-0.5">
                   कार्यक्रम का नाम (Event)
                 </label>
-                <input
+                <HindiInput
                   type="text"
                   value={item.event}
                   onChange={(e) => handleEventChange(index, 'event', e.target.value)}
                   className="w-full px-2.5 py-1.5 text-xs font-bold border rounded-md focus:ring-2 focus:ring-red-500 focus:outline-none text-red-900"
-                  placeholder="उदा. वंशरोपन एवं मण्डप ।"
+                  placeholder="shubh vivah -> शुभ विवाह"
                 />
               </div>
             </div>
@@ -259,7 +261,7 @@ export default function EventScheduleForm({ data, onChange }) {
           <Clock className="w-3.5 h-3.5 text-stone-600" />
           <span>विशेष नोट (बारात प्रस्थान समय, स्थान, वाहन आदि)</span>
         </label>
-        <textarea
+        <HindiTextarea
           rows={3}
           value={data.noteText}
           onChange={(e) => updateField('noteText', e.target.value)}

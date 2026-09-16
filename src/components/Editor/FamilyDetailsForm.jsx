@@ -1,6 +1,8 @@
 import React from 'react';
 import { Users, Printer, Sparkles, Heart, Smile } from 'lucide-react';
 import { BAAL_MANUHAR_PRESETS, SWAGATOTSUK_TITLE_PRESETS } from '../../utils/defaultData';
+import HindiInput from '../Controls/HindiInput';
+import HindiTextarea from '../Controls/HindiTextarea';
 
 export default function FamilyDetailsForm({ data, onChange }) {
   const updateField = (field, value) => {
@@ -25,24 +27,24 @@ export default function FamilyDetailsForm({ data, onChange }) {
         </div>
         <div>
           <label className="block text-xs font-semibold text-stone-700 mb-1">शीर्षक (Title)</label>
-          <input
+          <HindiInput
             type="text"
             value={data.darshanabhilashiTitle || ''}
             onChange={(e) => updateField('darshanabhilashiTitle', e.target.value)}
             className="w-full px-3 py-1.5 text-xs font-bold border rounded-lg focus:ring-1 focus:ring-red-500 focus:outline-none"
-            placeholder="उदा. दर्शनाभिलाषी"
+            placeholder="darshanabhilashi -> दर्शनाभिलाषी"
           />
         </div>
         <div>
           <label className="block text-xs font-semibold text-stone-700 mb-1">
             सदस्यों व परिजनों के नाम (एक पंक्ति में अथवा कॉमा लगाकर)
           </label>
-          <textarea
+          <HindiTextarea
             rows={3}
             value={data.darshanabhilashiNames || ''}
             onChange={(e) => updateField('darshanabhilashiNames', e.target.value)}
             className="w-full px-3 py-2 text-xs border rounded-lg focus:ring-1 focus:ring-red-500 focus:outline-none leading-relaxed"
-            placeholder="संजय पासवान, सुधीर पासवान, पवन पासवान..."
+            placeholder="sanjay paswan, sudhir paswan, pawan paswan..."
           />
         </div>
       </div>
@@ -86,12 +88,12 @@ export default function FamilyDetailsForm({ data, onChange }) {
                   </button>
                 ))}
               </div>
-              <input
+              <HindiInput
                 type="text"
                 value={data.swagatotsukTitle || ''}
                 onChange={(e) => updateField('swagatotsukTitle', e.target.value)}
                 className="w-full px-3 py-1.5 text-xs font-bold border rounded-lg focus:ring-1 focus:ring-red-500 focus:outline-none"
-                placeholder="उदा. स्वागतोत्सुक"
+                placeholder="swagatotsuk -> स्वागतोत्सुक"
               />
             </div>
 
@@ -100,12 +102,12 @@ export default function FamilyDetailsForm({ data, onChange }) {
               <label className="block text-xs font-semibold text-stone-700 mb-1">
                 स्वागतकर्ताओं / भ्रातृगण / मित्र मण्डली के नाम
               </label>
-              <textarea
+              <HindiTextarea
                 rows={2}
                 value={data.swagatotsukNames || ''}
                 onChange={(e) => updateField('swagatotsukNames', e.target.value)}
                 className="w-full px-3 py-2 text-xs border rounded-lg focus:ring-1 focus:ring-red-500 focus:outline-none leading-relaxed"
-                placeholder="विकास पासवान, अमित, राहुल, सन्नी एवं समस्त मित्र मण्डली व भ्रातृगण।"
+                placeholder="vikas paswan, amit, rahul, sunny evam samast mitra mandali"
               />
             </div>
           </div>
@@ -120,24 +122,24 @@ export default function FamilyDetailsForm({ data, onChange }) {
         </div>
         <div>
           <label className="block text-xs font-semibold text-stone-700 mb-1">शीर्षक</label>
-          <input
+          <HindiInput
             type="text"
             value={data.aakankshiTitle || ''}
             onChange={(e) => updateField('aakankshiTitle', e.target.value)}
             className="w-full px-3 py-1.5 text-xs font-bold border rounded-lg focus:ring-1 focus:ring-red-500 focus:outline-none"
-            placeholder="उदा. आकांक्षी अथवा विनीत"
+            placeholder="aakankshi -> आकांक्षी"
           />
         </div>
         <div>
           <label className="block text-xs font-semibold text-stone-700 mb-1">
             आकांक्षी नाम एवं पता
           </label>
-          <textarea
+          <HindiTextarea
             rows={3}
             value={data.aakankshiNames || ''}
             onChange={(e) => updateField('aakankshiNames', e.target.value)}
             className="w-full px-3 py-2 text-xs border rounded-lg focus:ring-1 focus:ring-red-500 focus:outline-none leading-relaxed"
-            placeholder="मन्नु पासवान\nग्राम चेरों, सरमेरा ( नालन्दा )"
+            placeholder="mannu paswan, gram cheron, sarmera (nalanda)"
           />
         </div>
       </div>
@@ -209,12 +211,12 @@ export default function FamilyDetailsForm({ data, onChange }) {
             {/* Title */}
             <div>
               <label className="block text-xs font-semibold text-stone-700 mb-1">शीर्षक</label>
-              <input
+              <HindiInput
                 type="text"
                 value={data.baalManuharTitle || 'बाल मनुहार'}
                 onChange={(e) => updateField('baalManuharTitle', e.target.value)}
                 className="w-full px-3 py-1.5 text-xs font-bold border rounded-lg focus:ring-1 focus:ring-red-500 focus:outline-none"
-                placeholder="उदा. बाल मनुहार"
+                placeholder="bal manuhar -> बाल मनुहार"
               />
             </div>
 
@@ -223,7 +225,7 @@ export default function FamilyDetailsForm({ data, onChange }) {
               <label className="block text-xs font-semibold text-stone-700 mb-1">
                 बाल मनुहार दोहा / कविता
               </label>
-              <textarea
+              <HindiTextarea
                 rows={2}
                 value={data.baalManuharQuote || ''}
                 onChange={(e) => updateField('baalManuharQuote', e.target.value)}
@@ -237,12 +239,12 @@ export default function FamilyDetailsForm({ data, onChange }) {
               <label className="block text-xs font-semibold text-stone-700 mb-1">
                 बाल गोपाल / बच्चों के नाम
               </label>
-              <input
+              <HindiInput
                 type="text"
                 value={data.baalManuharKids || ''}
                 onChange={(e) => updateField('baalManuharKids', e.target.value)}
                 className="w-full px-3 py-1.5 text-xs border rounded-lg focus:ring-1 focus:ring-red-500 focus:outline-none font-semibold"
-                placeholder="उदा. कान्हा, लड्डू, परी, आरव एवं समस्त बाल गोपाल"
+                placeholder="kanha, laddu, pari, aarav evam samast bal gopal"
               />
             </div>
           </div>
@@ -255,12 +257,12 @@ export default function FamilyDetailsForm({ data, onChange }) {
           <Printer className="w-4 h-4 text-stone-600" />
           <span>प्रिंटिंग प्रेस विवरण (Press Line)</span>
         </div>
-        <input
+        <HindiInput
           type="text"
           value={data.pressLine || ''}
           onChange={(e) => updateField('pressLine', e.target.value)}
           className="w-full px-3 py-2 text-xs border rounded-lg focus:ring-1 focus:ring-red-500 focus:outline-none font-semibold"
-          placeholder="पवन प्रिंटिंग प्रेस, सरमेरा, नालन्दा, 7739553339"
+          placeholder="pawan printing press, sarmera, nalanda, 7739553339"
         />
         <p className="text-[11px] text-stone-500">
           कार्ड के सबसे नीचे बारीक अक्षरों में पारंपरिक प्रेस की मुहर / विवरण

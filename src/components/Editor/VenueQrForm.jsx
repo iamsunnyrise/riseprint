@@ -12,6 +12,7 @@ import {
   Layout
 } from 'lucide-react';
 import VenueQrCode from '../Motifs/VenueQrCode';
+import HindiInput from '../Controls/HindiInput';
 
 const VENUE_TITLE_PRESETS = [
   'विवाह स्थल',
@@ -115,7 +116,6 @@ export default function VenueQrForm({ data, onChange }) {
         </h3>
 
         <div className="space-y-2.5">
-          {/* Toggle 1: Show Venue on Wedding Card */}
           <label className="flex items-center justify-between cursor-pointer p-2 rounded-lg hover:bg-stone-50 transition border border-transparent hover:border-stone-200">
             <div>
               <div className="text-xs font-bold text-stone-800">
@@ -133,7 +133,6 @@ export default function VenueQrForm({ data, onChange }) {
             />
           </label>
 
-          {/* Toggle 2: Show QR on Card */}
           <label className="flex items-center justify-between cursor-pointer p-2 rounded-lg hover:bg-stone-50 transition border border-transparent hover:border-stone-200">
             <div>
               <div className="text-xs font-bold text-stone-800">
@@ -151,7 +150,6 @@ export default function VenueQrForm({ data, onChange }) {
             />
           </label>
 
-          {/* Toggle 3: Show QR on Envelope */}
           <label className="flex items-center justify-between cursor-pointer p-2 rounded-lg hover:bg-stone-50 transition border border-transparent hover:border-stone-200">
             <div>
               <div className="text-xs font-bold text-stone-800">
@@ -199,11 +197,11 @@ export default function VenueQrForm({ data, onChange }) {
               </button>
             ))}
           </div>
-          <input
+          <HindiInput
             type="text"
             value={data.venueTitle || ''}
             onChange={(e) => handleChange('venueTitle', e.target.value)}
-            placeholder="उदा. विवाह स्थल"
+            placeholder="vivah sthal -> विवाह स्थल"
             className="w-full text-xs p-2 rounded-lg border border-stone-300 focus:ring-1 focus:ring-red-600 focus:outline-none"
           />
         </div>
@@ -213,11 +211,11 @@ export default function VenueQrForm({ data, onChange }) {
           <label className="block text-xs font-bold text-stone-700 mb-1">
             विवाह भवन / होटल / स्थल का नाम
           </label>
-          <input
+          <HindiInput
             type="text"
             value={data.venueName || ''}
             onChange={(e) => handleChange('venueName', e.target.value)}
-            placeholder="उदा. होटल उत्सव पैलेस / मां जानकी विवाह भवन / निज निवास"
+            placeholder="hotel utsav palace / maa janki vivah bhavan"
             className="w-full text-xs p-2 rounded-lg border border-stone-300 focus:ring-1 focus:ring-red-600 focus:outline-none font-semibold text-stone-800"
           />
         </div>
@@ -227,11 +225,11 @@ export default function VenueQrForm({ data, onChange }) {
           <label className="block text-xs font-bold text-stone-700 mb-1">
             स्थल का पता (Address / Landmark)
           </label>
-          <input
+          <HindiInput
             type="text"
             value={data.venueAddress || ''}
             onChange={(e) => handleChange('venueAddress', e.target.value)}
-            placeholder="उदा. मेन रोड, निकट स्टेशन चौराहा, नालन्दा (बिहार)"
+            placeholder="main road, near station chauraha, nalanda"
             className="w-full text-xs p-2 rounded-lg border border-stone-300 focus:ring-1 focus:ring-red-600 focus:outline-none"
           />
         </div>
@@ -251,7 +249,8 @@ export default function VenueQrForm({ data, onChange }) {
               <span>नाम व पते से लिंक बनाएं</span>
             </button>
           </div>
-          <input
+          <HindiInput
+            enableHindi={false}
             type="url"
             value={data.venueMapsUrl || ''}
             onChange={(e) => handleChange('venueMapsUrl', e.target.value)}
@@ -259,7 +258,7 @@ export default function VenueQrForm({ data, onChange }) {
             className="w-full text-xs p-2 rounded-lg border border-stone-300 focus:ring-1 focus:ring-red-600 focus:outline-none font-mono text-[11px]"
           />
           <p className="text-[10px] text-stone-500 mt-1">
-            💡 आप गूगल मैप्स से अपनी लोकेशन का शेयर लिंक (उदा. <code>https://maps.app.goo.gl/xxx</code>) भी सीधे पेस्ट कर सकते हैं।
+            💡 आप गूगल मैप्स से अपनी लोकेशन का शेयर लिंक भी सीधे पेस्ट कर सकते हैं।
           </p>
         </div>
       </div>
@@ -395,11 +394,11 @@ export default function VenueQrForm({ data, onChange }) {
               </button>
             ))}
           </div>
-          <input
+          <HindiInput
             type="text"
             value={data.qrLabel || ''}
             onChange={(e) => handleChange('qrLabel', e.target.value)}
-            placeholder="उदा. मानचित्र हेतु स्कैन करें"
+            placeholder="manchitra hetu scan karein"
             className="w-full text-xs p-2 rounded-lg border border-stone-300 focus:ring-1 focus:ring-red-600 focus:outline-none"
           />
         </div>

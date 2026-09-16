@@ -1,6 +1,7 @@
 import React from 'react';
 import { Mail, Send, UserCheck, RefreshCw, Sparkles, Image as ImageIcon } from 'lucide-react';
 import { ENVELOPE_SIZES } from '../../utils/defaultData';
+import HindiInput from '../Controls/HindiInput';
 
 export default function EnvelopeEditorForm({ data, onChange }) {
   const updateField = (field, value) => {
@@ -93,7 +94,7 @@ export default function EnvelopeEditorForm({ data, onChange }) {
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="block text-xs font-semibold text-stone-700 mb-1">शीर्ष आह्वान</label>
-            <input
+            <HindiInput
               type="text"
               value={data.envelopeTopInvocation || '॥ श्री गणेशाय नमः ॥'}
               onChange={(e) => updateField('envelopeTopInvocation', e.target.value)}
@@ -102,19 +103,19 @@ export default function EnvelopeEditorForm({ data, onChange }) {
           </div>
           <div>
             <label className="block text-xs font-semibold text-stone-700 mb-1">मुख्य शीर्षक</label>
-            <input
+            <HindiInput
               type="text"
               value={data.envelopeTitle || 'शुभ विवाह'}
               onChange={(e) => updateField('envelopeTitle', e.target.value)}
               className="w-full px-3 py-2 text-xs font-bold border rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none"
-              placeholder="शुभ विवाह / पावन परिणय"
+              placeholder="shubh vivah / pawan parinay"
             />
           </div>
         </div>
 
         <div>
           <label className="block text-xs font-semibold text-stone-700 mb-1">उप-शीर्षक (Sub-Title)</label>
-          <input
+          <HindiInput
             type="text"
             value={data.envelopeSubTitle || 'मांगलिक निमंत्रण पत्र'}
             onChange={(e) => updateField('envelopeSubTitle', e.target.value)}
@@ -155,7 +156,7 @@ export default function EnvelopeEditorForm({ data, onChange }) {
         <div className="grid grid-cols-3 gap-3">
           <div>
             <label className="block text-xs font-semibold text-stone-700 mb-1">शीर्षक</label>
-            <input
+            <HindiInput
               type="text"
               value={data.envelopeSenderTitle || 'प्रेषक :-'}
               onChange={(e) => updateField('envelopeSenderTitle', e.target.value)}
@@ -164,30 +165,31 @@ export default function EnvelopeEditorForm({ data, onChange }) {
           </div>
           <div className="col-span-2">
             <label className="block text-xs font-semibold text-stone-700 mb-1">प्रेषक का नाम / परिवार</label>
-            <input
+            <HindiInput
               type="text"
               value={data.envelopeSenderName || ''}
               onChange={(e) => updateField('envelopeSenderName', e.target.value)}
               className="w-full px-3 py-2 text-xs font-bold border rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none"
-              placeholder="मन्नु पासवान एवं समस्त परिवार"
+              placeholder="mannu paswan evam samast parivar"
             />
           </div>
         </div>
 
         <div>
           <label className="block text-xs font-semibold text-stone-700 mb-1">ग्राम, पोस्ट, थाना व जिला</label>
-          <input
+          <HindiInput
             type="text"
             value={data.envelopeSenderAddress || ''}
             onChange={(e) => updateField('envelopeSenderAddress', e.target.value)}
             className="w-full px-3 py-2 text-xs border rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none"
-            placeholder="ग्राम+पो०- चेरों, थाना-सरमेरा ( नालन्दा )"
+            placeholder="gram+po cheron, thana sarmera (nalanda)"
           />
         </div>
 
         <div>
           <label className="block text-xs font-semibold text-stone-700 mb-1">मोबाइल नंबर</label>
-          <input
+          <HindiInput
+            enableHindi={false}
             type="text"
             value={data.envelopeSenderMobile || ''}
             onChange={(e) => updateField('envelopeSenderMobile', e.target.value)}
@@ -198,12 +200,12 @@ export default function EnvelopeEditorForm({ data, onChange }) {
 
         <div>
           <label className="block text-xs font-semibold text-stone-700 mb-1">शुभ नोट / आग्रह पंक्ति</label>
-          <input
+          <HindiInput
             type="text"
             value={data.envelopeNote || ''}
             onChange={(e) => updateField('envelopeNote', e.target.value)}
             className="w-full px-3 py-2 text-xs border rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none"
-            placeholder="कृपया सपरिवार पधारकर वर-वधू को अपना शुभाशीर्वाद प्रदान करें।"
+            placeholder="kripya saparivar padharkar var-vadhu ko shubhashirwad pradan karein"
           />
         </div>
       </div>
@@ -217,7 +219,7 @@ export default function EnvelopeEditorForm({ data, onChange }) {
 
         <div>
           <label className="block text-xs font-semibold text-stone-700 mb-1">संबोधन शीर्षक</label>
-          <input
+          <HindiInput
             type="text"
             value={data.envelopeRecipientTitle || 'प्रति / सेवा में :-'}
             onChange={(e) => updateField('envelopeRecipientTitle', e.target.value)}
@@ -227,7 +229,7 @@ export default function EnvelopeEditorForm({ data, onChange }) {
 
         <div>
           <label className="block text-xs font-semibold text-stone-700 mb-1">पंक्ति 1 (अतिथि का नाम लिखने हेतु डॉटेड गाइड)</label>
-          <input
+          <HindiInput
             type="text"
             value={data.envelopeRecipientLine1 || 'श्रीमान ................................................................'}
             onChange={(e) => updateField('envelopeRecipientLine1', e.target.value)}
@@ -237,7 +239,7 @@ export default function EnvelopeEditorForm({ data, onChange }) {
 
         <div>
           <label className="block text-xs font-semibold text-stone-700 mb-1">पंक्ति 2 (सपरिवार / सादर आमंत्रण)</label>
-          <input
+          <HindiInput
             type="text"
             value={data.envelopeRecipientLine2 || 'सपरिवार / सादर आमंत्रण'}
             onChange={(e) => updateField('envelopeRecipientLine2', e.target.value)}
@@ -247,7 +249,7 @@ export default function EnvelopeEditorForm({ data, onChange }) {
 
         <div>
           <label className="block text-xs font-semibold text-stone-700 mb-1">पंक्ति 3 (स्थान / पता डॉटेड गाइड)</label>
-          <input
+          <HindiInput
             type="text"
             value={data.envelopeRecipientAddress || 'स्थान ................................................................'}
             onChange={(e) => updateField('envelopeRecipientAddress', e.target.value)}

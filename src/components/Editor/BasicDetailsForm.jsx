@@ -1,5 +1,6 @@
 import React from 'react';
 import { User, Heart, ArrowLeftRight } from 'lucide-react';
+import HindiInput from '../Controls/HindiInput';
 
 export default function BasicDetailsForm({ data, onChange }) {
   const updateField = (field, value) => {
@@ -24,7 +25,7 @@ export default function BasicDetailsForm({ data, onChange }) {
       <div className="grid grid-cols-3 gap-3">
         <div>
           <label className="block text-xs font-semibold text-stone-700 mb-1">संबोधन (चि० / सौ०)</label>
-          <input
+          <HindiInput
             type="text"
             value={data.groomPrefix}
             onChange={(e) => updateField('groomPrefix', e.target.value)}
@@ -33,12 +34,12 @@ export default function BasicDetailsForm({ data, onChange }) {
         </div>
         <div className="col-span-2">
           <label className="block text-xs font-semibold text-stone-700 mb-1">वर का नाम</label>
-          <input
+          <HindiInput
             type="text"
             value={data.groomName}
             onChange={(e) => updateField('groomName', e.target.value)}
             className="w-full px-3 py-2 text-sm font-bold border rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none"
-            placeholder="बिट्टू कुमार"
+            placeholder="bittu kumar -> बिट्टू कुमार"
           />
         </div>
       </div>
@@ -46,7 +47,7 @@ export default function BasicDetailsForm({ data, onChange }) {
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label className="block text-xs font-semibold text-stone-700 mb-1">सम्बन्ध (सुपुत्र / प्रथम सुपुत्र)</label>
-          <input
+          <HindiInput
             type="text"
             value={data.groomRelation}
             onChange={(e) => updateField('groomRelation', e.target.value)}
@@ -55,12 +56,12 @@ export default function BasicDetailsForm({ data, onChange }) {
         </div>
         <div>
           <label className="block text-xs font-semibold text-stone-700 mb-1">पिता का नाम</label>
-          <input
+          <HindiInput
             type="text"
             value={data.groomFather}
             onChange={(e) => updateField('groomFather', e.target.value)}
             className="w-full px-3 py-2 text-sm font-bold border rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none"
-            placeholder="श्री मन्नु पासवान"
+            placeholder="shri mannu paswan -> श्री मन्नु पासवान"
           />
         </div>
       </div>
@@ -68,22 +69,22 @@ export default function BasicDetailsForm({ data, onChange }) {
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label className="block text-xs font-semibold text-stone-700 mb-1">ग्राम + पोस्ट</label>
-          <input
+          <HindiInput
             type="text"
             value={data.groomVillage}
             onChange={(e) => updateField('groomVillage', e.target.value)}
             className="w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none"
-            placeholder="ग्राम+पो०- चेरों"
+            placeholder="gram+po cheron -> ग्राम+पो०- चेरों"
           />
         </div>
         <div>
           <label className="block text-xs font-semibold text-stone-700 mb-1">थाना एवं जिला</label>
-          <input
+          <HindiInput
             type="text"
             value={data.groomThana}
             onChange={(e) => updateField('groomThana', e.target.value)}
             className="w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none"
-            placeholder="थाना-सरमेरा ( नालन्दा )"
+            placeholder="thana sarmera (nalanda)"
           />
         </div>
       </div>
@@ -106,7 +107,7 @@ export default function BasicDetailsForm({ data, onChange }) {
       <div className="grid grid-cols-3 gap-3">
         <div>
           <label className="block text-xs font-semibold text-stone-700 mb-1">संबोधन (आयु० / सु०)</label>
-          <input
+          <HindiInput
             type="text"
             value={data.bridePrefix}
             onChange={(e) => updateField('bridePrefix', e.target.value)}
@@ -115,12 +116,12 @@ export default function BasicDetailsForm({ data, onChange }) {
         </div>
         <div className="col-span-2">
           <label className="block text-xs font-semibold text-stone-700 mb-1">वधू का नाम</label>
-          <input
+          <HindiInput
             type="text"
             value={data.brideName}
             onChange={(e) => updateField('brideName', e.target.value)}
             className="w-full px-3 py-2 text-sm font-bold border rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none"
-            placeholder="सिम्पी कुमारी"
+            placeholder="pooja kumari -> पूजा कुमारी"
           />
         </div>
       </div>
@@ -128,7 +129,7 @@ export default function BasicDetailsForm({ data, onChange }) {
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label className="block text-xs font-semibold text-stone-700 mb-1">सम्बन्ध (सुपुत्री / प्रथम सुपुत्री)</label>
-          <input
+          <HindiInput
             type="text"
             value={data.brideRelation}
             onChange={(e) => updateField('brideRelation', e.target.value)}
@@ -137,12 +138,12 @@ export default function BasicDetailsForm({ data, onChange }) {
         </div>
         <div>
           <label className="block text-xs font-semibold text-stone-700 mb-1">पिता का नाम</label>
-          <input
+          <HindiInput
             type="text"
             value={data.brideFather}
             onChange={(e) => updateField('brideFather', e.target.value)}
             className="w-full px-3 py-2 text-sm font-bold border rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none"
-            placeholder="श्री शिवशंकर पासवान"
+            placeholder="shri ramesh prasad"
           />
         </div>
       </div>
@@ -150,7 +151,7 @@ export default function BasicDetailsForm({ data, onChange }) {
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label className="block text-xs font-semibold text-stone-700 mb-1">ग्राम + पोस्ट</label>
-          <input
+          <HindiInput
             type="text"
             value={data.brideVillage}
             onChange={(e) => updateField('brideVillage', e.target.value)}
@@ -160,7 +161,7 @@ export default function BasicDetailsForm({ data, onChange }) {
         </div>
         <div>
           <label className="block text-xs font-semibold text-stone-700 mb-1">थाना एवं जिला</label>
-          <input
+          <HindiInput
             type="text"
             value={data.brideThana}
             onChange={(e) => updateField('brideThana', e.target.value)}
@@ -227,7 +228,7 @@ export default function BasicDetailsForm({ data, onChange }) {
         </div>
       </div>
 
-      {/* 2. Couple Information Form Sections (Ordered dynamically by host side) */}
+      {/* 2. Couple Information Form Sections */}
       {isBrideSide ? (
         <>
           {renderBrideSection()}
@@ -245,7 +246,7 @@ export default function BasicDetailsForm({ data, onChange }) {
         <div className="font-bold text-stone-800 text-sm">आमंत्रण उद्घोषणा (Starburst Badge)</div>
         <div>
           <label className="block text-xs font-semibold text-stone-700 mb-1">लाइन 1</label>
-          <input
+          <HindiInput
             type="text"
             value={data.starburstLine1}
             onChange={(e) => updateField('starburstLine1', e.target.value)}
@@ -254,7 +255,7 @@ export default function BasicDetailsForm({ data, onChange }) {
         </div>
         <div>
           <label className="block text-xs font-semibold text-stone-700 mb-1">लाइन 2</label>
-          <input
+          <HindiInput
             type="text"
             value={data.starburstLine2}
             onChange={(e) => updateField('starburstLine2', e.target.value)}
@@ -263,7 +264,7 @@ export default function BasicDetailsForm({ data, onChange }) {
         </div>
         <div>
           <label className="block text-xs font-semibold text-stone-700 mb-1">लाइन 3</label>
-          <input
+          <HindiInput
             type="text"
             value={data.starburstLine3}
             onChange={(e) => updateField('starburstLine3', e.target.value)}

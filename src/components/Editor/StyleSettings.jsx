@@ -467,6 +467,10 @@ export default function StyleSettings({ data, onChange }) {
             );
           })}
         </div>
+
+        <div className="bg-amber-50 p-2.5 rounded-lg border border-amber-200 text-[11.5px] text-amber-900 leading-relaxed">
+          ⚡ <b>प्रेस ऑपरेटर व CorelDRAW यूजर्स:</b> यदि आप अपनी प्रिंटिंग प्रेस में <b>Kruti Dev 010</b>, <b>Chanakya</b> या <b>ShreeLipi</b> फॉन्ट का प्रयोग करते हैं, तो ऊपर हेडर में दिए गए <b>'कृतिदेव / DTP कनवर्टर'</b> बटन से पूरा शादी कार्ड 1-क्लिक में कनवर्ट कर कॉपी कर सकते हैं।
+        </div>
       </div>
 
       {/* 6. Traditional Motif Toggles */}

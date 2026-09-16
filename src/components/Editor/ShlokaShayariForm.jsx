@@ -1,6 +1,8 @@
 import React from 'react';
 import { BookOpen, Sparkles } from 'lucide-react';
 import { SHLOKA_PRESETS, SHAYARI_PRESETS } from '../../utils/defaultData';
+import HindiInput from '../Controls/HindiInput';
+import HindiTextarea from '../Controls/HindiTextarea';
 
 export default function ShlokaShayariForm({ data, onChange }) {
   const updateField = (field, value) => {
@@ -32,7 +34,7 @@ export default function ShlokaShayariForm({ data, onChange }) {
         <label className="block text-xs font-semibold text-stone-700 mb-1">
           शीर्ष आह्वान (Top Invocation)
         </label>
-        <input
+        <HindiInput
           type="text"
           value={data.topInvocation}
           onChange={(e) => updateField('topInvocation', e.target.value)}
@@ -69,7 +71,7 @@ export default function ShlokaShayariForm({ data, onChange }) {
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="block text-xs font-medium text-stone-600 mb-1">बायाँ श्लोक</label>
-            <textarea
+            <HindiTextarea
               rows={2}
               value={data.shlokaLeft}
               onChange={(e) => updateField('shlokaLeft', e.target.value)}
@@ -78,7 +80,7 @@ export default function ShlokaShayariForm({ data, onChange }) {
           </div>
           <div>
             <label className="block text-xs font-medium text-stone-600 mb-1">दायाँ श्लोक</label>
-            <textarea
+            <HindiTextarea
               rows={2}
               value={data.shlokaRight}
               onChange={(e) => updateField('shlokaRight', e.target.value)}
@@ -112,16 +114,16 @@ export default function ShlokaShayariForm({ data, onChange }) {
         </div>
 
         {/* Left Shayari */}
-        <div className="bg-stone-50/70 p-3 rounded-lg border">
-          <span className="text-xs font-bold text-stone-700 block mb-1.5">बाईं शायरी</span>
-          <input
+        <div className="bg-stone-50/70 p-3 rounded-lg border space-y-2">
+          <span className="text-xs font-bold text-stone-700 block">बाईं शायरी</span>
+          <HindiInput
             type="text"
             value={data.shayariLeft1}
             onChange={(e) => updateField('shayariLeft1', e.target.value)}
-            className="w-full px-2.5 py-1.5 text-xs border rounded-md mb-2 focus:ring-1 focus:ring-red-500 focus:outline-none"
+            className="w-full px-2.5 py-1.5 text-xs border rounded-md focus:ring-1 focus:ring-red-500 focus:outline-none"
             placeholder="लाइन 1"
           />
-          <input
+          <HindiInput
             type="text"
             value={data.shayariLeft2}
             onChange={(e) => updateField('shayariLeft2', e.target.value)}
@@ -131,16 +133,16 @@ export default function ShlokaShayariForm({ data, onChange }) {
         </div>
 
         {/* Right Shayari */}
-        <div className="bg-stone-50/70 p-3 rounded-lg border">
-          <span className="text-xs font-bold text-stone-700 block mb-1.5">दाईं शायरी</span>
-          <input
+        <div className="bg-stone-50/70 p-3 rounded-lg border space-y-2">
+          <span className="text-xs font-bold text-stone-700 block">दाईं शायरी</span>
+          <HindiInput
             type="text"
             value={data.shayariRight1}
             onChange={(e) => updateField('shayariRight1', e.target.value)}
-            className="w-full px-2.5 py-1.5 text-xs border rounded-md mb-2 focus:ring-1 focus:ring-red-500 focus:outline-none"
+            className="w-full px-2.5 py-1.5 text-xs border rounded-md focus:ring-1 focus:ring-red-500 focus:outline-none"
             placeholder="लाइन 1"
           />
-          <input
+          <HindiInput
             type="text"
             value={data.shayariRight2}
             onChange={(e) => updateField('shayariRight2', e.target.value)}
@@ -155,13 +157,13 @@ export default function ShlokaShayariForm({ data, onChange }) {
         <label className="block text-xs font-bold text-stone-700">
           मध्य श्लोक (Middle Shloka - सर्व मंगल मांगल्ये...)
         </label>
-        <input
+        <HindiInput
           type="text"
           value={data.middleShlokaLine1}
           onChange={(e) => updateField('middleShlokaLine1', e.target.value)}
-          className="w-full px-2.5 py-1.5 text-xs border rounded-md mb-1 focus:ring-1 focus:ring-red-500 focus:outline-none"
+          className="w-full px-2.5 py-1.5 text-xs border rounded-md focus:ring-1 focus:ring-red-500 focus:outline-none"
         />
-        <input
+        <HindiInput
           type="text"
           value={data.middleShlokaLine2}
           onChange={(e) => updateField('middleShlokaLine2', e.target.value)}

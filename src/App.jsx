@@ -41,6 +41,8 @@ import ScreenPrintForm from './components/Editor/ScreenPrintForm';
 import PhotoUploadForm from './components/Editor/PhotoUploadForm';
 
 import HindiKeyboardHelper from './components/Controls/HindiKeyboardHelper';
+import DtpFontConverterModal from './components/Controls/DtpFontConverterModal';
+import { useHindiTyping } from './context/HindiTypingContext';
 
 import { DEFAULT_CARD_DATA, CARD_SIZES, ENVELOPE_SIZES, CARD_TEMPLATES } from './utils/defaultData';
 import {
@@ -64,6 +66,8 @@ export default function App() {
   const [exportMessage, setExportMessage] = useState('');
   const [zoomScale, setZoomScale] = useState(0.95);
   const [isDigitalModalOpen, setIsDigitalModalOpen] = useState(false);
+  const [isDtpModalOpen, setIsDtpModalOpen] = useState(false);
+  const { isHindiTyping, toggleHindiTyping } = useHindiTyping();
 
   const cardRef = useRef(null);
   const envelopeRef = useRef(null);
@@ -339,6 +343,40 @@ export default function App() {
             </select>
           </div>
 
+          {/* English to Hindi Phonetic Typing Toggle */}
+          <button
+            type="button"
+            onClick={toggleHindiTyping}
+            className={`flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-lg font-bold transition shadow-sm border ${
+              isHindiTyping
+                ? 'bg-amber-400 text-stone-950 border-amber-300 ring-2 ring-amber-300/60'
+                : 'bg-red-900/60 hover:bg-red-900 text-amber-200 border-amber-500/30'
+            }`}
+            title="इंग्लिश ➔ हिंदी टाइपिंग (शॉर्टकट: Ctrl+G)"
+          >
+            <span className="text-xs font-extrabold bg-stone-900 text-amber-300 px-1 rounded">
+              {isHindiTyping ? 'अ' : 'A'}
+            </span>
+            <span className="hidden sm:inline">
+              {isHindiTyping ? 'हिंदी टाइपिंग: चालू' : 'हिंदी टाइपिंग: बंद'}
+            </span>
+            <span className="sm:hidden">
+              {isHindiTyping ? 'हिंदी ON' : 'हिंदी OFF'}
+            </span>
+          </button>
+
+          {/* DTP Press Font Converter Modal Trigger */}
+          <button
+            type="button"
+            onClick={() => setIsDtpModalOpen(true)}
+            className="flex items-center gap-1 text-xs bg-stone-800 hover:bg-stone-700 text-amber-200 border border-amber-500/40 px-2 py-1.5 rounded-lg transition font-semibold"
+            title="कृतिदेव 010 / चाणक्य / श्रीलिपि DTP फॉन्ट कनवर्टर (CorelDRAW हेतु)"
+          >
+            <span className="text-amber-400 font-bold">⚡</span>
+            <span className="hidden lg:inline">कृतिदेव / DTP कनवर्टर</span>
+            <span className="lg:hidden">DTP</span>
+          </button>
+
           <button
             type="button"
             onClick={handleResetToDefault}
@@ -547,7 +585,7 @@ export default function App() {
 
             {/* Quick Hindi Typing & Copy Tool */}
             <div className="pt-2 border-t">
-              <HindiKeyboardHelper />
+              <HindiKeyboardHelper onOpenDtpConverter={() => setIsDtpModalOpen(true)} />
             </div>
           </div>
         </aside>
@@ -743,6 +781,13 @@ export default function App() {
         onClose={() => setIsDigitalModalOpen(false)}
         cardData={cardData}
         setCardData={setCardData}
+      />
+
+      {/* ⚡ DTP Press Font Converter Modal (KrutiDev 010 / Chanakya / ShreeLipi) */}
+      <DtpFontConverterModal
+        isOpen={isDtpModalOpen}
+        onClose={() => setIsDtpModalOpen(false)}
+        cardData={cardData}
       />
     </div>
   );
