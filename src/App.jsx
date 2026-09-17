@@ -48,6 +48,11 @@ import StyleSettings from './components/Editor/StyleSettings';
 import ScreenPrintForm from './components/Editor/ScreenPrintForm';
 import PhotoUploadForm from './components/Editor/PhotoUploadForm';
 import BlankCardMatcherForm from './components/Editor/BlankCardMatcherForm';
+import ProductSuiteSelector from './components/Editor/ProductSuiteSelector';
+import ShokSandeshForm from './components/Editor/ShokSandeshForm';
+import SanskarForm from './components/Editor/SanskarForm';
+import BillBookForm from './components/Editor/BillBookForm';
+import VisitingCardForm from './components/Editor/VisitingCardForm';
 
 import HindiKeyboardHelper from './components/Controls/HindiKeyboardHelper';
 import DtpFontConverterModal from './components/Controls/DtpFontConverterModal';
@@ -61,7 +66,7 @@ import OfficeRibbonBar from './components/Ribbon/OfficeRibbonBar';
 import OfficeStatusBar from './components/Ribbon/OfficeStatusBar';
 import DocumentRuler from './components/Workspace/DocumentRuler';
 
-import { DEFAULT_CARD_DATA, CARD_SIZES, ENVELOPE_SIZES, CARD_TEMPLATES } from './utils/defaultData';
+import { DEFAULT_CARD_DATA, CARD_SIZES, ENVELOPE_SIZES, CARD_TEMPLATES, PRODUCT_TYPES } from './utils/defaultData';
 import {
   downloadCardPDF,
   downloadCardPNG,
@@ -119,6 +124,21 @@ export default function App() {
     setIsTaskPaneOpen(true);
   };
 
+  // Switch Printing Product (Multi-Product Suite)
+  const handleSelectProduct = (type) => {
+    setCardData((prev) => ({
+      ...prev,
+      productType: type
+    }));
+    setActiveTab(type === 'wedding' ? 'basic' : 'product-form');
+    setIsTaskPaneOpen(true);
+    confetti({
+      particleCount: 40,
+      spread: 50,
+      origin: { y: 0.4 }
+    });
+  };
+
   // Export Card / Envelope PDF based on active preview
   const handleExportPDF = async () => {
     try {
@@ -135,8 +155,32 @@ export default function App() {
         setExportMessage('300 DPI लिफाफा PDF तैयार हो रही है...');
         await downloadEnvelopePDF(envEl, cardData.envelopeSizeKey, cardData.envelopeTitle || 'Vivah_Lifafa');
       } else {
-        setExportMessage('300 DPI शादी कार्ड PDF तैयार हो रही है...');
-        await downloadCardPDF(cardEl, cardData.sizeKey, cardData.groomName, cardData.brideName, {
+        const pType = cardData.productType || 'wedding';
+        let name1 = cardData.groomName || 'Card';
+        let name2 = cardData.brideName || '';
+        if (pType === 'shok-sandesh') {
+          name1 = cardData.shokPersonName || 'Shok_Sandesh';
+          name2 = 'Tehravin';
+        } else if (pType === 'sanskar') {
+          name1 = cardData.sanskarChildName || 'Sanskar';
+          name2 = cardData.sanskarType || 'Nimantran';
+        } else if (pType === 'bill-book') {
+          name1 = cardData.billFirmName || 'BillBook';
+          name2 = 'Master';
+        } else if (pType === 'visiting-card') {
+          name1 = cardData.bizCardShopName || 'VisitingCard';
+          name2 = cardData.bizCardViewMode === '10-up-sheet' ? '10Up_A4' : 'Single';
+        }
+
+        const productLabels = {
+          'wedding': 'शादी कार्ड',
+          'shok-sandesh': 'शोक संदेश',
+          'sanskar': 'संस्कार कार्ड',
+          'bill-book': 'बिल बुक',
+          'visiting-card': 'विज़िटिंग कार्ड'
+        };
+        setExportMessage(`300 DPI ${productLabels[pType] || 'कार्ड'} PDF तैयार हो रही है...`);
+        await downloadCardPDF(cardEl, cardData.sizeKey, name1, name2, {
           widthMm: cardData.customWidthMm,
           heightMm: cardData.customHeightMm
         });
@@ -412,48 +456,81 @@ export default function App() {
   const currentCardSize = CARD_SIZES[cardData.sizeKey] || CARD_SIZES['7x9'];
   const currentEnvelopeSize = ENVELOPE_SIZES[cardData.envelopeSizeKey] || ENVELOPE_SIZES['standard'];
 
-  const tabs = [
-    { id: 'templates', label: 'टेम्पलेट्स', icon: Layers, badge: '6' },
-    { id: 'basic', label: 'वर-वधू विवरण', icon: Heart },
-    { id: 'schedule', label: 'कार्यक्रम तालिका', icon: Calendar },
-    { id: 'venue', label: 'विवाह स्थल व QR', icon: MapPin },
-    { id: 'envelope', label: 'शादी का लिफाफा', icon: Mail },
-    { id: 'guests', label: 'अतिथि सूची', icon: Users, badge: `${cardData.guestList?.length || 0}` },
-    {
-      id: 'music',
-      label: 'संगीत व WhatsApp',
-      icon: Music,
-      badge: cardData.enableMusic ? '🎵' : undefined
-    },
-    { id: 'shloka', label: 'श्लोक व शायरी', icon: BookOpen },
-    { id: 'family', label: 'परिवार व प्रेस', icon: Users },
-    {
-      id: 'style',
-      label: 'थीम, पेपर व वॉटरमार्क',
-      icon: Palette,
-      badge: cardData.enableWatermark ? '🪔' : undefined
-    },
-    {
-      id: 'photos',
-      label: 'फोटो व देव चित्र',
-      icon: ImageIcon,
-      badge: cardData.showCouplePhoto || cardData.customDeityImage ? '✓' : undefined
-    },
-    {
-      id: 'screenprint',
-      label: 'बटर पेपर मोड',
-      icon: Printer,
-      badge: cardData.screenPrintMode ? 'ON' : undefined
-    },
-    {
-      id: 'blankcard',
-      label: 'थोक कार्ड नाप',
-      icon: Columns,
-      badge: cardData.cardFoldType !== 'single' ? cardData.cardFoldType : undefined
-    }
-  ];
+  const productType = cardData.productType || 'wedding';
 
-  const currentActiveTabMeta = tabs.find(t => t.id === activeTab) || tabs[1];
+  let tabs = [];
+  if (productType === 'wedding') {
+    tabs = [
+      { id: 'product-suite', label: 'उत्पाद सुइट', icon: Layers, badge: '5' },
+      { id: 'templates', label: 'टेम्पलेट्स', icon: BookOpen, badge: '6' },
+      { id: 'basic', label: 'वर-वधू विवरण', icon: Heart },
+      { id: 'schedule', label: 'कार्यक्रम तालिका', icon: Calendar },
+      { id: 'venue', label: 'विवाह स्थल व QR', icon: MapPin },
+      { id: 'envelope', label: 'शादी का लिफाफा', icon: Mail },
+      { id: 'guests', label: 'अतिथि सूची', icon: Users, badge: `${cardData.guestList?.length || 0}` },
+      {
+        id: 'music',
+        label: 'संगीत व WhatsApp',
+        icon: Music,
+        badge: cardData.enableMusic ? '🎵' : undefined
+      },
+      { id: 'shloka', label: 'श्लोक व शायरी', icon: BookOpen },
+      { id: 'family', label: 'परिवार व प्रेस', icon: Users },
+      {
+        id: 'style',
+        label: 'थीम, पेपर व वॉटरमार्क',
+        icon: Palette,
+        badge: cardData.enableWatermark ? '🪔' : undefined
+      },
+      {
+        id: 'photos',
+        label: 'फोटो व देव चित्र',
+        icon: ImageIcon,
+        badge: cardData.showCouplePhoto || cardData.customDeityImage ? '✓' : undefined
+      },
+      {
+        id: 'screenprint',
+        label: 'बटर पेपर मोड',
+        icon: Printer,
+        badge: cardData.screenPrintMode ? 'ON' : undefined
+      },
+      {
+        id: 'blankcard',
+        label: 'थोक कार्ड नाप',
+        icon: Columns,
+        badge: cardData.cardFoldType !== 'single' ? cardData.cardFoldType : undefined
+      }
+    ];
+  } else if (productType === 'shok-sandesh') {
+    tabs = [
+      { id: 'product-suite', label: 'उत्पाद सुइट', icon: Layers, badge: '5' },
+      { id: 'product-form', label: 'शोक संदेश विवरण', icon: FileText, badge: '🕊️' },
+      { id: 'style', label: 'थीम व पेपर', icon: Palette },
+      { id: 'screenprint', label: 'बटर पेपर मोड', icon: Printer, badge: cardData.screenPrintMode ? 'ON' : undefined }
+    ];
+  } else if (productType === 'sanskar') {
+    tabs = [
+      { id: 'product-suite', label: 'उत्पाद सुइट', icon: Layers, badge: '5' },
+      { id: 'product-form', label: 'संस्कार विवरण', icon: Sparkles, badge: '🪔' },
+      { id: 'style', label: 'थीम व पेपर', icon: Palette },
+      { id: 'screenprint', label: 'बटर पेपर मोड', icon: Printer, badge: cardData.screenPrintMode ? 'ON' : undefined }
+    ];
+  } else if (productType === 'bill-book') {
+    tabs = [
+      { id: 'product-suite', label: 'उत्पाद सुइट', icon: Layers, badge: '5' },
+      { id: 'product-form', label: 'बिल बुक विवरण', icon: FileText, badge: '📑' },
+      { id: 'screenprint', label: 'बटर पेपर मोड', icon: Printer, badge: cardData.screenPrintMode ? 'ON' : undefined }
+    ];
+  } else if (productType === 'visiting-card') {
+    tabs = [
+      { id: 'product-suite', label: 'उत्पाद सुइट', icon: Layers, badge: '5' },
+      { id: 'product-form', label: 'विज़िटिंग कार्ड', icon: SlidersHorizontal, badge: '💳' },
+      { id: 'style', label: 'थीम व पेपर', icon: Palette },
+      { id: 'screenprint', label: 'बटर पेपर मोड', icon: Printer, badge: cardData.screenPrintMode ? 'ON' : undefined }
+    ];
+  }
+
+  const currentActiveTabMeta = tabs.find(t => t.id === activeTab) || tabs[0];
 
   return (
     <div className="min-h-screen bg-[#ece9e6] flex flex-col font-sans select-text">
@@ -479,6 +556,7 @@ export default function App() {
           setIsDraftProofModalOpen(true);
         }}
         onOpenJobSlipModal={() => setIsJobSlipModalOpen(true)}
+        onSelectProduct={handleSelectProduct}
         onExportPDF={handleExportPDF}
         onExportPNG={handleExportPNG}
         onExportCorelDrawSVG={handleExportCorelDrawSVG}
@@ -491,6 +569,7 @@ export default function App() {
         onSelectRibbonTab={setActiveRibbonTab}
         activeTaskPaneTab={activeTab}
         onOpenTaskPane={handleOpenTaskPane}
+        onSelectProduct={handleSelectProduct}
         isRibbonCollapsed={isRibbonCollapsed}
         toggleRibbonCollapsed={() => setIsRibbonCollapsed(prev => !prev)}
         cardData={cardData}
@@ -593,6 +672,28 @@ export default function App() {
 
           {/* Form Content Scrollable Area */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            {activeTab === 'product-suite' && (
+              <ProductSuiteSelector
+                currentProductType={cardData.productType || 'wedding'}
+                onSelectProduct={handleSelectProduct}
+              />
+            )}
+            {activeTab === 'product-form' && (
+              <>
+                {cardData.productType === 'shok-sandesh' && (
+                  <ShokSandeshForm data={cardData} onChange={setCardData} />
+                )}
+                {cardData.productType === 'sanskar' && (
+                  <SanskarForm data={cardData} onChange={setCardData} />
+                )}
+                {cardData.productType === 'bill-book' && (
+                  <BillBookForm data={cardData} onChange={setCardData} />
+                )}
+                {cardData.productType === 'visiting-card' && (
+                  <VisitingCardForm data={cardData} onChange={setCardData} />
+                )}
+              </>
+            )}
             {activeTab === 'templates' && (
               <TemplateSelector
                 currentData={cardData}

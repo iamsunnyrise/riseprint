@@ -564,8 +564,160 @@ export const DEFAULT_CARD_DATA = {
   jobCardAdvancePaid: 1500,
   jobCardPaymentMode: 'UPI', // 'UPI', 'Cash', 'GPay', 'PhonePe', 'Due'
   jobCardStatus: 'received', // 'received', 'proof_sent', 'proof_approved', 'butter_printed', 'screen_printing', 'ready_delivered'
-  jobCardSpecialInstructions: '25 लिफाफों पर VIP नाम अलग से प्रिंट होगा। बटर शीट 600 DPI डार्क टोनर पर निकालें।'
+  jobCardSpecialInstructions: '25 लिफाफों पर VIP नाम अलग से प्रिंट होगा। बटर शीट 600 DPI डार्क टोनर पर निकालें।',
+
+  // 🖨️ Multi-Product Suite (प्रिंटिंग शॉप उत्पाद सुइट)
+  productType: 'wedding', // 'wedding', 'shok-sandesh', 'sanskar', 'bill-book', 'visiting-card'
+
+  // 🕊️ 1. Shok Sandesh & Tehravin Defaults (शोक संदेश व उठावनी)
+  shokType: 'shok-sandesh', // 'shok-sandesh', 'tehravin', 'uthavani', 'shradhanjali'
+  shokInvocation: '॥ ॐ शांति ॥',
+  shokSubHeading: 'अत्यंत दुःख के साथ सूचित करना पड़ रहा है कि हमारे पूज्य',
+  shokPersonPrefix: 'स्वर्गवासी',
+  shokPersonName: 'श्री रामेश्वर दयाल शर्मा',
+  shokGotra: 'कौशिक गोत्र',
+  shokAge: '78 वर्ष',
+  shokBirthDate: '15 अगस्त 1948',
+  shokDeathDate: 'दिनांक 12 अक्टूबर 2026',
+  shokPhotoUrl: '',
+  shokDescription: 'का आकस्मिक देवलोक गमन दिनांक 12-10-2026 को हो गया है। दिवंगत पुण्यात्मा की आत्मिक शांति एवं मोक्ष प्राप्ति हेतु निम्नलिखित कार्यक्रम निर्धारित हैं:',
+  shokEvents: [
+    {
+      name: 'तीजा / पीपल पानी',
+      date: 'दिनांक 15-10-2026',
+      time: 'प्रातः 09:00 बजे',
+      location: 'गंगा तट / निज निवास'
+    },
+    {
+      name: 'रस्म उठावनी / शोक सभा',
+      date: 'दिनांक 18-10-2026',
+      time: 'अपराह्न 03:00 से 04:00 बजे तक',
+      location: 'कम्युनिटी हॉल, मेन रोड, सरमेरा'
+    },
+    {
+      name: 'ब्रह्मभोज एवं तेरहवीं संस्कार',
+      date: 'दिनांक 24-10-2026',
+      time: 'दोपहर 12:00 बजे से प्रभु इच्छा तक',
+      location: 'निज निवास स्थान'
+    }
+  ],
+  shokFamilyGrieving: 'शोकाकुल: श्री राजेश शर्मा (पुत्र), रमेश शर्मा (पुत्र), अमित, राहुल (पौत्र) एवं समस्त शोक संतप्त शर्मा परिवार',
+  shokFamilyVineet: 'विनीत: समस्त भ्रातृगण एवं निकट सम्बन्धी',
+  shokEstablishment: 'प्रतिष्ठान: मेसर्स शर्मा प्रोविजन स्टोर, सरमेरा',
+  shokContact: 'मो० 9876543210, 9431000000',
+  shokBorderTone: 'black-traditional', // 'black-traditional', 'charcoal-floral', 'subtle-grey'
+
+  // 🪔 2. Sanskar Ceremonies Defaults (मांगलिक संस्कार: मुंडन / जनेऊ / गृह प्रवेश)
+  sanskarType: 'mundan', // 'mundan', 'janeu', 'griha-pravesh', 'kuan-pujan', 'birthday'
+  sanskarHeading: 'शुभ मुंडन संस्कार निमंत्रण',
+  sanskarInvocation: '॥ श्री गणेशाय नमः ॥',
+  sanskarMantra: 'ॐ भूर्भुवः स्वः तत्सवितुर्वरेण्यं भर्गो देवस्य धीमहि धियो यो नः प्रचोदयात् ॥',
+  sanskarChildPrefix: 'चि०',
+  sanskarChildName: 'आरव कुमार',
+  sanskarChildRelation: 'प्रथम सुपुत्र',
+  sanskarParents: 'श्रीमती नीतू देवी एवं श्री अमित कुमार',
+  sanskarGrandParents: 'श्रीमती शान्ति देवी एवं श्री मन्नु पासवान',
+  sanskarHouseName: 'आनन्द कुटीर',
+  sanskarGraceText: 'परमपिता परमेश्वर एवं कुलदेवी के असीम आशीर्वाद से हमारे सुपुत्र के मुंडन संस्कार के पावन अवसर पर आपकी गरिमामयी उपस्थिति एवं आशीर्वचन सादर प्रार्थनीय हैं।',
+  sanskarEvents: [
+    {
+      event: 'हवन एवं वेदारंभ / मुंडन रस्म',
+      date: 'दिनांक 14-05-2026',
+      time: 'प्रातः 08:30 बजे',
+      day: '( गुरुवार )'
+    },
+    {
+      event: 'प्रीतिभोज (भण्डारा)',
+      date: 'दिनांक 14-05-2026',
+      time: 'सायं 06:30 बजे से प्रभु इच्छा तक',
+      day: '( गुरुवार )'
+    }
+  ],
+  sanskarVenue: 'निज निवास, ग्राम चेरों, थाना- सरमेरा, नालन्दा',
+  sanskarDarshanabhilashi: 'समस्त परिवार, इष्ट-मित्र एवं स्नेहीजन',
+  sanskarSwagat: 'विकास, राहुल, सन्नी एवं समस्त मित्र मण्डली',
+  sanskarAakankshi: 'अमित कुमार एवं समस्त परिवार',
+
+  // 📑 3. Bill Book / Cash Memo Defaults (बिल बुक व कैश मेमो)
+  billFirmName: 'श्री श्याम गारमेंट्स & साड़ी केंद्र',
+  billTagline: 'फैंसी साड़ियाँ, सूट, लहंगा एवं कटपीस के थोक व फुटकर विक्रेता',
+  billProprietor: 'पवन कुमार अग्रवाल',
+  billPhone1: '9876543210',
+  billPhone2: '9431234567',
+  billAddress: 'मेन मार्केट, निकट महावीर मंदिर, बिहार शरीफ (नालन्दा)',
+  billGstNumber: '10ABCDE1234F1Z5',
+  billType: 'cash-memo', // 'cash-memo', 'bill-book', 'challan', 'estimate'
+  billCopyType: 'मूल प्रति (Original)', // 'मूल प्रति (Original)', 'दुकानदार प्रति (Duplicate)', 'ग्राहक प्रति (Customer Copy)'
+  billNoPrefix: 'No. 1042',
+  billDateDefault: 'दिनांक: ........................ 202...',
+  billCustomerName: 'श्री / मेसर्स: ..........................................................................',
+  billCustomerAddress: 'पता: ......................................................................................',
+  billInkColor: '#0d47a1', // '#0d47a1' (प्रेस ब्लू), '#000000' (ब्लैक), '#b71c1c' (रेड)
+  billTerms: '1. बिका हुआ माल 7 दिन के अंदर सही स्थिति में ही बदला जाएगा, नकद वापसी नहीं होगी।\n2. माल की डिलीवरी लेने के बाद किसी टूट-फूट की जिम्मेदारी हमारी नहीं होगी।\n3. सभी विवाद स्थानीय न्यायालय के क्षेत्राधिकार के अधीन होंगे।\n4. भूल-चूक लेनी-देनी (E. & O.E.)',
+  billSignTitle: 'हस्ताक्षर विक्रेता / For श्री श्याम गारमेंट्स',
+  billRowsCount: 8,
+
+  // 💳 4. Visiting Card (10-Up A4 Master Sheet) Defaults
+  bizCardShopName: 'शिवम डिजिटल स्टूडियो & प्रिंटिंग प्रेस',
+  bizCardTagline: 'हाई क्वालिटी मल्टीकलर ऑफसेट, स्क्रीन प्रिंटिंग एवं शादी कार्ड विशेषज्ञ',
+  bizCardOwnerName: 'सनी राज',
+  bizCardDesignation: 'ग्राफिक डिजाइनर व प्रोपराइटर',
+  bizCardPhone1: '7739553339',
+  bizCardPhone2: '9876543210',
+  bizCardEmail: 'riseprint77@gmail.com',
+  bizCardWebsite: 'www.riseprint.in',
+  bizCardAddress: 'मेन मार्केट चौराहा, चेरों मोड़, सरमेरा (नालन्दा) बिहार',
+  bizCardServices: 'शादी कार्ड • बिल बुक • फ्लेक्स बैनर • विज़िटिंग कार्ड • स्क्रीन प्रिंटिंग • पोस्टर व पैम्फलेट',
+  bizCardTheme: 'royal-navy', // 'royal-navy', 'classic-gold', 'crimson-bold', 'press-monochrome'
+  bizCardViewMode: 'single', // 'single' (1 Card View), '10-up-sheet' (A4 Sheet 10 Cards with ✂️)
+  bizCardShowBack: false
 };
+
+/**
+ * 🖨️ Indian Printing Shop Product Suite Definitions
+ */
+export const PRODUCT_TYPES = [
+  {
+    id: 'wedding',
+    name: 'विवाह निमंत्रण पत्र (Wedding Card)',
+    shortName: 'विवाह कार्ड',
+    icon: '🎴',
+    tag: 'शाही शादी कार्ड',
+    description: 'भारतीय पारम्परिक व आधुनिक 1-पल्ला, 2-पल्ला व 3-पल्ला शादी कार्ड'
+  },
+  {
+    id: 'shok-sandesh',
+    name: 'शोक संदेश / उठावनी / तेरहवीं',
+    shortName: 'शोक संदेश',
+    icon: '🕊️',
+    tag: '1-घंटे की फास्ट छपाई',
+    description: 'आकस्मिक छपाई, दिवंगत की तस्वीर, पुष्पमाला, कार्यक्रम व शोकाकुल'
+  },
+  {
+    id: 'sanskar',
+    name: 'मांगलिक संस्कार (मुंडन / जनेऊ / गृह प्रवेश)',
+    shortName: 'मांगलिक संस्कार',
+    icon: '🪔',
+    tag: 'संस्कार निमंत्रण',
+    description: 'मुंडन, यज्ञोपवीत, गृह प्रवेश, कुआं पूजन व जन्मोत्सव निमंत्रण'
+  },
+  {
+    id: 'bill-book',
+    name: 'बिल बुक व कैश मेमो (Bill Book / Cash Memo)',
+    shortName: 'बिल बुक',
+    icon: '📑',
+    tag: 'दुकान व फर्म खाता',
+    description: 'दुकानों व व्यापारियों हेतु GSTIN, आइटम तालिका, नियम व शर्तें'
+  },
+  {
+    id: 'visiting-card',
+    name: 'विज़िटिंग कार्ड (10-Up A4 मास्टर)',
+    shortName: 'विज़िटिंग कार्ड',
+    icon: '💳',
+    tag: '10 कार्ड प्रति A4 शीट',
+    description: 'प्रोफेशनल बिज़नेस कार्ड एवं 10-Up A4 शीट सेंटर कटिंग मार्क सहित'
+  }
+];
 
 /**
  * 🎴 Wholesale Ready-Made Blank Card Presets (भारतीय थोक मंडी कार्ड्स)

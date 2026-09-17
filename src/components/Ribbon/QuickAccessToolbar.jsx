@@ -12,6 +12,8 @@ import {
   FileCheck
 } from 'lucide-react';
 
+import { PRODUCT_TYPES } from '../../utils/defaultData';
+
 export default function QuickAccessToolbar({
   cardData,
   previewMode,
@@ -23,6 +25,7 @@ export default function QuickAccessToolbar({
   onOpenDigitalModal,
   onOpenDraftProofModal,
   onOpenJobSlipModal,
+  onSelectProduct,
   onExportPDF,
   onExportPNG,
   onExportCorelDrawSVG,
@@ -30,9 +33,18 @@ export default function QuickAccessToolbar({
 }) {
   const [isExportDropdownOpen, setIsExportDropdownOpen] = useState(false);
 
-  const docTitle = cardData.groomName && cardData.brideName
-    ? `${cardData.groomName} संग ${cardData.brideName} — विवाह निमंत्रण पत्र.rdtp`
-    : 'श्री गणेशाय नमः — शुभ विवाह निमंत्रण पत्र.rdtp';
+  let docTitle = 'श्री गणेशाय नमः — शुभ विवाह निमंत्रण पत्र.rdtp';
+  if (cardData.productType === 'shok-sandesh') {
+    docTitle = `${cardData.shokPersonName || 'शोक संदेश'} — तेरहवीं संस्कार.rdtp`;
+  } else if (cardData.productType === 'sanskar') {
+    docTitle = `${cardData.sanskarChildName || 'संस्कार'} — ${cardData.sanskarHeading || 'मांगलिक निमंत्रण'}.rdtp`;
+  } else if (cardData.productType === 'bill-book') {
+    docTitle = `${cardData.billFirmName || 'बिल बुक'} — कैश मेमो मास्टर.rdtp`;
+  } else if (cardData.productType === 'visiting-card') {
+    docTitle = `${cardData.bizCardShopName || 'विज़िटिंग कार्ड'} — 10-Up A4 शीट.rdtp`;
+  } else if (cardData.groomName && cardData.brideName) {
+    docTitle = `${cardData.groomName} संग ${cardData.brideName} — विवाह निमंत्रण पत्र.rdtp`;
+  }
 
   return (
     <div className="bg-[#380606] text-amber-100 border-b border-amber-600/40 px-3 py-1.5 flex items-center justify-between gap-2 text-xs select-none shadow-md no-print relative z-50">
@@ -44,11 +56,27 @@ export default function QuickAccessToolbar({
             卐
           </div>
           <span className="font-bold text-white tracking-wide hidden sm:inline text-xs">
-            विवाह कार्ड मेकर
+            राइज प्रिंट स्टूडियो
           </span>
           <span className="text-[10px] bg-amber-500/20 text-amber-300 px-1.5 py-0.2 rounded border border-amber-500/30 hidden lg:inline font-mono">
-            DTP Studio
+            DTP Press
           </span>
+        </div>
+
+        {/* 🖨️ Product Switcher Dropdown */}
+        <div className="flex items-center bg-black/40 border border-amber-500/40 rounded px-1.5 py-0.5">
+          <span className="text-[10px] text-amber-300 font-bold hidden sm:inline mr-1">उत्पाद:</span>
+          <select
+            value={cardData.productType || 'wedding'}
+            onChange={(e) => onSelectProduct && onSelectProduct(e.target.value)}
+            className="bg-transparent text-amber-100 font-bold text-[11px] cursor-pointer focus:outline-none"
+          >
+            {PRODUCT_TYPES.map((p) => (
+              <option key={p.id} value={p.id} className="bg-stone-900 text-white">
+                {p.icon} {p.shortName}
+              </option>
+            ))}
+          </select>
         </div>
 
         {/* Quick Save / Reset Button */}

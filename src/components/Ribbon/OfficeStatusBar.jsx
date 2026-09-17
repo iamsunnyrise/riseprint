@@ -33,7 +33,19 @@ export default function OfficeStatusBar({
         <div className="flex items-center gap-1.5 font-medium text-stone-200">
           <FileText className="w-3.5 h-3.5 text-amber-400" />
           <span>
-            {previewMode === 'envelope' ? 'पेज 1/1 (लिफाफा)' : 'पेज 1/1 (विवाह कार्ड)'}
+            {previewMode === 'envelope'
+              ? 'पेज 1/1 (लिफाफा)'
+              : cardData.productType === 'shok-sandesh'
+              ? 'पेज 1/1 (शोक संदेश)'
+              : cardData.productType === 'sanskar'
+              ? 'पेज 1/1 (संस्कार निमंत्रण)'
+              : cardData.productType === 'bill-book'
+              ? 'पेज 1/1 (बिल बुक मास्टर)'
+              : cardData.productType === 'visiting-card'
+              ? cardData.bizCardViewMode === '10-up-sheet'
+                ? 'पेज 1/1 (10-Up A4 शीट)'
+                : 'पेज 1/1 (विज़िटिंग कार्ड)'
+              : 'पेज 1/1 (विवाह कार्ड)'}
           </span>
         </div>
 

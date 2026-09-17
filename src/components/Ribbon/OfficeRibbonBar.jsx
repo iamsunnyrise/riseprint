@@ -28,7 +28,7 @@ import {
   Eye,
   Settings
 } from 'lucide-react';
-import { CARD_SIZES, ENVELOPE_SIZES, CARD_TEMPLATES, COLOR_THEMES } from '../../utils/defaultData';
+import { CARD_SIZES, ENVELOPE_SIZES, CARD_TEMPLATES, COLOR_THEMES, PRODUCT_TYPES } from '../../utils/defaultData';
 
 export default function OfficeRibbonBar({
   activeRibbonTab,
@@ -132,6 +132,47 @@ export default function OfficeRibbonBar({
           {/* TAB: FILE (फ़ाइल) */}
           {activeRibbonTab === 'file' && (
             <>
+              {/* Group 0: Multi-Product Suite Quick Switcher */}
+              <div className="flex flex-col justify-between pr-2.5 border-r border-stone-300 flex-shrink-0">
+                <div className="flex items-center gap-1">
+                  {PRODUCT_TYPES.map((prod) => {
+                    const isSelected = (cardData.productType || 'wedding') === prod.id;
+                    return (
+                      <button
+                        key={prod.id}
+                        type="button"
+                        onClick={() => {
+                          updateCard({ productType: prod.id });
+                          onOpenTaskPane('product-form');
+                        }}
+                        className={`flex flex-col items-center p-1 rounded border transition w-16 group ${
+                          isSelected
+                            ? 'bg-red-800 text-white border-red-900 shadow-xs'
+                            : 'bg-white hover:bg-stone-100 border-stone-200 text-stone-800'
+                        }`}
+                        title={prod.name}
+                      >
+                        <span className="text-sm">{prod.icon}</span>
+                        <span className="text-[9.5px] font-bold truncate w-full mt-0.5">
+                          {prod.shortName}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+                <div className="flex items-center justify-between mt-1 text-[10px] text-stone-500 font-semibold">
+                  <span className="text-red-900 font-bold">🖨️ उत्पाद सुइट</span>
+                  <button
+                    type="button"
+                    onClick={() => onOpenTaskPane('product-suite')}
+                    className="text-red-700 hover:underline flex items-center gap-0.5"
+                  >
+                    <span>सभी 5 उत्पाद</span>
+                    <ExternalLink className="w-2.5 h-2.5" />
+                  </button>
+                </div>
+              </div>
+
               {/* Group 1: Templates Quick Picker */}
               <div className="flex flex-col justify-between pr-2.5 border-r border-stone-300 flex-shrink-0">
                 <div className="flex items-center gap-1.5">

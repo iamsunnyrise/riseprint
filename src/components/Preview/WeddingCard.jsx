@@ -15,8 +15,26 @@ import { QRCodeSVG } from 'qrcode.react';
 import { CARD_SIZES } from '../../utils/defaultData';
 import { getPaperTextureStyle, getPaperVignetteStyle } from '../../utils/paperTextures';
 import { Scissors } from 'lucide-react';
+import ShokSandeshCard from './ShokSandeshCard';
+import SanskarCard from './SanskarCard';
+import BillBookMaster from './BillBookMaster';
+import VisitingCardMaster from './VisitingCardMaster';
 
 const WeddingCard = forwardRef(({ data, scale = 1 }, ref) => {
+  // 🖨️ Multi-Product Suite Delegation
+  if (data?.productType === 'shok-sandesh') {
+    return <ShokSandeshCard ref={ref} data={data} scale={scale} />;
+  }
+  if (data?.productType === 'sanskar') {
+    return <SanskarCard ref={ref} data={data} scale={scale} />;
+  }
+  if (data?.productType === 'bill-book') {
+    return <BillBookMaster ref={ref} data={data} scale={scale} />;
+  }
+  if (data?.productType === 'visiting-card') {
+    return <VisitingCardMaster ref={ref} data={data} scale={scale} />;
+  }
+
   const isScreenPrint = Boolean(data?.screenPrintMode);
   const foldType = data?.cardFoldType || 'single';
   const showCreases = data?.showFoldCreaseGuides !== false;
