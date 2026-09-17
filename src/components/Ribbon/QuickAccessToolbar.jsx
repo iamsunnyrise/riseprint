@@ -43,7 +43,8 @@ export default function QuickAccessToolbar({
   } else if (cardData.productType === 'sanskar') {
     docTitle = `${cardData.sanskarChildName || 'संस्कार'} — ${cardData.sanskarHeading || 'मांगलिक निमंत्रण'}.rdtp`;
   } else if (cardData.productType === 'bill-book') {
-    docTitle = `${cardData.billFirmName || 'बिल बुक'} — कैश मेमो मास्टर.rdtp`;
+    const isSchool = cardData.billTemplate === 'school-fee';
+    docTitle = `${isSchool ? (cardData.schoolName || 'स्कूल फीस रसीद') : (cardData.billFirmName || 'बिल बुक')} — ${isSchool ? 'डिमांड बिल मास्टर' : 'कैश मेमो मास्टर'}.rdtp`;
   } else if (cardData.productType === 'visiting-card') {
     docTitle = `${cardData.bizCardShopName || 'विज़िटिंग कार्ड'} — 10-Up A4 शीट.rdtp`;
   } else if (cardData.groomName && cardData.brideName) {

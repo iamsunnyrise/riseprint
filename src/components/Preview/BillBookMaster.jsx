@@ -1,18 +1,22 @@
 import React, { forwardRef } from 'react';
 import ScreenPrintMasterWrapper from './ScreenPrintMasterWrapper';
-import { CARD_SIZES } from '../../utils/defaultData';
+import { CARD_SIZES, PAPER_TINTS } from '../../utils/defaultData';
+import SchoolFeeReceiptView from './SchoolFeeReceiptView';
 
 const BillBookMaster = forwardRef(({ data, scale = 1 }, ref) => {
   const isScreenPrint = Boolean(data?.screenPrintMode);
+  const isSchoolFee = (data?.billTemplate || 'school-fee') === 'school-fee';
+
   const currentSize = CARD_SIZES[data?.sizeKey] || CARD_SIZES['7x9'];
   const widthInches = currentSize.widthInches || 7;
   const heightInches = currentSize.heightInches || 9;
 
-  const baseWidth = 650;
-  const calculatedHeight = Math.max(560, (baseWidth * heightInches) / widthInches);
+  const baseWidth = isSchoolFee ? 580 : 650;
+  const calculatedHeight = Math.max(isSchoolFee ? 760 : 560, (baseWidth * heightInches) / widthInches);
 
-  const inkColor = isScreenPrint ? '#000000' : (data?.billInkColor || '#0d47a1');
-  const paperColor = isScreenPrint ? '#ffffff' : (data?.paperColor || '#fcfbf7');
+  const selectedTint = PAPER_TINTS.find(t => t.id === (data?.billPaperTint || 'pink')) || PAPER_TINTS[0];
+  const paperColor = isScreenPrint ? '#ffffff' : (isSchoolFee ? selectedTint.color : (data?.paperColor || '#fcfbf7'));
+  const inkColor = isScreenPrint ? '#000000' : (data?.billInkColor || (isSchoolFee ? selectedTint.ink : '#0d47a1'));
 
   const rowsCount = data?.billRowsCount || 8;
   const emptyRows = Array.from({ length: rowsCount });
@@ -43,14 +47,17 @@ const BillBookMaster = forwardRef(({ data, scale = 1 }, ref) => {
             : '0 10px 30px -5px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.08)',
           transform: scale !== 1 ? `scale(${scale})` : undefined,
           transformOrigin: 'top center',
-          padding: '24px'
+          padding: isSchoolFee ? '16px' : '24px'
         }}
       >
-        {/* Border Frame */}
-        <div
-          className="w-full h-full p-4 flex flex-col justify-between border-2 rounded-sm"
-          style={{ borderColor: inkColor }}
-        >
+        {isSchoolFee ? (
+          <SchoolFeeReceiptView data={data} isScreenPrint={isScreenPrint} />
+        ) : (
+          /* Border Frame for Retail Cash Memo */
+          <div
+            className="w-full h-full p-4 flex flex-col justify-between border-2 rounded-sm"
+            style={{ borderColor: inkColor }}
+          >
           {/* 1. Header: GSTIN, Invocation, Contact */}
           <div>
             <div className="flex justify-between items-center text-[10.5px] font-bold border-b pb-1" style={{ borderColor: inkColor }}>
@@ -200,8 +207,9 @@ const BillBookMaster = forwardRef(({ data, scale = 1 }, ref) => {
             </div>
           </div>
         </div>
-      </div>
-    </ScreenPrintMasterWrapper>
+      )}
+    </div>
+  </ScreenPrintMasterWrapper>
   );
 });
 

@@ -642,7 +642,46 @@ export const DEFAULT_CARD_DATA = {
   sanskarSwagat: 'विकास, राहुल, सन्नी एवं समस्त मित्र मण्डली',
   sanskarAakankshi: 'अमित कुमार एवं समस्त परिवार',
 
-  // 📑 3. Bill Book / Cash Memo Defaults (बिल बुक व कैश मेमो)
+  // 📑 3. Bill Book, School Fee Demand Bill & Receipt Book Defaults (बिल बुक व स्कूल फीस रसीद)
+  billTemplate: 'school-fee', // 'school-fee' (देव इंटरनेशनल स्कूल स्टाइल), 'retail-cash-memo', 'coaching-receipt', 'donation-chanda', 'transport-challan'
+  billPaperTint: 'pink', // 'pink' (गुलाबी रसीद - Exact Photo Match), 'yellow', 'blue', 'green', 'white'
+  
+  // 🏫 School Fee Demand Bill Specifics (DEV INTERNATIONAL PUBLIC SCHOOL Exact Match)
+  schoolLogoPreset: 'tree-education', // 'tree-education', 'open-book', 'sun-emblem', 'custom'
+  schoolRecCode: 'Rec. Code - 22913842023611104706',
+  schoolBillTitle: 'Demand Bill',
+  schoolPhone: 'Mob.: 8969997450, 9128350273\n9741111766',
+  schoolName: 'DEV INTERNATIONAL PUBLIC SCHOOL',
+  schoolAddress: 'Dev Colony, SH-78, Sarmera, Nalanda 811104',
+  schoolReceiptNo: '',
+  schoolDate: '2/2',
+  schoolStudentName: 'Ragini',
+  schoolAdmNo: 'T 1485',
+  schoolClass: 'II',
+  schoolMonth: 'Feb + Dues',
+  schoolFeeItems: [
+    { id: 1, name: 'Tuition Fee', amountRs: '2100', amountP: '0' },
+    { id: 2, name: 'Examination Fee', amountRs: '', amountP: '' },
+    { id: 3, name: 'Medical Fee', amountRs: '', amountP: '' },
+    { id: 4, name: 'Maintenance', amountRs: '', amountP: '' },
+    { id: 5, name: 'Library', amountRs: '', amountP: '' },
+    { id: 6, name: 'Transport Fee', amountRs: '', amountP: '' },
+    { id: 7, name: 'Dues', amountRs: '2100', amountP: '0' },
+    { id: 8, name: 'Laboratory', amountRs: '', amountP: '' },
+    { id: 9, name: 'Stationary', amountRs: '', amountP: '' },
+    { id: 10, name: 'Identity Card', amountRs: '', amountP: '' },
+    { id: 11, name: 'Computer', amountRs: '', amountP: '' },
+    { id: 12, name: 'Excursion', amountRs: '', amountP: '' },
+    { id: 13, name: 'Birthday Celebration', amountRs: '', amountP: '' },
+    { id: 14, name: 'Games & Sports', amountRs: '', amountP: '' }
+  ],
+  schoolTotalAmount: '4200',
+  schoolTotalPaise: '0',
+  schoolAmountInWords: '',
+  schoolSignatoryText: 'Signature',
+  schoolBlankMode: false,
+
+  // General Retail Bill Book Defaults
   billFirmName: 'श्री श्याम गारमेंट्स & साड़ी केंद्र',
   billTagline: 'फैंसी साड़ियाँ, सूट, लहंगा एवं कटपीस के थोक व फुटकर विक्रेता',
   billProprietor: 'पवन कुमार अग्रवाल',
@@ -656,7 +695,7 @@ export const DEFAULT_CARD_DATA = {
   billDateDefault: 'दिनांक: ........................ 202...',
   billCustomerName: 'श्री / मेसर्स: ..........................................................................',
   billCustomerAddress: 'पता: ......................................................................................',
-  billInkColor: '#0d47a1', // '#0d47a1' (प्रेस ब्लू), '#000000' (ब्लैक), '#b71c1c' (रेड)
+  billInkColor: '#1a237e', // '#1a237e' (नेवी ब्लू - फोटो मैच), '#000000' (ब्लैक), '#b71c1c' (रेड)
   billTerms: '1. बिका हुआ माल 7 दिन के अंदर सही स्थिति में ही बदला जाएगा, नकद वापसी नहीं होगी।\n2. माल की डिलीवरी लेने के बाद किसी टूट-फूट की जिम्मेदारी हमारी नहीं होगी।\n3. सभी विवाद स्थानीय न्यायालय के क्षेत्राधिकार के अधीन होंगे।\n4. भूल-चूक लेनी-देनी (E. & O.E.)',
   billSignTitle: 'हस्ताक्षर विक्रेता / For श्री श्याम गारमेंट्स',
   billRowsCount: 8,
@@ -707,11 +746,11 @@ export const PRODUCT_TYPES = [
   },
   {
     id: 'bill-book',
-    name: 'बिल बुक व कैश मेमो (Bill Book / Cash Memo)',
-    shortName: 'बिल बुक',
-    icon: '📑',
-    tag: 'दुकान व फर्म खाता',
-    description: 'दुकानों व व्यापारियों हेतु GSTIN, आइटम तालिका, नियम व शर्तें'
+    name: 'स्कूल फीस रसीद व बिल बुक (Fee Receipt & Bill Book)',
+    shortName: 'स्कूल फीस व बिल',
+    icon: '🧾',
+    tag: 'स्कूल फीस डिमांड बिल, कैश मेमो',
+    description: 'स्कूल/कॉलेज फीस रसीद, दुकान कैश मेमो, चंदा रसीद कट्टा व चालान'
   },
   {
     id: 'visiting-card',
@@ -722,6 +761,107 @@ export const PRODUCT_TYPES = [
     description: 'प्रोफेशनल बिज़नेस कार्ड एवं 10-Up A4 शीट सेंटर कटिंग मार्क सहित'
   }
 ];
+
+/**
+ * 🧾 Bill & Receipt Book Templates (बिल व रसीद बुक टेम्पलेट्स)
+ */
+export const BILL_TEMPLATES = [
+  {
+    id: 'school-fee',
+    name: '🏫 स्कूल फीस डिमांड बिल (School Demand Bill)',
+    shortName: 'स्कूल फीस रसीद',
+    badge: 'देव इंटरनेशनल स्टाइल (फोटो मैच)',
+    description: '14 फीस मदें, वृत्ताकार लोगो, रिकॉर्ड कोड, छात्र विवरण व रुपये/पैसे विभाजन',
+    defaults: {
+      billTemplate: 'school-fee',
+      schoolName: 'DEV INTERNATIONAL PUBLIC SCHOOL',
+      schoolRecCode: 'Rec. Code - 22913842023611104706',
+      schoolBillTitle: 'Demand Bill',
+      schoolPhone: 'Mob.: 8969997450, 9128350273\n9741111766',
+      schoolAddress: 'Dev Colony, SH-78, Sarmera, Nalanda 811104',
+      billPaperTint: 'pink',
+      billInkColor: '#1a237e'
+    }
+  },
+  {
+    id: 'retail-cash-memo',
+    name: '🏬 दुकान व फर्म कैश मेमो (Retail Cash Memo)',
+    shortName: 'दुकान कैश मेमो',
+    badge: 'व्यापार व GST',
+    description: 'कपड़ा, किराना व इलेक्ट्रॉनिक्स हेतु GSTIN, आइटम, विवरण, मात्रा, दर व राशि',
+    defaults: {
+      billTemplate: 'retail-cash-memo',
+      billFirmName: 'श्री श्याम गारमेंट्स & साड़ी केंद्र',
+      billTagline: 'फैंसी साड़ियाँ, सूट, लहंगा एवं कटपीस के थोक व फुटकर विक्रेता',
+      billAddress: 'मेन मार्केट, निकट महावीर मंदिर, बिहार शरीफ (नालन्दा)',
+      billType: 'cash-memo',
+      billPaperTint: 'white',
+      billInkColor: '#0d47a1'
+    }
+  },
+  {
+    id: 'coaching-receipt',
+    name: '🎓 कोचिंग व ट्यूशन रसीद (Coaching Fee Slip)',
+    shortName: 'कोचिंग रसीद',
+    badge: 'संस्थान व क्लासेज',
+    description: 'कोचिंग, कंप्यूटर सेंटर व ट्यूशन क्लासेज हेतु बैच समय, विषय व मासिक शुल्क',
+    defaults: {
+      billTemplate: 'school-fee',
+      schoolName: 'TARGET POINT COACHING INSTITUTE',
+      schoolRecCode: 'Reg. No. - BIH/NAL/2024/098',
+      schoolBillTitle: 'Fee Receipt / मासिक शुल्क रसीद',
+      schoolPhone: 'Mob.: 9876543210, 7739553339',
+      schoolAddress: 'स्टेशन रोड, बिहार शरीफ, नालन्दा (बिहार)',
+      billPaperTint: 'yellow',
+      billInkColor: '#b71c1c'
+    }
+  },
+  {
+    id: 'donation-chanda',
+    name: '🛕 दान, चंदा व ट्रस्ट रसीद (Donation Receipt)',
+    shortName: 'चंदा रसीद कट्टा',
+    badge: 'ट्रस्ट व मंदिर',
+    description: 'मंदिर निर्माण, पूजा समिति, ट्रस्ट व धार्मिक आयोजनों हेतु चंदा रसीद कट्टा',
+    defaults: {
+      billTemplate: 'donation-chanda',
+      donationTrustName: 'श्री राम जानकी मंदिर निर्माण न्यास समिति',
+      donationRegNo: 'पंजीकरण संख्या: 142/2018-19',
+      donationAddress: 'ग्राम चेरों, थाना- सरमेरा, जिला- नालन्दा (बिहार)',
+      donationPhone: 'मो० 9431234567, 7739553339',
+      billPaperTint: 'yellow',
+      billInkColor: '#b71c1c'
+    }
+  },
+  {
+    id: 'transport-challan',
+    name: '🚚 ट्रांसपोर्ट चालान व बिल्टी (Delivery Challan)',
+    shortName: 'ट्रांसपोर्ट चालान',
+    badge: 'लॉजिस्टिक्स',
+    description: 'गुड्स ट्रांसपोर्ट, माल भाड़ा, बिल्टी व डिलीवरी चालान',
+    defaults: {
+      billTemplate: 'retail-cash-memo',
+      billFirmName: 'मगध गुड्स ट्रांसपोर्ट कंपनी',
+      billTagline: 'दैनिक पार्सल व फुल ट्रक लोड सेवा - पटना, नालन्दा, रांची व कोलकाता',
+      billAddress: 'ट्रांसपोर्ट नगर, बाईपास रोड, बिहार शरीफ (नालन्दा)',
+      billType: 'challan',
+      billPaperTint: 'white',
+      billInkColor: '#000000'
+    }
+  }
+];
+
+/**
+ * 🎨 Indian Receipt & Bill Book Paper Tint Presets (कागज़ के रंग)
+ */
+export const PAPER_TINTS = [
+  { id: 'pink', name: '🌸 गुलाबी (Pink Tint - फोटो मैच)', color: '#fce4ec', border: '#f48fb1', ink: '#1a237e' },
+  { id: 'yellow', name: '🌟 पीला (Yellow Tint - डुप्लीकेट)', color: '#fff9c4', border: '#fff176', ink: '#b71c1c' },
+  { id: 'blue', name: '🌊 हल्का नीला (Blue Tint)', color: '#e1f5fe', border: '#81d4fa', ink: '#0d47a1' },
+  { id: 'green', name: '🍃 हल्का हरा (Green Tint)', color: '#e8f5e9', border: '#a5d6a7', ink: '#1b5e20' },
+  { id: 'white', name: '⚪ सफेद / बटर पेपर (Screen Master)', color: '#ffffff', border: '#e0e0e0', ink: '#000000' }
+];
+
+
 
 /**
  * 🎴 Wholesale Ready-Made Blank Card Presets (भारतीय थोक मंडी कार्ड्स)
