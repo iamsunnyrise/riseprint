@@ -54,6 +54,7 @@ export default function OfficeRibbonBar({
   onOpenDigitalModal,
   onOpenDtpModal,
   onOpenJobSlipModal,
+  onOpenSpellCheckModal,
   isExporting
 }) {
   const ribbonTabs = [
@@ -598,6 +599,23 @@ export default function OfficeRibbonBar({
                 </div>
                 <span className="text-[10px] text-center text-stone-500 font-semibold mt-1">
                   देवनागरी फॉन्ट परिवार
+                </span>
+              </div>
+
+              {/* Group 1.5: Spell & Matra Proofing */}
+              <div className="flex flex-col justify-between pr-2.5 border-r border-stone-300 flex-shrink-0">
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={onOpenSpellCheckModal}
+                    className="flex flex-col items-center justify-center p-2 rounded bg-amber-100 hover:bg-amber-200 border border-amber-300 text-amber-950 font-bold transition min-w-[75px] shadow-2xs group cursor-pointer"
+                  >
+                    <span className="text-base group-hover:scale-110 transition-transform">✍️</span>
+                    <span className="text-[10px] mt-0.5">वर्तनी जांच</span>
+                  </button>
+                </div>
+                <span className="text-[10px] text-center text-stone-500 font-semibold mt-1">
+                  मात्रा व व्याकरण रक्षक
                 </span>
               </div>
 

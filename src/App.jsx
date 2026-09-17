@@ -58,6 +58,7 @@ import HindiKeyboardHelper from './components/Controls/HindiKeyboardHelper';
 import DtpFontConverterModal from './components/Controls/DtpFontConverterModal';
 import DraftProofModal from './components/Controls/DraftProofModal';
 import JobSlipModal from './components/Controls/JobSlipModal';
+import HindiSpellCheckModal from './components/Controls/HindiSpellCheckModal';
 import { useHindiTyping } from './context/HindiTypingContext';
 
 // Office Ribbon & Workspace Suite
@@ -98,6 +99,7 @@ export default function App() {
   const [isDtpModalOpen, setIsDtpModalOpen] = useState(false);
   const [isDraftProofModalOpen, setIsDraftProofModalOpen] = useState(false);
   const [isJobSlipModalOpen, setIsJobSlipModalOpen] = useState(false);
+  const [isSpellCheckModalOpen, setIsSpellCheckModalOpen] = useState(false);
   const { isHindiTyping, toggleHindiTyping } = useHindiTyping();
 
   const cardRef = useRef(null);
@@ -556,6 +558,7 @@ export default function App() {
           setIsDraftProofModalOpen(true);
         }}
         onOpenJobSlipModal={() => setIsJobSlipModalOpen(true)}
+        onOpenSpellCheckModal={() => setIsSpellCheckModalOpen(true)}
         onSelectProduct={handleSelectProduct}
         onExportPDF={handleExportPDF}
         onExportPNG={handleExportPNG}
@@ -589,6 +592,7 @@ export default function App() {
         onOpenDigitalModal={() => setIsDigitalModalOpen(true)}
         onOpenDtpModal={() => setIsDtpModalOpen(true)}
         onOpenJobSlipModal={() => setIsJobSlipModalOpen(true)}
+        onOpenSpellCheckModal={() => setIsSpellCheckModalOpen(true)}
         isExporting={isExporting}
       />
 
@@ -955,6 +959,14 @@ export default function App() {
       <JobSlipModal
         isOpen={isJobSlipModalOpen}
         onClose={() => setIsJobSlipModalOpen(false)}
+        data={cardData}
+        onChange={setCardData}
+      />
+
+      {/* ✍️ Hindi Matra & Spell Auto-Check Modal */}
+      <HindiSpellCheckModal
+        isOpen={isSpellCheckModalOpen}
+        onClose={() => setIsSpellCheckModalOpen(false)}
         data={cardData}
         onChange={setCardData}
       />

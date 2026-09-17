@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 
 import { PRODUCT_TYPES } from '../../utils/defaultData';
+import { scanCardText } from '../../utils/hindiProofingEngine';
 
 export default function QuickAccessToolbar({
   cardData,
@@ -25,6 +26,7 @@ export default function QuickAccessToolbar({
   onOpenDigitalModal,
   onOpenDraftProofModal,
   onOpenJobSlipModal,
+  onOpenSpellCheckModal,
   onSelectProduct,
   onExportPDF,
   onExportPNG,
@@ -32,6 +34,8 @@ export default function QuickAccessToolbar({
   onPrint
 }) {
   const [isExportDropdownOpen, setIsExportDropdownOpen] = useState(false);
+  const detectedErrors = scanCardText(cardData);
+  const errorCount = detectedErrors.length;
 
   let docTitle = 'श्री गणेशाय नमः — शुभ विवाह निमंत्रण पत्र.rdtp';
   if (cardData.productType === 'shok-sandesh') {
@@ -142,6 +146,28 @@ export default function QuickAccessToolbar({
 
       {/* Right: Key Workflow Actions (Draft Proof, Digital Card, Quick Export) */}
       <div className="flex items-center gap-1.5 flex-shrink-0">
+        {/* ✍️ Spell & Matra Check Trigger */}
+        <button
+          type="button"
+          onClick={onOpenSpellCheckModal}
+          className={`flex items-center gap-1 px-2.5 py-1 rounded text-[11px] font-bold transition shadow-xs border cursor-pointer ${
+            errorCount > 0
+              ? 'bg-amber-400 hover:bg-amber-300 text-stone-950 border-amber-300 ring-1 ring-amber-400/50'
+              : 'bg-black/30 hover:bg-black/50 text-amber-200 border-amber-500/30'
+          }`}
+          title="हिंदी मात्रा व वर्तनी जांच (Hindi Matra & Spell Check)"
+        >
+          <span>✍️</span>
+          <span className="hidden sm:inline">वर्तनी जांच</span>
+          {errorCount > 0 ? (
+            <span className="bg-red-700 text-white px-1.5 py-0.2 rounded-full text-[9.5px] font-bold animate-pulse">
+              ⚠️ {errorCount}
+            </span>
+          ) : (
+            <span className="text-emerald-400 text-[9px] font-bold">✓</span>
+          )}
+        </button>
+
         {/* 📋 Digital Job Slip & Billing Button */}
         <button
           type="button"
