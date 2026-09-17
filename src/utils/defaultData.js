@@ -469,7 +469,16 @@ export const DEFAULT_CARD_DATA = {
   watermarkOpacity: 0.08,             // 0.03 to 0.15 (डिफ़ॉल्ट 8%)
   watermarkScale: 100,                // 60% to 140%
   watermarkColor: 'full-color',       // 'full-color' (दिव्य सजीव रंग), 'gold-tint' (शाही स्वर्ण), 'sindoor-tint' (सिन्दूरी लाल), 'monochrome' (चारकोल)
-  syncTextureToEnvelope: true         // लिफाफे पर भी यही पेपर टेक्सचर लागू करें
+  syncTextureToEnvelope: true,        // लिफाफे पर भी यही पेपर टेक्सचर लागू करें
+
+  // 📑 Draft Proof & Client Approval Workflow (कच्चा प्रूफ व ग्राहक सत्यापन)
+  isDraftProofMode: false,            // कच्चा प्रूफ वॉटरमार्क ऑन/ऑफ
+  proofStatus: 'draft',               // 'draft' (कच्चा प्रूफ - केवल जांच हेतु) or 'approved' (अंतिम स्वीकृत)
+  draftWatermarkText: 'कच्चा प्रूफ • केवल जांच हेतु',
+  clientProofName: '',                // ग्राहक का नाम
+  clientProofPhone: '',               // ग्राहक का WhatsApp मोबाइल नंबर
+  pressShopName: 'राइज प्रिंटर्स एंड ग्राफिक्स',
+  pressShopPhone: ''
 };
 
 /**

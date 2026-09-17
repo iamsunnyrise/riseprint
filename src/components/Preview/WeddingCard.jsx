@@ -6,6 +6,7 @@ import CardFooter from './CardFooter';
 import { OuterCardBorder } from '../Motifs/TraditionalBorders';
 import ScreenPrintMasterWrapper from './ScreenPrintMasterWrapper';
 import CardBackgroundWatermark from '../Motifs/CardBackgroundWatermark';
+import DraftProofOverlay from '../Controls/DraftProofOverlay';
 import { CARD_SIZES } from '../../utils/defaultData';
 import { getPaperTextureStyle, getPaperVignetteStyle } from '../../utils/paperTextures';
 
@@ -99,6 +100,9 @@ const WeddingCard = forwardRef(({ data, scale = 1 }, ref) => {
           {/* 4. Footer Section (Family & Press) */}
           <CardFooter data={effectiveData} />
         </OuterCardBorder>
+
+        {/* 5. Pre-Press Draft Proof Watermark & Disclaimer Overlay */}
+        <DraftProofOverlay data={effectiveData} />
       </div>
     </ScreenPrintMasterWrapper>
   );

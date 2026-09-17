@@ -42,6 +42,7 @@ import PhotoUploadForm from './components/Editor/PhotoUploadForm';
 
 import HindiKeyboardHelper from './components/Controls/HindiKeyboardHelper';
 import DtpFontConverterModal from './components/Controls/DtpFontConverterModal';
+import DraftProofModal from './components/Controls/DraftProofModal';
 import { useHindiTyping } from './context/HindiTypingContext';
 
 import { DEFAULT_CARD_DATA, CARD_SIZES, ENVELOPE_SIZES, CARD_TEMPLATES } from './utils/defaultData';
@@ -67,6 +68,7 @@ export default function App() {
   const [zoomScale, setZoomScale] = useState(0.95);
   const [isDigitalModalOpen, setIsDigitalModalOpen] = useState(false);
   const [isDtpModalOpen, setIsDtpModalOpen] = useState(false);
+  const [isDraftProofModalOpen, setIsDraftProofModalOpen] = useState(false);
   const { isHindiTyping, toggleHindiTyping } = useHindiTyping();
 
   const cardRef = useRef(null);
@@ -193,6 +195,44 @@ export default function App() {
     } catch (err) {
       console.error(err);
       setExportMessage(err?.message || 'डाउनलोड में त्रुटि हुई');
+      setTimeout(() => setExportMessage(''), 5000);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  // Export Draft Proof Image (WhatsApp Ready with Security Watermark)
+  const handleExportDraftPNG = async () => {
+    try {
+      setIsExporting(true);
+      setExportMessage('कच्चा प्रूफ (Draft Proof) HD इमेज तैयार हो रही है...');
+
+      // Ensure draft proof mode is active
+      if (!cardData.isDraftProofMode) {
+        setCardData(prev => ({ ...prev, isDraftProofMode: true, proofStatus: 'draft' }));
+        await new Promise(r => setTimeout(r, 120));
+      }
+
+      const cardEl = cardRef.current || document.getElementById('wedding-card-element');
+      const envEl = envelopeRef.current || document.getElementById('wedding-envelope-element');
+      const clientName = cardData.clientProofName || cardData.groomName || 'Client';
+
+      if (previewMode === 'envelope') {
+        await downloadEnvelopePNG(envEl, cardData.envelopeSizeKey, `Draft_Proof_Lifafa_${clientName}`);
+      } else {
+        await downloadCardPNG(cardEl, cardData.sizeKey, `Draft_Proof_Card_${clientName}`);
+      }
+
+      confetti({
+        particleCount: 50,
+        spread: 60,
+        origin: { y: 0.6 }
+      });
+      setExportMessage('कच्चा प्रूफ इमेज सफलतापूर्वक डाउनलोड हो गई!');
+      setTimeout(() => setExportMessage(''), 3000);
+    } catch (err) {
+      console.error(err);
+      setExportMessage('ड्राफ्ट इमेज डाउनलोड में त्रुटि हुई');
       setTimeout(() => setExportMessage(''), 5000);
     } finally {
       setIsExporting(false);
@@ -440,6 +480,29 @@ export default function App() {
           >
             <Sparkles className="w-3.5 h-3.5 fill-current text-red-950" />
             <span>🎵 डिजिटल कार्ड</span>
+          </button>
+
+          {/* 📑 Draft Proof & Client WhatsApp Approval Modal Trigger */}
+          <button
+            type="button"
+            onClick={() => setIsDraftProofModalOpen(true)}
+            className={`flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm transition border cursor-pointer ${
+              cardData.isDraftProofMode
+                ? cardData.proofStatus === 'approved'
+                  ? 'bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-400 ring-2 ring-emerald-400/50'
+                  : 'bg-amber-400 hover:bg-amber-300 text-stone-950 border-amber-300 ring-2 ring-amber-300/60'
+                : 'bg-stone-800 hover:bg-stone-700 text-amber-200 border-amber-500/40'
+            }`}
+            title="कच्चा प्रूफ (Draft Approval) मोड, सुरक्षा वॉटरमार्क व सीधा WhatsApp शेयरिंग"
+          >
+            <span className="text-sm">📑</span>
+            <span>
+              {cardData.isDraftProofMode
+                ? cardData.proofStatus === 'approved'
+                  ? 'स्वीकृत (Approved)'
+                  : 'कच्चा प्रूफ (Draft)'
+                : 'कच्चा प्रूफ (WhatsApp)'}
+            </span>
           </button>
 
           {/* Quick Screen Print / Butter Paper Mode Toggle */}
@@ -788,6 +851,16 @@ export default function App() {
         isOpen={isDtpModalOpen}
         onClose={() => setIsDtpModalOpen(false)}
         cardData={cardData}
+      />
+
+      {/* 📑 Pre-Press Draft Proof & Client WhatsApp Approval Modal */}
+      <DraftProofModal
+        isOpen={isDraftProofModalOpen}
+        onClose={() => setIsDraftProofModalOpen(false)}
+        data={cardData}
+        onChange={setCardData}
+        onExportDraftPNG={handleExportDraftPNG}
+        isExporting={isExporting}
       />
     </div>
   );

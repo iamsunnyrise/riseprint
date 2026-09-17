@@ -3,6 +3,7 @@ import GaneshaColorBadge from '../Motifs/GaneshaColorBadge';
 import ShehnaiKalash from '../Motifs/ShehnaiKalash';
 import VenueQrCode from '../Motifs/VenueQrCode';
 import ScreenPrintMasterWrapper from './ScreenPrintMasterWrapper';
+import DraftProofOverlay from '../Controls/DraftProofOverlay';
 import { ENVELOPE_SIZES } from '../../utils/defaultData';
 import shubhVivahSealHd from '../../assets/shubh-vivah-seal-hd.png';
 import { getPaperTextureStyle, getPaperVignetteStyle } from '../../utils/paperTextures';
@@ -333,6 +334,8 @@ const WeddingEnvelope = forwardRef(({ data, scale = 1 }, ref) => {
           <span>卐 मंगल परिणय 卐</span>
         </div>
 
+        {/* Pre-Press Draft Proof Watermark & Disclaimer Overlay */}
+        <DraftProofOverlay data={data} isEnvelope={true} />
       </div>
     </div>
     </ScreenPrintMasterWrapper>
