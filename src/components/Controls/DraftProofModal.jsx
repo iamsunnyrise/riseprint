@@ -34,12 +34,10 @@ export default function DraftProofModal({
     shlokas: true
   });
 
-  if (!isOpen) return null;
-
-  const clientName = data.clientProofName || data.groomFather || data.groomName || 'आदरणीय ग्राहक';
-  const pressName = data.pressShopName || data.pressName || 'राइज प्रिंटर्स एंड ग्राफिक्स';
-  const pressPhone = data.pressShopPhone || data.pressPhone || '';
-  const clientPhone = data.clientProofPhone || '';
+  const clientName = data?.clientProofName || data?.groomFather || data?.groomName || 'आदरणीय ग्राहक';
+  const pressName = data?.pressShopName || data?.pressName || 'राइज प्रिंटर्स एंड ग्राफिक्स';
+  const pressPhone = data?.pressShopPhone || data?.pressPhone || '';
+  const clientPhone = data?.clientProofPhone || '';
 
   // Generate standardized professional Hindi WhatsApp message
   const defaultMessage = `*श्री गणेशाय नमः* 🪔\n*विवाह निमंत्रण पत्र - कच्चा प्रूफ (Draft Proof)*\n\nसादर प्रणाम ${clientName} जी,\nआपके विवाह निमंत्रण पत्र का कच्चा प्रूफ (Draft Proof) अवलोकन हेतु तैयार है।\n\n⚠️ *कृपया निम्नलिखित ५ मुख्य बिंदुओं की विशेष जांच करें:*\n1. वर-वधू एवं माता-पिता के नाम व उपनाम\n2. मांगलिक तिथियां, दिनांक एवं वार (दिन)\n3. ग्राम, थाना, जिला व विवाह स्थल का पता\n4. दर्शनाभिलाषी, स्वागताकांक्षी व बाल मनुहार\n5. श्लोक, शायरी एवं हिंदी वर्तनी (Spellings)\n\n✅ *कार्ड देखने के उपरांत यदि कोई सुधार हो तो बताएं, अथवा 'OK / APPROVED' लिखकर भेजें ताकि फाइनल छपाई (Printing) प्रारंभ की जा सके।*\n\n⚠️ _नोट: छपाई पूर्ण होने के बाद किसी भी त्रुटि की जिम्मेदारी ग्राहक की होगी।_\n\nभवदीय,\n*${pressName}*${pressPhone ? `\n📞 संपर्क: ${pressPhone}` : ''}`;
@@ -49,6 +47,8 @@ export default function DraftProofModal({
   useEffect(() => {
     setCustomMessage(defaultMessage);
   }, [clientName, pressName, pressPhone]);
+
+  if (!isOpen) return null;
 
   const updateField = (field, value) => {
     onChange({ ...data, [field]: value });

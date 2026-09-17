@@ -485,7 +485,16 @@ export default function App() {
           {/* 📑 Draft Proof & Client WhatsApp Approval Modal Trigger */}
           <button
             type="button"
-            onClick={() => setIsDraftProofModalOpen(true)}
+            onClick={() => {
+              if (!cardData.isDraftProofMode) {
+                setCardData(prev => ({
+                  ...prev,
+                  isDraftProofMode: true,
+                  proofStatus: prev.proofStatus || 'draft'
+                }));
+              }
+              setIsDraftProofModalOpen(true);
+            }}
             className={`flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm transition border cursor-pointer ${
               cardData.isDraftProofMode
                 ? cardData.proofStatus === 'approved'
