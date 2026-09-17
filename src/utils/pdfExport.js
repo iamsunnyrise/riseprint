@@ -128,14 +128,15 @@ async function captureElementToCanvas(targetElement, options = {}) {
 /**
  * High-Resolution 300 DPI PDF Generation for Wedding Card
  */
-export async function downloadCardPDF(cardElement, sizeKey = '7x9', groomName = '', brideName = '') {
+export async function downloadCardPDF(cardElement, sizeKey = '7x9', groomName = '', brideName = '', customDimensions = null) {
   const element = resolvePrintElement(cardElement, 'card');
   if (!element) {
     throw new Error('शादी कार्ड का तत्व (wedding-card-element) नहीं मिला।');
   }
 
   const cardConfig = CARD_SIZES[sizeKey] || CARD_SIZES['7x9'];
-  const { widthMm, heightMm } = cardConfig;
+  const widthMm = (sizeKey === 'custom' && customDimensions?.widthMm) ? customDimensions.widthMm : cardConfig.widthMm;
+  const heightMm = (sizeKey === 'custom' && customDimensions?.heightMm) ? customDimensions.heightMm : cardConfig.heightMm;
 
   const canvas = await captureElementToCanvas(element, { scale: 3 });
   const imgData = canvas.toDataURL('image/jpeg', 0.98);

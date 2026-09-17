@@ -366,7 +366,75 @@ export default function OfficeRibbonBar({
           {/* TAB: LAYOUT (पेज आकार व थीम्स) */}
           {activeRibbonTab === 'layout' && (
             <>
-              {/* Group 1: Page Size */}
+              {/* Group 1: Wholesale Blank Card & Multi-Fold Inner */}
+              <div className="flex flex-col justify-between pr-2.5 border-r border-stone-300 flex-shrink-0">
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => onOpenTaskPane('blankcard')}
+                    className="flex flex-col items-center justify-center p-2 rounded bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-950 font-bold transition min-w-[85px] shadow-2xs"
+                    title="थोक मार्केट रेडीमेड ब्लैंक कार्ड साइज व स्केल कैलिब्रेटर"
+                  >
+                    <span className="text-base">🎴</span>
+                    <span className="text-[10px]">थोक कार्ड नाप</span>
+                  </button>
+
+                  {/* Fold Selector in Ribbon */}
+                  <div className="flex flex-col gap-1">
+                    <span className="text-[10px] font-bold text-stone-700">पल्ला फोल्ड:</span>
+                    <div className="flex items-center bg-white border border-stone-300 rounded p-0.5">
+                      <button
+                        type="button"
+                        onClick={() => updateCard({ cardFoldType: 'single', sizeKey: cardData.cardFoldType === 'single' ? cardData.sizeKey : '7x9' })}
+                        className={`px-2 py-0.5 rounded text-[10.5px] font-bold transition ${
+                          (cardData.cardFoldType || 'single') === 'single'
+                            ? 'bg-red-800 text-white'
+                            : 'text-stone-600 hover:text-stone-900'
+                        }`}
+                        title="1-पल्ला (सिंगल कार्ड)"
+                      >
+                        1-पल्ला
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => updateCard({ cardFoldType: 'bi-fold', sizeKey: 'bi-fold-book' })}
+                        className={`px-2 py-0.5 rounded text-[10.5px] font-bold transition ${
+                          cardData.cardFoldType === 'bi-fold'
+                            ? 'bg-red-800 text-white'
+                            : 'text-stone-600 hover:text-stone-900'
+                        }`}
+                        title="2-पल्ला (बुक स्टाइल - 12×8.5 इंच)"
+                      >
+                        2-पल्ला
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => updateCard({ cardFoldType: 'tri-fold', sizeKey: 'tri-fold-classic' })}
+                        className={`px-2 py-0.5 rounded text-[10.5px] font-bold transition ${
+                          cardData.cardFoldType === 'tri-fold'
+                            ? 'bg-red-800 text-white'
+                            : 'text-stone-600 hover:text-stone-900'
+                        }`}
+                        title="3-पल्ला (गेटफोल्ड - 15×8.5 इंच)"
+                      >
+                        3-पल्ला
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between text-[10px] text-stone-500 font-semibold mt-1">
+                  <span>थोक कार्ड व फोल्ड</span>
+                  <button
+                    type="button"
+                    onClick={() => updateCard({ showFoldCreaseGuides: !cardData.showFoldCreaseGuides })}
+                    className="text-red-700 hover:underline flex items-center gap-0.5 font-bold"
+                  >
+                    <span>✂️ क्रीज {cardData.showFoldCreaseGuides !== false ? 'चालू' : 'बंद'}</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Group 2: Page Size */}
               <div className="flex flex-col justify-between pr-2.5 border-r border-stone-300 flex-shrink-0">
                 <div className="flex items-center gap-1.5">
                   <div className="flex flex-col gap-1">
@@ -374,11 +442,11 @@ export default function OfficeRibbonBar({
                     <select
                       value={cardData.sizeKey || '7x9'}
                       onChange={(e) => updateCard({ sizeKey: e.target.value })}
-                      className="text-xs bg-white border border-stone-300 rounded px-2 py-1 font-semibold focus:outline-none focus:ring-1 focus:ring-red-600"
+                      className="text-xs bg-white border border-stone-300 rounded px-2 py-1 font-semibold focus:outline-none focus:ring-1 focus:ring-red-600 max-w-[150px] truncate"
                     >
                       {Object.entries(CARD_SIZES).map(([key, sz]) => (
                         <option key={key} value={key}>
-                          {sz.name} ({sz.widthMm}×{sz.heightMm}mm)
+                          {sz.name}
                         </option>
                       ))}
                     </select>
@@ -388,7 +456,7 @@ export default function OfficeRibbonBar({
                     <select
                       value={cardData.envelopeSizeKey || 'standard'}
                       onChange={(e) => updateCard({ envelopeSizeKey: e.target.value })}
-                      className="text-xs bg-white border border-stone-300 rounded px-2 py-1 font-semibold focus:outline-none focus:ring-1 focus:ring-red-600"
+                      className="text-xs bg-white border border-stone-300 rounded px-2 py-1 font-semibold focus:outline-none focus:ring-1 focus:ring-red-600 max-w-[130px] truncate"
                     >
                       {Object.entries(ENVELOPE_SIZES).map(([key, sz]) => (
                         <option key={key} value={key}>

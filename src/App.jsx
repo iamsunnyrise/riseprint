@@ -47,6 +47,7 @@ import EnvelopeEditorForm from './components/Editor/EnvelopeEditorForm';
 import StyleSettings from './components/Editor/StyleSettings';
 import ScreenPrintForm from './components/Editor/ScreenPrintForm';
 import PhotoUploadForm from './components/Editor/PhotoUploadForm';
+import BlankCardMatcherForm from './components/Editor/BlankCardMatcherForm';
 
 import HindiKeyboardHelper from './components/Controls/HindiKeyboardHelper';
 import DtpFontConverterModal from './components/Controls/DtpFontConverterModal';
@@ -133,7 +134,10 @@ export default function App() {
         await downloadEnvelopePDF(envEl, cardData.envelopeSizeKey, cardData.envelopeTitle || 'Vivah_Lifafa');
       } else {
         setExportMessage('300 DPI शादी कार्ड PDF तैयार हो रही है...');
-        await downloadCardPDF(cardEl, cardData.sizeKey, cardData.groomName, cardData.brideName);
+        await downloadCardPDF(cardEl, cardData.sizeKey, cardData.groomName, cardData.brideName, {
+          widthMm: cardData.customWidthMm,
+          heightMm: cardData.customHeightMm
+        });
       }
       
       confetti({
@@ -438,6 +442,12 @@ export default function App() {
       label: 'बटर पेपर मोड',
       icon: Printer,
       badge: cardData.screenPrintMode ? 'ON' : undefined
+    },
+    {
+      id: 'blankcard',
+      label: 'थोक कार्ड नाप',
+      icon: Columns,
+      badge: cardData.cardFoldType !== 'single' ? cardData.cardFoldType : undefined
     }
   ];
 
@@ -625,6 +635,9 @@ export default function App() {
             )}
             {activeTab === 'screenprint' && (
               <ScreenPrintForm data={cardData} onChange={setCardData} />
+            )}
+            {activeTab === 'blankcard' && (
+              <BlankCardMatcherForm data={cardData} onChange={setCardData} />
             )}
 
             {/* Quick Hindi Typing & Copy Tool */}

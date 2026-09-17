@@ -46,6 +46,61 @@ export const CARD_SIZES = {
     heightMm: 297,
     aspectRatio: '210/297',
     description: 'स्टैंडर्ड प्रिंट शीट / फोल्डर'
+  },
+  'bi-fold-book': {
+    name: '12" × 8.5" (2-पल्ला बुक स्टाइल - Bi-Fold)',
+    widthInches: 12,
+    heightInches: 8.5,
+    widthMm: 305,
+    heightMm: 216,
+    aspectRatio: '12/8.5',
+    foldType: 'bi-fold',
+    panels: 2,
+    description: 'भारतीय थोक कार्ड का लोकप्रिय 2-पल्ला खुला बुक फॉर्मेट'
+  },
+  'tri-fold-classic': {
+    name: '15" × 8.5" (3-पल्ला गेटफोल्ड - चावड़ी बाजार)',
+    widthInches: 15,
+    heightInches: 8.5,
+    widthMm: 381,
+    heightMm: 216,
+    aspectRatio: '15/8.5',
+    foldType: 'tri-fold',
+    panels: 3,
+    description: '3-पल्ले वाला क्लासिक गेटफोल्ड थोक कार्ड'
+  },
+  'tri-fold-jumbo': {
+    name: '18" × 9" (3-पल्ला रॉयल जंबो बॉक्स इनर)',
+    widthInches: 18,
+    heightInches: 9,
+    widthMm: 457,
+    heightMm: 228,
+    aspectRatio: '18/9',
+    foldType: 'tri-fold',
+    panels: 3,
+    description: 'प्रीमियम बड़े बॉक्स कार्ड का 3-पल्ला इनर शीट'
+  },
+  'pocket-slim': {
+    name: '4.5" × 8.5" (स्लिम पॉकेट / डोरी वाला इनर)',
+    widthInches: 4.5,
+    heightInches: 8.5,
+    widthMm: 114,
+    heightMm: 216,
+    aspectRatio: '4.5/8.5',
+    foldType: 'single',
+    panels: 1,
+    description: 'पॉकेट या डोरी वाले कार्ड का इनर पेपर'
+  },
+  'custom': {
+    name: '📐 कस्टम पटरी नाप (Custom Calibration)',
+    widthInches: 7,
+    heightInches: 9,
+    widthMm: 178,
+    heightMm: 228,
+    aspectRatio: '7/9',
+    foldType: 'single',
+    panels: 1,
+    description: 'दुकानदार द्वारा स्केल से नापी गई सटीक इनर शीट'
   }
 };
 
@@ -484,8 +539,83 @@ export const DEFAULT_CARD_DATA = {
   clientProofName: '',                // ग्राहक का नाम
   clientProofPhone: '',               // ग्राहक का WhatsApp मोबाइल नंबर
   pressShopName: 'राइज प्रिंटर्स एंड ग्राफिक्स',
-  pressShopPhone: ''
+  pressShopPhone: '',
+
+  // 🎴 Wholesale Blank Card & Multi-Fold Inner Settings (थोक ब्लैंक कार्ड व मल्टी-फोल्ड इनर)
+  cardFoldType: 'single', // 'single' (1-पल्ला), 'bi-fold' (2-पल्ला बुक स्टाइल), 'tri-fold' (3-पल्ला गेटफोल्ड)
+  showFoldCreaseGuides: true, // फोल्डिंग क्रीज गाइड्स ऑन/ऑफ
+  wholesaleMarketPreset: 'chawri-7x9', // 'chawri-7x9', 'chawri-bi-fold', 'chawri-tri-fold', 'custom'
+  customWidthMm: 178,
+  customHeightMm: 228,
+  customWidthInches: 7,
+  customHeightInches: 9
 };
+
+/**
+ * 🎴 Wholesale Ready-Made Blank Card Presets (भारतीय थोक मंडी कार्ड्स)
+ */
+export const WHOLESALE_CARD_PRESETS = [
+  {
+    id: 'chawri-7x9',
+    name: 'चावड़ी बाजार क्लासिक (7" × 9")',
+    foldType: 'single',
+    sizeKey: '7x9',
+    widthMm: 178,
+    heightMm: 228,
+    panels: 1,
+    description: 'भारत का सबसे लोकप्रिय सिंगल इनर शादी कार्ड'
+  },
+  {
+    id: 'chawri-bi-fold',
+    name: 'रॉयल बुक फोल्ड 12" × 8.5" (2-पल्ला)',
+    foldType: 'bi-fold',
+    sizeKey: 'bi-fold-book',
+    widthMm: 305,
+    heightMm: 216,
+    panels: 2,
+    description: 'खुली किताब जैसा 2 पल्लों वाला कार्ड (बाएं कार्यक्रम, दाएं वर-वधू)'
+  },
+  {
+    id: 'chawri-tri-fold',
+    name: '3-पल्ला गेटफोल्ड 15" × 8.5" (त्रिफोल्ड)',
+    foldType: 'tri-fold',
+    sizeKey: 'tri-fold-classic',
+    widthMm: 381,
+    heightMm: 216,
+    panels: 3,
+    description: 'चावड़ी बाजार का 3-पल्ले वाला भव्य निमंत्रण पत्र'
+  },
+  {
+    id: 'jumbo-tri-fold',
+    name: 'शाही 3-पल्ला जंबो (18" × 9")',
+    foldType: 'tri-fold',
+    sizeKey: 'tri-fold-jumbo',
+    widthMm: 457,
+    heightMm: 228,
+    panels: 3,
+    description: 'प्रीमियम बड़े बॉक्स कार्ड का 3-पल्ला इनर शीट'
+  },
+  {
+    id: 'pocket-slim',
+    name: 'स्लिम पॉकेट इनर (4.5" × 8.5")',
+    foldType: 'single',
+    sizeKey: 'pocket-slim',
+    widthMm: 114,
+    heightMm: 216,
+    panels: 1,
+    description: 'पॉकेट या डोरी वाले कार्ड का इनर पेपर'
+  },
+  {
+    id: 'custom-calibrated',
+    name: '📐 कस्टम पटरी नाप (Custom Calibration)',
+    foldType: 'custom',
+    sizeKey: 'custom',
+    widthMm: 178,
+    heightMm: 228,
+    panels: 1,
+    description: 'दुकानदार द्वारा स्केल से नापी गई सटीक इनर शीट'
+  }
+];
 
 /**
  * 🪔 Authentic Indian Wedding Paper Texture Presets
