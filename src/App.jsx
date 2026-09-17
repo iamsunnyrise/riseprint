@@ -21,7 +21,13 @@ import {
   Image as ImageIcon,
   Music,
   Scissors,
-  FileDown
+  FileDown,
+  ChevronLeft,
+  ChevronRight,
+  SlidersHorizontal,
+  Eye,
+  PanelLeftClose,
+  PanelLeftOpen
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -47,6 +53,12 @@ import DtpFontConverterModal from './components/Controls/DtpFontConverterModal';
 import DraftProofModal from './components/Controls/DraftProofModal';
 import { useHindiTyping } from './context/HindiTypingContext';
 
+// Office Ribbon & Workspace Suite
+import QuickAccessToolbar from './components/Ribbon/QuickAccessToolbar';
+import OfficeRibbonBar from './components/Ribbon/OfficeRibbonBar';
+import OfficeStatusBar from './components/Ribbon/OfficeStatusBar';
+import DocumentRuler from './components/Workspace/DocumentRuler';
+
 import { DEFAULT_CARD_DATA, CARD_SIZES, ENVELOPE_SIZES, CARD_TEMPLATES } from './utils/defaultData';
 import {
   downloadCardPDF,
@@ -63,10 +75,14 @@ import {
 } from './utils/pdfExport';
 import { downloadCorelDrawSVG } from './utils/svgExport';
 
-
 export default function App() {
   const [cardData, setCardData] = useState(DEFAULT_CARD_DATA);
-  const [activeTab, setActiveTab] = useState('templates'); // templates, basic, schedule, shloka, family, envelope, style
+  const [activeRibbonTab, setActiveRibbonTab] = useState('home'); // file, home, insert, layout, typography, mailings, prepress, export
+  const [isRibbonCollapsed, setIsRibbonCollapsed] = useState(false);
+  const [activeTab, setActiveTab] = useState('basic'); // templates, basic, schedule, venue, envelope, guests, music, shloka, family, style, photos, screenprint
+  const [isTaskPaneOpen, setIsTaskPaneOpen] = useState(true);
+  const [showRuler, setShowRuler] = useState(true);
+
   const [previewMode, setPreviewMode] = useState('card'); // 'card' or 'envelope'
   const [isExporting, setIsExporting] = useState(false);
   const [exportMessage, setExportMessage] = useState('');
@@ -92,6 +108,12 @@ export default function App() {
       spread: 60,
       origin: { y: 0.5 }
     });
+  };
+
+  // Open Task Pane for specific sub-form
+  const handleOpenTaskPane = (tabKey) => {
+    setActiveTab(tabKey);
+    setIsTaskPaneOpen(true);
   };
 
   // Export Card / Envelope PDF based on active preview
@@ -212,7 +234,6 @@ export default function App() {
       setIsExporting(true);
       setExportMessage('कच्चा प्रूफ (Draft Proof) HD इमेज तैयार हो रही है...');
 
-      // Ensure draft proof mode is active
       if (!cardData.isDraftProofMode) {
         setCardData(prev => ({ ...prev, isDraftProofMode: true, proofStatus: 'draft' }));
         await new Promise(r => setTimeout(r, 120));
@@ -248,7 +269,7 @@ export default function App() {
     triggerBrowserPrint(previewMode, cardData.sizeKey, cardData.envelopeSizeKey);
   };
 
-  // ⚡ CorelDRAW Ready SVG (Convert to Curves / Text to Path) Export
+  // CorelDRAW Ready SVG (Convert to Curves / Text to Path) Export
   const handleExportCorelDrawSVG = async () => {
     try {
       setIsExporting(true);
@@ -275,7 +296,7 @@ export default function App() {
     }
   };
 
-  // ✂️ 2-Up / 4-Up Imposition Butter Paper PDF Export
+  // 2-Up / 4-Up Imposition Butter Paper PDF Export
   const handleExportImpositionPDF = async () => {
     try {
       setIsExporting(true);
@@ -303,7 +324,7 @@ export default function App() {
     }
   };
 
-  // 🎨 2-Color Screen Printing Plates (2-Page Combined PDF)
+  // 2-Color Screen Printing Plates (2-Page Combined PDF)
   const handleExportTwoPlatePDF = async () => {
     try {
       setIsExporting(true);
@@ -326,7 +347,7 @@ export default function App() {
     }
   };
 
-  // Bulk Multi-Page PDF Export for all guests (Feature 3)
+  // Bulk Multi-Page PDF Export for all guests
   const handleExportBulkEnvelopes = async () => {
     if (!envelopeRef.current) return;
     if (!cardData.guestList || cardData.guestList.length === 0) {
@@ -420,253 +441,108 @@ export default function App() {
     }
   ];
 
-
+  const currentActiveTabMeta = tabs.find(t => t.id === activeTab) || tabs[1];
 
   return (
-    <div className="min-h-screen bg-stone-100 flex flex-col">
-      {/* Top Navigation Bar */}
-      <header className="bg-red-950 text-amber-100 border-b-2 border-amber-600 px-3 py-2 sm:px-6 flex flex-wrap items-center justify-between gap-3 shadow-md no-print sticky top-0 z-50">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-full bg-amber-500/20 border border-amber-400/40 flex items-center justify-center text-amber-300 font-bold text-lg flex-shrink-0">
-            卐
-          </div>
-          <div>
-            <h1 className="text-sm sm:text-base md:text-lg font-bold tracking-wide text-white flex items-center gap-2">
-              <span>विवाह निमंत्रण पत्र निर्माता</span>
-              <span className="bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] px-2 py-0.5 rounded-full font-medium hidden md:inline">
-                Professional Print Engine
-              </span>
-            </h1>
-            <p className="text-[10px] sm:text-[11px] text-amber-200/70 hidden sm:block">
-              पारम्परिक भारतीय शादी कार्ड व मैचिंग लिफाफा (Wedding Card & Envelope Suite)
-            </p>
-          </div>
-        </div>
+    <div className="min-h-screen bg-[#ece9e6] flex flex-col font-sans select-text">
+      
+      {/* 1. Word / Office 365 Quick Access Toolbar & Title Bar */}
+      <QuickAccessToolbar
+        cardData={cardData}
+        previewMode={previewMode}
+        isExporting={isExporting}
+        isHindiTyping={isHindiTyping}
+        toggleHindiTyping={toggleHindiTyping}
+        onReset={handleResetToDefault}
+        onOpenDtpModal={() => setIsDtpModalOpen(true)}
+        onOpenDigitalModal={() => setIsDigitalModalOpen(true)}
+        onOpenDraftProofModal={() => {
+          if (!cardData.isDraftProofMode) {
+            setCardData(prev => ({
+              ...prev,
+              isDraftProofMode: true,
+              proofStatus: prev.proofStatus || 'draft'
+            }));
+          }
+          setIsDraftProofModalOpen(true);
+        }}
+        onExportPDF={handleExportPDF}
+        onExportPNG={handleExportPNG}
+        onExportCorelDrawSVG={handleExportCorelDrawSVG}
+        onPrint={handlePrint}
+      />
 
-        {/* Quick Actions & Export Controls */}
-        <div className="flex items-center flex-wrap gap-2">
-          {/* Top Quick Template Dropdown */}
-          <div className="hidden xl:flex items-center gap-1.5 bg-red-900/80 border border-amber-500/40 px-2.5 py-1 rounded-lg">
-            <span className="text-xs font-semibold text-amber-200 flex items-center gap-1">
-              <Layers className="w-3.5 h-3.5 text-amber-400" />
-              <span>टेम्पलेट:</span>
-            </span>
-            <select
-              onChange={(e) => {
-                const found = CARD_TEMPLATES.find((t) => t.id === e.target.value);
-                if (found) handleSelectTemplate(found.data);
-              }}
-              className="bg-transparent text-xs font-bold text-white cursor-pointer focus:outline-none"
-            >
-              {CARD_TEMPLATES.map((t) => (
-                <option key={t.id} value={t.id} className="bg-stone-900 text-white">
-                  {t.name}
-                </option>
-              ))}
-            </select>
-          </div>
+      {/* 2. Office 365 Ribbon Bar (Collapsible with Tabs & Tool Groups) */}
+      <OfficeRibbonBar
+        activeRibbonTab={activeRibbonTab}
+        onSelectRibbonTab={setActiveRibbonTab}
+        activeTaskPaneTab={activeTab}
+        onOpenTaskPane={handleOpenTaskPane}
+        isRibbonCollapsed={isRibbonCollapsed}
+        toggleRibbonCollapsed={() => setIsRibbonCollapsed(prev => !prev)}
+        cardData={cardData}
+        onChangeCardData={setCardData}
+        onSelectTemplate={handleSelectTemplate}
+        previewMode={previewMode}
+        setPreviewMode={setPreviewMode}
+        onExportPDF={handleExportPDF}
+        onExportPNG={handleExportPNG}
+        onExportCombinedPDF={handleExportCombinedPDF}
+        onExportBulkEnvelopes={handleExportBulkEnvelopes}
+        onExportImpositionPDF={handleExportImpositionPDF}
+        onExportTwoPlatePDF={handleExportTwoPlatePDF}
+        onExportCorelDrawSVG={handleExportCorelDrawSVG}
+        onPrint={handlePrint}
+        onOpenDraftProofModal={() => setIsDraftProofModalOpen(true)}
+        onOpenDigitalModal={() => setIsDigitalModalOpen(true)}
+        onOpenDtpModal={() => setIsDtpModalOpen(true)}
+        isExporting={isExporting}
+      />
 
-          {/* English to Hindi Phonetic Typing Toggle */}
-          <button
-            type="button"
-            onClick={toggleHindiTyping}
-            className={`flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-lg font-bold transition shadow-sm border ${
-              isHindiTyping
-                ? 'bg-amber-400 text-stone-950 border-amber-300 ring-2 ring-amber-300/60'
-                : 'bg-red-900/60 hover:bg-red-900 text-amber-200 border-amber-500/30'
-            }`}
-            title="इंग्लिश ➔ हिंदी टाइपिंग (शॉर्टकट: Ctrl+G)"
-          >
-            <span className="text-xs font-extrabold bg-stone-900 text-amber-300 px-1 rounded">
-              {isHindiTyping ? 'अ' : 'A'}
-            </span>
-            <span className="hidden sm:inline">
-              {isHindiTyping ? 'हिंदी टाइपिंग: चालू' : 'हिंदी टाइपिंग: बंद'}
-            </span>
-            <span className="sm:hidden">
-              {isHindiTyping ? 'हिंदी ON' : 'हिंदी OFF'}
-            </span>
-          </button>
-
-          {/* DTP Press Font Converter Modal Trigger */}
-          <button
-            type="button"
-            onClick={() => setIsDtpModalOpen(true)}
-            className="flex items-center gap-1 text-xs bg-stone-800 hover:bg-stone-700 text-amber-200 border border-amber-500/40 px-2 py-1.5 rounded-lg transition font-semibold"
-            title="कृतिदेव 010 / चाणक्य / श्रीलिपि DTP फॉन्ट कनवर्टर (CorelDRAW हेतु)"
-          >
-            <span className="text-amber-400 font-bold">⚡</span>
-            <span className="hidden lg:inline">कृतिदेव / DTP कनवर्टर</span>
-            <span className="lg:hidden">DTP</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={handleResetToDefault}
-            className="flex items-center gap-1 text-xs bg-red-900/60 hover:bg-red-900 text-amber-200 border border-amber-500/30 px-2 py-1.5 rounded-lg transition"
-            title="मूल टेम्पलेट पर रीसेट करें"
-          >
-            <RefreshCw className="w-3.5 h-3.5" />
-            <span className="hidden md:inline">रीसेट</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={handlePrint}
-            className="flex items-center gap-1 text-xs bg-stone-800 hover:bg-stone-700 text-white px-2.5 py-1.5 rounded-lg border border-stone-600 transition shadow-sm"
-            title={previewMode === 'envelope' ? 'लिफाफा सीधे प्रिंट करें' : 'कार्ड सीधे प्रिंट करें'}
-          >
-            <Printer className="w-3.5 h-3.5" />
-            <span>प्रिंट ({previewMode === 'envelope' ? 'लिफाफा' : 'कार्ड'})</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={handleExportPNG}
-            disabled={isExporting}
-            className="flex items-center gap-1 text-xs bg-emerald-700 hover:bg-emerald-600 text-white px-2.5 py-1.5 rounded-lg transition shadow-sm font-semibold"
-          >
-            <Download className="w-3.5 h-3.5" />
-            <span>इमेज (WhatsApp)</span>
-          </button>
-
-          {/* Combined Card + Envelope Export */}
-          <button
-            type="button"
-            onClick={handleExportCombinedPDF}
-            disabled={isExporting}
-            className="hidden sm:flex items-center gap-1.5 text-xs bg-purple-800 hover:bg-purple-700 text-purple-100 font-bold px-2.5 py-1.5 rounded-lg transition shadow-sm border border-purple-500/40"
-            title="कार्ड और लिफाफा दोनों को 2-पेज की संयुक्त PDF में डाउनलोड करें"
-          >
-            <Files className="w-3.5 h-3.5 text-amber-300" />
-            <span>कार्ड + लिफाफा PDF</span>
-          </button>
-
-          {/* Bulk Envelopes for All Guests */}
-          <button
-            type="button"
-            onClick={handleExportBulkEnvelopes}
-            disabled={isExporting}
-            className="hidden md:flex items-center gap-1.5 text-xs bg-indigo-800 hover:bg-indigo-700 text-indigo-100 font-bold px-2.5 py-1.5 rounded-lg transition shadow-sm border border-indigo-500/40"
-            title="सभी मेहमानों के नाम का अलग-अलग लिफाफा 1 ही PDF में डाउनलोड करें"
-          >
-            <Users className="w-3.5 h-3.5 text-indigo-300" />
-            <span>सभी लिफाफे PDF ({cardData.guestList?.length || 0})</span>
-          </button>
-
-          {/* 🎵 Fullscreen Digital Card & WhatsApp Viewer */}
-          <button
-            type="button"
-            onClick={() => setIsDigitalModalOpen(true)}
-            className="flex items-center gap-1.5 text-xs bg-gradient-to-r from-amber-400 via-amber-500 to-amber-400 hover:from-amber-300 hover:to-amber-400 text-stone-950 font-bold px-3 py-1.5 rounded-lg shadow-md transition border border-amber-300 cursor-pointer"
-            title="फुल-स्क्रीन डिजिटल शादी कार्ड, मंगल शहनाई व WhatsApp शेयर"
-          >
-            <Sparkles className="w-3.5 h-3.5 fill-current text-red-950" />
-            <span>🎵 डिजिटल कार्ड</span>
-          </button>
-
-          {/* 📑 Draft Proof & Client WhatsApp Approval Modal Trigger */}
-          <button
-            type="button"
-            onClick={() => {
-              if (!cardData.isDraftProofMode) {
-                setCardData(prev => ({
-                  ...prev,
-                  isDraftProofMode: true,
-                  proofStatus: prev.proofStatus || 'draft'
-                }));
-              }
-              setIsDraftProofModalOpen(true);
-            }}
-            className={`flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm transition border cursor-pointer ${
-              cardData.isDraftProofMode
-                ? cardData.proofStatus === 'approved'
-                  ? 'bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-400 ring-2 ring-emerald-400/50'
-                  : 'bg-amber-400 hover:bg-amber-300 text-stone-950 border-amber-300 ring-2 ring-amber-300/60'
-                : 'bg-stone-800 hover:bg-stone-700 text-amber-200 border-amber-500/40'
-            }`}
-            title="कच्चा प्रूफ (Draft Approval) मोड, सुरक्षा वॉटरमार्क व सीधा WhatsApp शेयरिंग"
-          >
-            <span className="text-sm">📑</span>
-            <span>
-              {cardData.isDraftProofMode
-                ? cardData.proofStatus === 'approved'
-                  ? 'स्वीकृत (Approved)'
-                  : 'कच्चा प्रूफ (Draft)'
-                : 'कच्चा प्रूफ (WhatsApp)'}
-            </span>
-          </button>
-
-          {/* Quick Screen Print / Butter Paper Mode Toggle */}
-          <button
-            type="button"
-            onClick={() => setCardData(prev => ({ ...prev, screenPrintMode: !prev.screenPrintMode }))}
-            className={`flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-lg font-bold transition shadow-sm border ${
-              cardData.screenPrintMode
-                ? 'bg-amber-400 text-stone-950 border-amber-300 ring-2 ring-amber-300/60'
-                : 'bg-red-900/60 hover:bg-red-900 text-amber-200 border-amber-500/30'
-            }`}
-            title="स्क्रीन प्रिंटिंग व बटर पेपर मास्टर मोड (100% सॉलिड ब्लैक)"
-          >
-            <Printer className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">
-              {cardData.screenPrintMode ? 'बटर पेपर: सक्रिय' : 'बटर पेपर मोड'}
-            </span>
-            <span className="sm:hidden">
-              {cardData.screenPrintMode ? 'बटर ऑन' : 'बटर मोड'}
-            </span>
-          </button>
-
-          {/* Active View PDF Download */}
-          <button
-            type="button"
-            onClick={handleExportPDF}
-            disabled={isExporting}
-            className={`flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg transition shadow-md ${
-              cardData.screenPrintMode
-                ? 'bg-stone-900 hover:bg-black text-amber-300 border border-amber-400'
-                : 'bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-red-950'
-            }`}
-          >
-            <FileText className="w-4 h-4" />
-            <span>
-              {cardData.screenPrintMode
-                ? 'बटर पेपर PDF (600 DPI)'
-                : previewMode === 'envelope'
-                ? 'लिफाफा PDF (300 DPI)'
-                : 'कार्ड PDF (300 DPI)'}
-            </span>
-          </button>
-
-          {/* ⚡ CorelDRAW Ready SVG (Convert to Curves / Text to Path) */}
-          <button
-            type="button"
-            onClick={handleExportCorelDrawSVG}
-            disabled={isExporting}
-            className="flex items-center gap-1.5 text-xs bg-stone-900 hover:bg-stone-800 text-amber-300 font-bold px-3 py-1.5 rounded-lg shadow-md transition border border-amber-400 cursor-pointer"
-            title="CorelDRAW रेडी SVG (Convert to Curves / No Missing Fonts) डाउनलोड करें"
-          >
-            <FileDown className="w-3.5 h-3.5 text-amber-400" />
-            <span className="hidden sm:inline">CorelDRAW SVG</span>
-            <span className="sm:hidden">Corel SVG</span>
-          </button>
-        </div>
-      </header>
-
-      {/* Export Status Banner */}
+      {/* Export Status Notification Banner */}
       {exportMessage && (
-        <div className="bg-amber-600 text-white text-xs py-1.5 px-4 text-center font-semibold shadow-inner transition flex items-center justify-center gap-2 no-print">
+        <div className="bg-amber-600 text-white text-xs py-1.5 px-4 text-center font-semibold shadow-inner transition flex items-center justify-center gap-2 no-print z-50">
           <Sparkles className="w-3.5 h-3.5" />
           <span>{exportMessage}</span>
         </div>
       )}
 
-      {/* Main Workspace Layout */}
-      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
-        {/* Left Side: Customization & Form Controls */}
-        <aside className="w-full lg:w-[460px] xl:w-[500px] flex-shrink-0 bg-white border-r border-stone-200 flex flex-col h-[420px] lg:h-[calc(100vh-58px)] no-print">
-          {/* Navigation Tabs */}
-          <div className="flex overflow-x-auto border-b border-stone-200 bg-stone-50 p-1.5 gap-1 scrollbar-none">
+      {/* 3. Main Workspace Area: Split Screen (Task Pane + Document Canvas) */}
+      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden relative">
+        
+        {/* Left Side: Collapsible Office Task Pane / Inspector (कार्य फलक) */}
+        <aside
+          className={`transition-all duration-200 ease-in-out bg-white border-r border-stone-300 flex flex-col flex-shrink-0 z-20 no-print shadow-sm ${
+            isTaskPaneOpen
+              ? 'w-full lg:w-[460px] xl:w-[490px] h-[440px] lg:h-auto'
+              : 'w-0 h-0 lg:h-auto overflow-hidden border-none'
+          }`}
+        >
+          {/* Task Pane Header with Title & Collapse Icon */}
+          <div className="bg-stone-100 border-b border-stone-200 px-3 py-2 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-red-800 font-bold text-xs flex items-center gap-1.5">
+                <SlidersHorizontal className="w-3.5 h-3.5 text-red-700" />
+                <span>कार्य फलक (Inspector):</span>
+              </span>
+              <span className="text-xs font-semibold text-stone-700 bg-white px-2 py-0.5 rounded border border-stone-300">
+                {currentActiveTabMeta.label}
+              </span>
+            </div>
+
+            {/* Close / Collapse Task Pane button */}
+            <button
+              type="button"
+              onClick={() => setIsTaskPaneOpen(false)}
+              className="p-1 hover:bg-stone-200 rounded text-stone-500 hover:text-stone-800 transition"
+              title="टास्क पैन छुपाएं (Hide Task Pane)"
+            >
+              <PanelLeftClose className="w-4 h-4" />
+            </button>
+          </div>
+
+          {/* Quick Sub-Tab Switcher inside Task Pane */}
+          <div className="flex overflow-x-auto border-b border-stone-200 bg-stone-50 p-1 gap-1 scrollbar-none">
             {tabs.map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -680,16 +556,17 @@ export default function App() {
                       setPreviewMode('envelope');
                     }
                   }}
-                  className={`flex items-center gap-1.5 px-2.5 py-2 rounded-lg text-xs font-semibold whitespace-nowrap transition relative ${
+                  className={`flex items-center gap-1 px-2.5 py-1.5 rounded text-[11px] font-semibold whitespace-nowrap transition relative ${
                     isActive
-                      ? 'bg-red-700 text-white shadow-sm'
+                      ? 'bg-red-800 text-white shadow-xs'
                       : 'text-stone-600 hover:bg-stone-200/70'
                   }`}
+                  title={tab.label}
                 >
-                  <Icon className="w-3.5 h-3.5" />
-                  <span>{tab.label}</span>
+                  <Icon className="w-3 h-3" />
+                  <span>{tab.label.split(' ')[0]}</span>
                   {tab.badge && (
-                    <span className={`text-[9.5px] px-1.5 py-0.2 rounded-full font-bold ${
+                    <span className={`text-[9px] px-1 py-0.2 rounded-full font-bold ${
                       isActive ? 'bg-amber-400 text-red-950' : 'bg-red-100 text-red-700'
                     }`}>
                       {tab.badge}
@@ -700,7 +577,7 @@ export default function App() {
             })}
           </div>
 
-          {/* Tab Content Panels */}
+          {/* Form Content Scrollable Area */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
             {activeTab === 'templates' && (
               <TemplateSelector
@@ -734,7 +611,6 @@ export default function App() {
                 onOpenDigitalInvite={() => setIsDigitalModalOpen(true)}
               />
             )}
-
             {activeTab === 'shloka' && (
               <ShlokaShayariForm data={cardData} onChange={setCardData} />
             )}
@@ -758,24 +634,38 @@ export default function App() {
           </div>
         </aside>
 
-        {/* Right Side: Live Interactive Canvas (Card vs Envelope) */}
-        <main className="flex-1 flex flex-col bg-stone-200/80 overflow-hidden relative print-container">
-          {/* Canvas Toolbar with View Switcher */}
-          <div className="bg-stone-100/95 backdrop-blur border-b border-stone-300 px-4 py-2 flex flex-wrap items-center justify-between text-xs text-stone-700 no-print gap-2">
+        {/* Center / Right: Word Style Document Canvas Viewport */}
+        <main className="flex-1 flex flex-col bg-[#e8e6e3] overflow-hidden relative print-container">
+          
+          {/* Document Canvas Top Toolbar (MS Word Document Header) */}
+          <div className="bg-[#f3f2f1] border-b border-stone-300 px-3 py-1.5 flex flex-wrap items-center justify-between text-xs text-stone-700 no-print gap-2 shadow-2xs">
             
             <div className="flex items-center flex-wrap gap-2">
+              {/* Task Pane Re-Open Toggle if closed */}
+              {!isTaskPaneOpen && (
+                <button
+                  type="button"
+                  onClick={() => setIsTaskPaneOpen(true)}
+                  className="flex items-center gap-1.5 px-2.5 py-1 bg-white hover:bg-stone-100 text-red-950 font-bold text-xs rounded border border-stone-300 shadow-2xs transition"
+                  title="कार्य फलक खोलें (Open Inspector)"
+                >
+                  <PanelLeftOpen className="w-3.5 h-3.5 text-red-700" />
+                  <span>कार्य फलक खोलें</span>
+                </button>
+              )}
+
               {/* View Mode Switcher: Card ⇄ Envelope */}
-              <div className="flex items-center bg-stone-200/90 p-0.5 rounded-lg border border-stone-300 shadow-inner">
+              <div className="flex items-center bg-stone-200/90 p-0.5 rounded-md border border-stone-300 shadow-inner">
                 <button
                   type="button"
                   onClick={() => setPreviewMode('card')}
-                  className={`flex items-center gap-1.5 px-3 py-1 text-xs font-bold rounded-md transition ${
+                  className={`flex items-center gap-1.5 px-3 py-1 text-xs font-bold rounded transition ${
                     previewMode === 'card'
-                      ? 'bg-red-800 text-white shadow-sm'
+                      ? 'bg-red-800 text-white shadow-2xs'
                       : 'text-stone-700 hover:text-stone-900 hover:bg-stone-100/50'
                   }`}
                 >
-                  <span>🎴 मुख्य शादी कार्ड</span>
+                  <span>🎴 मुख्य कार्ड</span>
                 </button>
 
                 <button
@@ -784,154 +674,46 @@ export default function App() {
                     setPreviewMode('envelope');
                     if (activeTab !== 'envelope') setActiveTab('envelope');
                   }}
-                  className={`flex items-center gap-1.5 px-3 py-1 text-xs font-bold rounded-md transition ${
+                  className={`flex items-center gap-1.5 px-3 py-1 text-xs font-bold rounded transition ${
                     previewMode === 'envelope'
-                      ? 'bg-red-800 text-white shadow-sm'
+                      ? 'bg-red-800 text-white shadow-2xs'
                       : 'text-stone-700 hover:text-stone-900 hover:bg-stone-100/50'
                   }`}
                 >
                   <Mail className="w-3.5 h-3.5" />
-                  <span>💌 शादी का लिफाफा (Cover)</span>
+                  <span>💌 लिफाफा</span>
                 </button>
               </div>
 
-              {/* Screen Print & Pre-Press Master Quick Toolbar Controls */}
+              {/* Screen Print & Pre-Press Quick Status Strip */}
               {cardData.screenPrintMode && (
-                <div className="flex items-center gap-1.5 bg-stone-900 text-amber-300 px-2.5 py-1 rounded-lg border border-stone-700 shadow-xs flex-wrap">
-                  <span className="text-[11px] font-bold">🖨️ बटर:</span>
-
-                  {/* 2-Up / 4-Up Imposition Quick Toggle */}
-                  <div className="flex items-center bg-stone-800 rounded p-0.5 text-[10.5px]">
-                    <button
-                      type="button"
-                      onClick={() => setCardData(prev => ({ ...prev, screenPrintImposition: '1-up' }))}
-                      className={`px-1.5 py-0.5 rounded font-bold transition ${
-                        (cardData.screenPrintImposition || '1-up') === '1-up' ? 'bg-amber-400 text-stone-950' : 'text-stone-300'
-                      }`}
-                      title="1-Up (सिंगल कार्ड)"
-                    >
-                      1-Up
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setCardData(prev => ({ ...prev, screenPrintImposition: '2-up' }))}
-                      className={`px-1.5 py-0.5 rounded font-bold transition ${
-                        cardData.screenPrintImposition === '2-up' ? 'bg-amber-400 text-stone-950' : 'text-stone-300'
-                      }`}
-                      title="2-Up (डबल कार्ड - 50% बचत ✂️)"
-                    >
-                      2-Up ✂️
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setCardData(prev => ({ ...prev, screenPrintImposition: '4-up' }))}
-                      className={`px-1.5 py-0.5 rounded font-bold transition ${
-                        cardData.screenPrintImposition === '4-up' ? 'bg-amber-400 text-stone-950' : 'text-stone-300'
-                      }`}
-                      title="4-Up (क्वाड कार्ड ✂️)"
-                    >
-                      4-Up
-                    </button>
-                  </div>
-
-                  {/* 2-Color Screen Plate Separation Quick Selector */}
-                  <div className="flex items-center bg-stone-800 rounded p-0.5 text-[10.5px]">
-                    <button
-                      type="button"
-                      onClick={() => setCardData(prev => ({ ...prev, screenPrintPlate: 'all' }))}
-                      className={`px-1.5 py-0.5 rounded font-bold transition ${
-                        (cardData.screenPrintPlate || 'all') === 'all' ? 'bg-white text-stone-950' : 'text-stone-300'
-                      }`}
-                      title="सभी तत्व (फुल कंपोजिट मास्टर)"
-                    >
-                      फुल
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setCardData(prev => ({ ...prev, screenPrintPlate: 'text' }))}
-                      className={`px-1.5 py-0.5 rounded font-bold transition ${
-                        cardData.screenPrintPlate === 'text' ? 'bg-red-600 text-white' : 'text-red-300'
-                      }`}
-                      title="प्लेट 1: केवल टेक्स्ट मास्टर (Red Ink Screen)"
-                    >
-                      🔴 प्लेट 1
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setCardData(prev => ({ ...prev, screenPrintPlate: 'motifs' }))}
-                      className={`px-1.5 py-0.5 rounded font-bold transition ${
-                        cardData.screenPrintPlate === 'motifs' ? 'bg-amber-500 text-stone-950' : 'text-amber-300'
-                      }`}
-                      title="प्लेट 2: केवल मोटिफ व बॉर्डर (Gold Ink Screen)"
-                    >
-                      🟡 प्लेट 2
-                    </button>
-                  </div>
-
-                  {/* Direct 2-Color Plates PDF Export */}
-                  <button
-                    type="button"
-                    onClick={handleExportTwoPlatePDF}
-                    disabled={isExporting}
-                    className="px-2 py-0.5 rounded text-[10px] font-bold bg-stone-800 hover:bg-stone-700 text-amber-200 border border-amber-500/40 transition"
-                    title="दोनों प्लेट्स (Plate 1 Text + Plate 2 Motifs) एक साथ 2-पेज PDF डाउनलोड करें"
-                  >
-                    🎨 2-रंग PDF
-                  </button>
-
-                  {/* Direct Imposition PDF Export */}
-                  {cardData.screenPrintImposition !== '1-up' && (
-                    <button
-                      type="button"
-                      onClick={handleExportImpositionPDF}
-                      disabled={isExporting}
-                      className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-800 hover:bg-emerald-700 text-white border border-emerald-500 transition flex items-center gap-1"
-                      title="इम्पोज़िशन बटर पेपर शीट PDF डाउनलोड करें"
-                    >
-                      <Scissors className="w-2.5 h-2.5" />
-                      <span>{cardData.screenPrintImposition?.toUpperCase()} PDF</span>
-                    </button>
+                <div className="flex items-center gap-1 bg-stone-900 text-amber-300 px-2 py-0.5 rounded border border-stone-700 text-[11px] flex-wrap">
+                  <span className="font-bold">🖨️ बटर:</span>
+                  <span className="font-mono bg-stone-800 px-1 rounded text-amber-200 font-bold">
+                    {cardData.screenPrintImposition?.toUpperCase() || '1-UP'}
+                  </span>
+                  {cardData.screenPrintPlate !== 'all' && (
+                    <span className="font-bold text-amber-400">
+                      [{cardData.screenPrintPlate === 'text' ? 'प्लेट 1: टेक्स्ट' : 'प्लेट 2: बॉर्डर्स'}]
+                    </span>
                   )}
-
-                  {/* Mirror Toggle */}
-                  <button
-                    type="button"
-                    onClick={() => setCardData(prev => ({ ...prev, screenPrintMirror: !prev.screenPrintMirror }))}
-                    className={`px-1.5 py-0.5 rounded text-[10px] font-bold transition ${
-                      cardData.screenPrintMirror
-                        ? 'bg-red-600 text-white'
-                        : 'bg-stone-800 hover:bg-stone-700 text-stone-300'
-                    }`}
-                    title="शीशा प्रभाव / उल्टा प्रिंट (डायरेक्ट इमल्शन एक्सपोज़र हेतु)"
-                  >
-                    🪞 {cardData.screenPrintMirror ? 'मिरर ऑन' : 'मिरर'}
-                  </button>
-
-                  {/* Invert / Negative Toggle */}
-                  <button
-                    type="button"
-                    onClick={() => setCardData(prev => ({ ...prev, screenPrintInvert: !prev.screenPrintInvert }))}
-                    className={`px-1.5 py-0.5 rounded text-[10px] font-bold transition ${
-                      cardData.screenPrintInvert
-                        ? 'bg-amber-400 text-stone-950'
-                        : 'bg-stone-800 hover:bg-stone-700 text-stone-300'
-                    }`}
-                    title="नेगेटिव / रिवर्स फिल्म मोड (ब्लॉक मेकिंग)"
-                  >
-                    {cardData.screenPrintInvert ? 'नेगेटिव' : 'पॉजिटिव'}
-                  </button>
+                  {cardData.screenPrintFoilMode && (
+                    <span className="bg-amber-400 text-stone-950 px-1 rounded text-[10px] font-bold">
+                      हॉट फॉइल डाई
+                    </span>
+                  )}
                 </div>
               )}
             </div>
 
-            {/* Guest Quick Switcher in Toolbar */}
-            <div className="flex items-center gap-1.5 bg-white border border-stone-300 px-2.5 py-1 rounded-lg shadow-2xs">
+            {/* Guest Quick Selector in Document Header */}
+            <div className="flex items-center gap-1.5 bg-white border border-stone-300 px-2 py-0.5 rounded shadow-2xs">
               <Users className="w-3.5 h-3.5 text-red-700 flex-shrink-0" />
-              <span className="text-[11px] font-bold text-stone-700 hidden md:inline">अतिथि:</span>
+              <span className="text-[10.5px] font-bold text-stone-600 hidden md:inline">अतिथि:</span>
               <select
                 value={cardData.activeGuestId || ''}
                 onChange={(e) => setCardData({ ...cardData, activeGuestId: e.target.value || null })}
-                className="bg-transparent text-xs font-bold text-stone-900 cursor-pointer focus:outline-none max-w-[130px] sm:max-w-[160px] truncate"
+                className="bg-transparent text-xs font-bold text-stone-900 cursor-pointer focus:outline-none max-w-[120px] sm:max-w-[150px] truncate"
               >
                 <option value="">✏️ साधारण (डॉटेड)</option>
                 {cardData.guestList?.map((g, idx) => (
@@ -942,11 +724,11 @@ export default function App() {
               </select>
 
               {/* Prev / Next buttons */}
-              <div className="flex items-center border-l border-stone-200 pl-1.5 gap-0.5">
+              <div className="flex items-center border-l border-stone-200 pl-1 gap-0.5">
                 <button
                   type="button"
                   onClick={handlePrevGuest}
-                  className="px-1.5 py-0.5 hover:bg-stone-100 rounded text-stone-700 font-bold text-xs"
+                  className="px-1 py-0.5 hover:bg-stone-100 rounded text-stone-700 font-bold text-xs"
                   title="पिछला अतिथि"
                 >
                   ‹
@@ -954,7 +736,7 @@ export default function App() {
                 <button
                   type="button"
                   onClick={handleNextGuest}
-                  className="px-1.5 py-0.5 hover:bg-stone-100 rounded text-stone-700 font-bold text-xs"
+                  className="px-1 py-0.5 hover:bg-stone-100 rounded text-stone-700 font-bold text-xs"
                   title="अगला अतिथि"
                 >
                   ›
@@ -962,58 +744,35 @@ export default function App() {
               </div>
             </div>
 
-
-            {/* Current Size Label */}
-            <div className="hidden sm:flex items-center gap-2">
-              <span className="font-bold text-red-950">
-                {previewMode === 'envelope' ? currentEnvelopeSize.name : currentCardSize.name}
-              </span>
-              <span className="text-stone-400">|</span>
-              <span className="font-mono text-stone-500">
-                {previewMode === 'envelope'
-                  ? `${currentEnvelopeSize.widthMm} × ${currentEnvelopeSize.heightMm} mm`
-                  : `${currentCardSize.widthMm} × ${currentCardSize.heightMm} mm`}
-              </span>
-            </div>
-
-            {/* Zoom Controls */}
-            <div className="flex items-center gap-2 bg-white px-2 py-1 rounded-lg border border-stone-200 shadow-sm">
-              <button
-                type="button"
-                onClick={() => setZoomScale((prev) => Math.max(0.4, prev - 0.1))}
-                className="p-1 hover:bg-stone-100 rounded text-stone-600 transition"
-                title="ज़ूम कम करें"
-              >
-                <ZoomOut className="w-3.5 h-3.5" />
-              </button>
-              <span className="font-mono text-[11px] w-12 text-center">
-                {Math.round(zoomScale * 100)}%
-              </span>
-              <button
-                type="button"
-                onClick={() => setZoomScale((prev) => Math.min(1.4, prev + 0.1))}
-                className="p-1 hover:bg-stone-100 rounded text-stone-600 transition"
-                title="ज़ूम बढ़ाएं"
-              >
-                <ZoomIn className="w-3.5 h-3.5" />
-              </button>
-              <button
-                type="button"
-                onClick={() => setZoomScale(0.95)}
-                className="p-1 hover:bg-stone-100 rounded text-stone-600 transition"
-                title="रीसेट ज़ूम"
-              >
-                <Maximize2 className="w-3.5 h-3.5" />
-              </button>
-            </div>
+            {/* Ruler Toggle Button */}
+            <button
+              type="button"
+              onClick={() => setShowRuler(prev => !prev)}
+              className={`px-2 py-1 rounded text-[11px] font-semibold border transition flex items-center gap-1 ${
+                showRuler ? 'bg-amber-100 text-amber-950 border-amber-300' : 'bg-white text-stone-600 border-stone-300'
+              }`}
+              title="रूलर स्केल ऑन/ऑफ करें"
+            >
+              <span>📐</span>
+              <span className="hidden sm:inline">रूलर {showRuler ? 'चालू' : 'बंद'}</span>
+            </button>
           </div>
 
-          {/* Canvas Viewport Container */}
+          {/* Top Millimeter / Inch Ruler */}
+          <DocumentRuler
+            widthMm={previewMode === 'envelope' ? currentEnvelopeSize.widthMm : currentCardSize.widthMm}
+            heightMm={previewMode === 'envelope' ? currentEnvelopeSize.heightMm : currentCardSize.heightMm}
+            scale={zoomScale}
+            showRuler={showRuler}
+            onToggleRuler={() => setShowRuler(prev => !prev)}
+          />
+
+          {/* Interactive Document Workspace Canvas */}
           <div className="flex-1 overflow-auto p-4 sm:p-8 flex justify-center items-start">
             
             {/* 1. Main Wedding Card View */}
             <div
-              className={`transition-transform duration-200 origin-top ${
+              className={`transition-transform duration-150 origin-top shadow-2xl rounded-sm ${
                 previewMode === 'card' ? 'block' : 'hidden'
               }`}
             >
@@ -1022,7 +781,7 @@ export default function App() {
 
             {/* 2. Matching Envelope View */}
             <div
-              className={`transition-transform duration-200 origin-top ${
+              className={`transition-transform duration-150 origin-top shadow-2xl rounded-sm ${
                 previewMode === 'envelope' ? 'block' : 'hidden'
               }`}
             >
@@ -1032,6 +791,15 @@ export default function App() {
           </div>
         </main>
       </div>
+
+      {/* 4. MS Word / Windows Style Bottom Status Bar */}
+      <OfficeStatusBar
+        cardData={cardData}
+        previewMode={previewMode}
+        setPreviewMode={setPreviewMode}
+        zoomScale={zoomScale}
+        setZoomScale={setZoomScale}
+      />
 
       {/* 🎵 Auspicious Mangal Shehnai Music Player (Floating) */}
       <ShehnaiMusicPlayer
