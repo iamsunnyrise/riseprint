@@ -26,10 +26,10 @@ export default function PrinterCalibrationModal({
   data,
   onChange
 }) {
-  if (!isOpen) return null;
-
   const currentPresetId = data?.selectedPrinterPreset || 'hp-1020';
   const [activePresetId, setActivePresetId] = useState(currentPresetId);
+
+  if (!isOpen) return null;
 
   const activePreset =
     INDIAN_PRINTER_PRESETS.find((p) => p.id === activePresetId) ||

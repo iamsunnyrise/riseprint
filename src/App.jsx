@@ -27,7 +27,8 @@ import {
   SlidersHorizontal,
   Eye,
   PanelLeftClose,
-  PanelLeftOpen
+  PanelLeftOpen,
+  Columns
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
