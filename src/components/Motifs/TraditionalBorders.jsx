@@ -10,7 +10,7 @@ import dividerRibbonHdImg from '../../assets/divider-ribbon-hd.png';
 export function DividerRibbon({ color = '#a61515', isScreenPrint = false, className = 'w-full my-2' }) {
   if (isScreenPrint) {
     return (
-      <div className={`flex items-center justify-center select-none overflow-hidden my-1.5 ${className}`}>
+      <div className={`dtp-plate-motif flex items-center justify-center select-none overflow-hidden my-1.5 ${className}`}>
         {/* Authentic Indian Screen Printing Kangura Ribbon (Pure Vector Black) */}
         <div className="w-full border-y-[1.5px] border-black py-0.5 flex flex-col items-center">
           <div className="w-full flex items-center justify-between px-1 text-[11px] font-bold text-black select-none tracking-widest">
@@ -28,7 +28,7 @@ export function DividerRibbon({ color = '#a61515', isScreenPrint = false, classN
   }
 
   return (
-    <div className={`flex items-center justify-center select-none overflow-hidden ${className}`}>
+    <div className={`dtp-plate-motif flex items-center justify-center select-none overflow-hidden ${className}`}>
       <img
         src={dividerRibbonHdImg}
         alt="पारम्परिक कंगूरा बॉर्डर रिबन"
@@ -57,19 +57,19 @@ export function PillarArchFrame({ color = '#a61515', children }) {
         backgroundColor: '#ffffff60'
       }}
     >
-      {/* Top and Bottom Decorative Toran lines */}
+      {/* Top and Bottom Decorative Toran lines (Motif Plate) */}
       <div
-        className="absolute top-1 left-6 right-6 h-0.5"
+        className="dtp-plate-motif absolute top-1 left-6 right-6 h-0.5"
         style={{ borderTop: `1px dashed ${color}80` }}
       />
       <div
-        className="absolute bottom-1 left-6 right-6 h-0.5"
+        className="dtp-plate-motif absolute bottom-1 left-6 right-6 h-0.5"
         style={{ borderBottom: `1px dashed ${color}80` }}
       />
 
       {/* Left Pillar (पारम्परिक नक्काशीदार खंभा) */}
       <div
-        className="absolute left-0 top-0 bottom-0 w-6 flex flex-col items-center justify-between pointer-events-none select-none"
+        className="dtp-plate-motif absolute left-0 top-0 bottom-0 w-6 flex flex-col items-center justify-between pointer-events-none select-none"
         style={{ borderRight: `2.5px solid ${color}` }}
       >
         {/* Pillar Capital (शीर्षक तोरण) */}
@@ -101,7 +101,7 @@ export function PillarArchFrame({ color = '#a61515', children }) {
 
       {/* Right Pillar */}
       <div
-        className="absolute right-0 top-0 bottom-0 w-6 flex flex-col items-center justify-between pointer-events-none select-none"
+        className="dtp-plate-motif absolute right-0 top-0 bottom-0 w-6 flex flex-col items-center justify-between pointer-events-none select-none"
         style={{ borderLeft: `2.5px solid ${color}` }}
       >
         {/* Pillar Capital */}
@@ -130,7 +130,10 @@ export function PillarArchFrame({ color = '#a61515', children }) {
         </div>
       </div>
 
-      {children}
+      {/* Inner Children (Text Plate) */}
+      <div className="dtp-plate-text">
+        {children}
+      </div>
     </div>
   );
 }
@@ -146,83 +149,84 @@ export function OuterCardBorder({ color = '#a61515', goldColor = '#cda339', chil
         boxShadow: 'inset 0 0 25px rgba(180, 140, 60, 0.12)'
       }}
     >
-      {/* 1. Outermost Traditional Scalloped Lace / Die-cut border */}
-      <div
-        className="absolute inset-1.5 sm:inset-2.5 pointer-events-none border-2 rounded-sm"
-        style={{ borderColor: color }}
-      />
+      {/* Traditional Frame & Corner Ornaments Container (Motif Plate) */}
+      <div className="dtp-plate-motif pointer-events-none">
+        {/* 1. Outermost Traditional Scalloped Lace / Die-cut border */}
+        <div
+          className="absolute inset-1.5 sm:inset-2.5 pointer-events-none border-2 rounded-sm"
+          style={{ borderColor: color }}
+        />
 
-      {/* 2. Middle Thin Border */}
-      <div
-        className="absolute inset-2 sm:inset-3.5 pointer-events-none border"
-        style={{ borderColor: color, opacity: 0.5 }}
-      />
+        {/* 2. Middle Thin Border */}
+        <div
+          className="absolute inset-2 sm:inset-3.5 pointer-events-none border"
+          style={{ borderColor: color, opacity: 0.5 }}
+        />
 
-      {/* 3. Inner Solid Bold Frame */}
-      <div
-        className="absolute inset-3 sm:inset-4.5 pointer-events-none border-2"
-        style={{ borderColor: color }}
-      />
+        {/* 3. Inner Solid Bold Frame */}
+        <div
+          className="absolute inset-3 sm:inset-4.5 pointer-events-none border-2"
+          style={{ borderColor: color }}
+        />
 
-      {/* 4. Fine Beaded Inset Line */}
-      <div
-        className="absolute inset-3.5 sm:inset-5 pointer-events-none border"
-        style={{ borderColor: `${color}50`, borderStyle: 'dotted' }}
-      />
+        {/* 4. Fine Beaded Inset Line */}
+        <div
+          className="absolute inset-3.5 sm:inset-5 pointer-events-none border"
+          style={{ borderColor: `${color}50`, borderStyle: 'dotted' }}
+        />
 
-      {/* 4 Majestic Indian Wedding Vintage Corner Ornaments */}
-      {/* Top-Left Corner */}
-      <div className="absolute top-2.5 left-2.5 sm:top-4 sm:left-4 w-10 h-10 pointer-events-none">
-        <svg viewBox="0 0 50 50" className="w-full h-full" fill="none" stroke={color}>
-          {/* Solid Corner Bracket */}
-          <path d="M 0 0 L 32 0 C 18 0 0 18 0 32 Z" fill={color} />
-          <circle cx="10" cy="10" r="3.5" fill="#fff" />
-          <circle cx="10" cy="10" r="1.5" fill={color} />
-          {/* Flourish curls */}
-          <path d="M 4 45 Q 4 4 45 4" stroke={color} strokeWidth="2" fill="none" />
-          <path d="M 12 40 Q 12 12 40 12" stroke={color} strokeWidth="1" fill="none" />
-          <circle cx="25" cy="6" r="2" fill={color} />
-          <circle cx="6" cy="25" r="2" fill={color} />
-        </svg>
-      </div>
+        {/* 4 Majestic Indian Wedding Vintage Corner Ornaments */}
+        {/* Top-Left Corner */}
+        <div className="absolute top-2.5 left-2.5 sm:top-4 sm:left-4 w-10 h-10 pointer-events-none">
+          <svg viewBox="0 0 50 50" className="w-full h-full" fill="none" stroke={color}>
+            <path d="M 0 0 L 32 0 C 18 0 0 18 0 32 Z" fill={color} />
+            <circle cx="10" cy="10" r="3.5" fill="#fff" />
+            <circle cx="10" cy="10" r="1.5" fill={color} />
+            <path d="M 4 45 Q 4 4 45 4" stroke={color} strokeWidth="2" fill="none" />
+            <path d="M 12 40 Q 12 12 40 12" stroke={color} strokeWidth="1" fill="none" />
+            <circle cx="25" cy="6" r="2" fill={color} />
+            <circle cx="6" cy="25" r="2" fill={color} />
+          </svg>
+        </div>
 
-      {/* Top-Right Corner */}
-      <div className="absolute top-2.5 right-2.5 sm:top-4 sm:right-4 w-10 h-10 pointer-events-none rotate-90">
-        <svg viewBox="0 0 50 50" className="w-full h-full" fill="none" stroke={color}>
-          <path d="M 0 0 L 32 0 C 18 0 0 18 0 32 Z" fill={color} />
-          <circle cx="10" cy="10" r="3.5" fill="#fff" />
-          <circle cx="10" cy="10" r="1.5" fill={color} />
-          <path d="M 4 45 Q 4 4 45 4" stroke={color} strokeWidth="2" fill="none" />
-          <path d="M 12 40 Q 12 12 40 12" stroke={color} strokeWidth="1" fill="none" />
-          <circle cx="25" cy="6" r="2" fill={color} />
-          <circle cx="6" cy="25" r="2" fill={color} />
-        </svg>
-      </div>
+        {/* Top-Right Corner */}
+        <div className="absolute top-2.5 right-2.5 sm:top-4 sm:right-4 w-10 h-10 pointer-events-none rotate-90">
+          <svg viewBox="0 0 50 50" className="w-full h-full" fill="none" stroke={color}>
+            <path d="M 0 0 L 32 0 C 18 0 0 18 0 32 Z" fill={color} />
+            <circle cx="10" cy="10" r="3.5" fill="#fff" />
+            <circle cx="10" cy="10" r="1.5" fill={color} />
+            <path d="M 4 45 Q 4 4 45 4" stroke={color} strokeWidth="2" fill="none" />
+            <path d="M 12 40 Q 12 12 40 12" stroke={color} strokeWidth="1" fill="none" />
+            <circle cx="25" cy="6" r="2" fill={color} />
+            <circle cx="6" cy="25" r="2" fill={color} />
+          </svg>
+        </div>
 
-      {/* Bottom-Left Corner */}
-      <div className="absolute bottom-2.5 left-2.5 sm:bottom-4 sm:left-4 w-10 h-10 pointer-events-none -rotate-90">
-        <svg viewBox="0 0 50 50" className="w-full h-full" fill="none" stroke={color}>
-          <path d="M 0 0 L 32 0 C 18 0 0 18 0 32 Z" fill={color} />
-          <circle cx="10" cy="10" r="3.5" fill="#fff" />
-          <circle cx="10" cy="10" r="1.5" fill={color} />
-          <path d="M 4 45 Q 4 4 45 4" stroke={color} strokeWidth="2" fill="none" />
-          <path d="M 12 40 Q 12 12 40 12" stroke={color} strokeWidth="1" fill="none" />
-          <circle cx="25" cy="6" r="2" fill={color} />
-          <circle cx="6" cy="25" r="2" fill={color} />
-        </svg>
-      </div>
+        {/* Bottom-Left Corner */}
+        <div className="absolute bottom-2.5 left-2.5 sm:bottom-4 sm:left-4 w-10 h-10 pointer-events-none -rotate-90">
+          <svg viewBox="0 0 50 50" className="w-full h-full" fill="none" stroke={color}>
+            <path d="M 0 0 L 32 0 C 18 0 0 18 0 32 Z" fill={color} />
+            <circle cx="10" cy="10" r="3.5" fill="#fff" />
+            <circle cx="10" cy="10" r="1.5" fill={color} />
+            <path d="M 4 45 Q 4 4 45 4" stroke={color} strokeWidth="2" fill="none" />
+            <path d="M 12 40 Q 12 12 40 12" stroke={color} strokeWidth="1" fill="none" />
+            <circle cx="25" cy="6" r="2" fill={color} />
+            <circle cx="6" cy="25" r="2" fill={color} />
+          </svg>
+        </div>
 
-      {/* Bottom-Right Corner */}
-      <div className="absolute bottom-2.5 right-2.5 sm:bottom-4 sm:right-4 w-10 h-10 pointer-events-none rotate-180">
-        <svg viewBox="0 0 50 50" className="w-full h-full" fill="none" stroke={color}>
-          <path d="M 0 0 L 32 0 C 18 0 0 18 0 32 Z" fill={color} />
-          <circle cx="10" cy="10" r="3.5" fill="#fff" />
-          <circle cx="10" cy="10" r="1.5" fill={color} />
-          <path d="M 4 45 Q 4 4 45 4" stroke={color} strokeWidth="2" fill="none" />
-          <path d="M 12 40 Q 12 12 40 12" stroke={color} strokeWidth="1" fill="none" />
-          <circle cx="25" cy="6" r="2" fill={color} />
-          <circle cx="6" cy="25" r="2" fill={color} />
-        </svg>
+        {/* Bottom-Right Corner */}
+        <div className="absolute bottom-2.5 right-2.5 sm:bottom-4 sm:right-4 w-10 h-10 pointer-events-none rotate-180">
+          <svg viewBox="0 0 50 50" className="w-full h-full" fill="none" stroke={color}>
+            <path d="M 0 0 L 32 0 C 18 0 0 18 0 32 Z" fill={color} />
+            <circle cx="10" cy="10" r="3.5" fill="#fff" />
+            <circle cx="10" cy="10" r="1.5" fill={color} />
+            <path d="M 4 45 Q 4 4 45 4" stroke={color} strokeWidth="2" fill="none" />
+            <path d="M 12 40 Q 12 12 40 12" stroke={color} strokeWidth="1" fill="none" />
+            <circle cx="25" cy="6" r="2" fill={color} />
+            <circle cx="6" cy="25" r="2" fill={color} />
+          </svg>
+        </div>
       </div>
 
       {/* Inner Content */}

@@ -17,9 +17,9 @@ export default function EventScheduleBox({ data }) {
     <div className="w-full my-2 relative">
       {/* Container with Banana Trees flanking left and right */}
       <div className="flex items-center justify-between gap-1 sm:gap-2">
-        {/* Left Banana Tree (कदली स्तम्भ) */}
+        {/* Left Banana Tree (कदली स्तम्भ) (Motif Plate) */}
         {showBananaTrees && (
-          <div className="flex-shrink-0 flex items-center justify-center pl-0.5">
+          <div className="dtp-plate-motif flex-shrink-0 flex items-center justify-center pl-0.5">
             <BananaTree
               color={inkColor}
               style={{ width: '82px', height: '165px' }}
@@ -119,7 +119,7 @@ export default function EventScheduleBox({ data }) {
                 )}
               </div>
               {data.showVenueQr && (
-                <div className="flex-shrink-0">
+                <div className="dtp-plate-motif flex-shrink-0">
                   <VenueQrCode
                     url={data.venueMapsUrl}
                     size={48}
@@ -136,9 +136,9 @@ export default function EventScheduleBox({ data }) {
           )}
         </div>
 
-        {/* Right Banana Tree (कदली स्तम्भ) - Mirrored */}
+        {/* Right Banana Tree (कदली स्तम्भ) - Mirrored (Motif Plate) */}
         {showBananaTrees && (
-          <div className="flex-shrink-0 flex items-center justify-center pr-0.5">
+          <div className="dtp-plate-motif flex-shrink-0 flex items-center justify-center pr-0.5">
             <BananaTree
               color={inkColor}
               style={{ width: '82px', height: '165px' }}

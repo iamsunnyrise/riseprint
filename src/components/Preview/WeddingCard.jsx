@@ -58,6 +58,10 @@ const WeddingCard = forwardRef(({ data, scale = 1 }, ref) => {
             : ''
         } ${
           isScreenPrint && data.screenPrintTonerBoost ? 'screen-print-toner-boost' : ''
+        } ${
+          isScreenPrint && data.screenPrintPlate === 'text' ? 'screen-plate-text-only' : ''
+        } ${
+          isScreenPrint && data.screenPrintPlate === 'motifs' ? 'screen-plate-motifs-only' : ''
         }`}
         style={{
           width: `${baseWidth}px`,

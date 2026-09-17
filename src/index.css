@@ -117,3 +117,33 @@ img.screen-print-motif-lineart {
   background-color: #000000 !important;
 }
 
+/* 🎨 2-Color Screen Printing Plate Separation (Red Ink Text vs Gold Ink Motifs) */
+.screen-plate-text-only .dtp-plate-motif {
+  visibility: hidden !important;
+}
+
+.screen-plate-motifs-only .dtp-plate-text {
+  visibility: hidden !important;
+}
+
+/* ✂️ Pre-Press 2-Up & 4-Up Imposition Guides */
+.imposition-cut-line-v {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  border-left: 1.5px dashed #444444;
+  pointer-events: none;
+  z-index: 20;
+}
+
+.imposition-cut-line-h {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  border-top: 1.5px dashed #444444;
+  pointer-events: none;
+  z-index: 20;
+}
+

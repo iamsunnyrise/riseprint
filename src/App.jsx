@@ -19,7 +19,9 @@ import {
   Files,
   MapPin,
   Image as ImageIcon,
-  Music
+  Music,
+  Scissors,
+  FileDown
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -55,8 +57,11 @@ import {
   downloadBulkPersonalizedEnvelopesPDF,
   downloadScreenPrintPDF,
   downloadScreenPrintPNG,
+  downloadImpositionPDF,
+  downloadTwoPlateSeparationPDF,
   triggerBrowserPrint
 } from './utils/pdfExport';
+import { downloadCorelDrawSVG } from './utils/svgExport';
 
 
 export default function App() {
@@ -241,6 +246,84 @@ export default function App() {
 
   const handlePrint = () => {
     triggerBrowserPrint(previewMode, cardData.sizeKey, cardData.envelopeSizeKey);
+  };
+
+  // ⚡ CorelDRAW Ready SVG (Convert to Curves / Text to Path) Export
+  const handleExportCorelDrawSVG = async () => {
+    try {
+      setIsExporting(true);
+      setExportMessage('CorelDRAW रेडी SVG (Convert to Curves) तैयार हो रहा है...');
+      const targetEl = previewMode === 'envelope'
+        ? (envelopeRef.current || document.getElementById('wedding-envelope-element'))
+        : (cardRef.current || document.getElementById('wedding-card-element'));
+      const clientName = cardData.groomName || 'Wedding_Card';
+      await downloadCorelDrawSVG(targetEl, `${clientName}_CorelDRAW_Curves`, {
+        type: previewMode,
+        sizeKey: cardData.sizeKey,
+        envelopeSizeKey: cardData.envelopeSizeKey,
+        title: clientName
+      });
+      confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 } });
+      setExportMessage('CorelDRAW SVG (100% Curves) सफलतापूर्वक डाउनलोड हो गया!');
+      setTimeout(() => setExportMessage(''), 4000);
+    } catch (err) {
+      console.error(err);
+      setExportMessage('CorelDRAW SVG एक्सपोर्ट में त्रुटि हुई');
+      setTimeout(() => setExportMessage(''), 5000);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  // ✂️ 2-Up / 4-Up Imposition Butter Paper PDF Export
+  const handleExportImpositionPDF = async () => {
+    try {
+      setIsExporting(true);
+      const imp = cardData.screenPrintImposition || '2-up';
+      const sheet = cardData.screenPrintSheetSize || 'a4';
+      setExportMessage(`${imp.toUpperCase()} बटर पेपर (${sheet.toUpperCase()}) PDF तैयार हो रहा है...`);
+      const targetEl = previewMode === 'envelope'
+        ? (envelopeRef.current || document.getElementById('wedding-envelope-element'))
+        : (cardRef.current || document.getElementById('wedding-card-element'));
+      await downloadImpositionPDF(targetEl, {
+        type: previewMode,
+        imposition: imp,
+        sheetSize: sheet,
+        isInvert: cardData.screenPrintInvert || cardData.screenPrintFoilMode
+      });
+      confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 } });
+      setExportMessage(`${imp.toUpperCase()} बटर पेपर शीट PDF सफलतापूर्वक डाउनलोड हो गई!`);
+      setTimeout(() => setExportMessage(''), 4000);
+    } catch (err) {
+      console.error(err);
+      setExportMessage('इम्पोज़िशन PDF एक्सपोर्ट में त्रुटि हुई');
+      setTimeout(() => setExportMessage(''), 5000);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  // 🎨 2-Color Screen Printing Plates (2-Page Combined PDF)
+  const handleExportTwoPlatePDF = async () => {
+    try {
+      setIsExporting(true);
+      setExportMessage('2-रंग स्क्रीन प्लेट्स (Plate 1 Text + Plate 2 Motifs) PDF तैयार हो रही है...');
+      const targetEl = previewMode === 'envelope'
+        ? (envelopeRef.current || document.getElementById('wedding-envelope-element'))
+        : (cardRef.current || document.getElementById('wedding-card-element'));
+      await downloadTwoPlateSeparationPDF(targetEl, cardData, {
+        type: previewMode
+      });
+      confetti({ particleCount: 80, spread: 80, origin: { y: 0.6 } });
+      setExportMessage('2-रंग स्क्रीन प्लेट्स PDF (दोनों प्लेट्स एक साथ) डाउनलोड हो गई!');
+      setTimeout(() => setExportMessage(''), 4000);
+    } catch (err) {
+      console.error(err);
+      setExportMessage('स्क्रीन प्लेट्स PDF एक्सपोर्ट में त्रुटि हुई');
+      setTimeout(() => setExportMessage(''), 5000);
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   // Bulk Multi-Page PDF Export for all guests (Feature 3)
@@ -554,6 +637,19 @@ export default function App() {
                 : 'कार्ड PDF (300 DPI)'}
             </span>
           </button>
+
+          {/* ⚡ CorelDRAW Ready SVG (Convert to Curves / Text to Path) */}
+          <button
+            type="button"
+            onClick={handleExportCorelDrawSVG}
+            disabled={isExporting}
+            className="flex items-center gap-1.5 text-xs bg-stone-900 hover:bg-stone-800 text-amber-300 font-bold px-3 py-1.5 rounded-lg shadow-md transition border border-amber-400 cursor-pointer"
+            title="CorelDRAW रेडी SVG (Convert to Curves / No Missing Fonts) डाउनलोड करें"
+          >
+            <FileDown className="w-3.5 h-3.5 text-amber-400" />
+            <span className="hidden sm:inline">CorelDRAW SVG</span>
+            <span className="sm:hidden">Corel SVG</span>
+          </button>
         </div>
       </header>
 
@@ -699,31 +795,128 @@ export default function App() {
                 </button>
               </div>
 
-              {/* Screen Print Quick Toolbar Controls */}
+              {/* Screen Print & Pre-Press Master Quick Toolbar Controls */}
               {cardData.screenPrintMode && (
-                <div className="flex items-center gap-1.5 bg-stone-900 text-amber-300 px-2.5 py-1 rounded-lg border border-stone-700 shadow-xs">
-                  <span className="text-[11px] font-bold">🖨️ बटर पेपर:</span>
+                <div className="flex items-center gap-1.5 bg-stone-900 text-amber-300 px-2.5 py-1 rounded-lg border border-stone-700 shadow-xs flex-wrap">
+                  <span className="text-[11px] font-bold">🖨️ बटर:</span>
+
+                  {/* 2-Up / 4-Up Imposition Quick Toggle */}
+                  <div className="flex items-center bg-stone-800 rounded p-0.5 text-[10.5px]">
+                    <button
+                      type="button"
+                      onClick={() => setCardData(prev => ({ ...prev, screenPrintImposition: '1-up' }))}
+                      className={`px-1.5 py-0.5 rounded font-bold transition ${
+                        (cardData.screenPrintImposition || '1-up') === '1-up' ? 'bg-amber-400 text-stone-950' : 'text-stone-300'
+                      }`}
+                      title="1-Up (सिंगल कार्ड)"
+                    >
+                      1-Up
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setCardData(prev => ({ ...prev, screenPrintImposition: '2-up' }))}
+                      className={`px-1.5 py-0.5 rounded font-bold transition ${
+                        cardData.screenPrintImposition === '2-up' ? 'bg-amber-400 text-stone-950' : 'text-stone-300'
+                      }`}
+                      title="2-Up (डबल कार्ड - 50% बचत ✂️)"
+                    >
+                      2-Up ✂️
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setCardData(prev => ({ ...prev, screenPrintImposition: '4-up' }))}
+                      className={`px-1.5 py-0.5 rounded font-bold transition ${
+                        cardData.screenPrintImposition === '4-up' ? 'bg-amber-400 text-stone-950' : 'text-stone-300'
+                      }`}
+                      title="4-Up (क्वाड कार्ड ✂️)"
+                    >
+                      4-Up
+                    </button>
+                  </div>
+
+                  {/* 2-Color Screen Plate Separation Quick Selector */}
+                  <div className="flex items-center bg-stone-800 rounded p-0.5 text-[10.5px]">
+                    <button
+                      type="button"
+                      onClick={() => setCardData(prev => ({ ...prev, screenPrintPlate: 'all' }))}
+                      className={`px-1.5 py-0.5 rounded font-bold transition ${
+                        (cardData.screenPrintPlate || 'all') === 'all' ? 'bg-white text-stone-950' : 'text-stone-300'
+                      }`}
+                      title="सभी तत्व (फुल कंपोजिट मास्टर)"
+                    >
+                      फुल
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setCardData(prev => ({ ...prev, screenPrintPlate: 'text' }))}
+                      className={`px-1.5 py-0.5 rounded font-bold transition ${
+                        cardData.screenPrintPlate === 'text' ? 'bg-red-600 text-white' : 'text-red-300'
+                      }`}
+                      title="प्लेट 1: केवल टेक्स्ट मास्टर (Red Ink Screen)"
+                    >
+                      🔴 प्लेट 1
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setCardData(prev => ({ ...prev, screenPrintPlate: 'motifs' }))}
+                      className={`px-1.5 py-0.5 rounded font-bold transition ${
+                        cardData.screenPrintPlate === 'motifs' ? 'bg-amber-500 text-stone-950' : 'text-amber-300'
+                      }`}
+                      title="प्लेट 2: केवल मोटिफ व बॉर्डर (Gold Ink Screen)"
+                    >
+                      🟡 प्लेट 2
+                    </button>
+                  </div>
+
+                  {/* Direct 2-Color Plates PDF Export */}
+                  <button
+                    type="button"
+                    onClick={handleExportTwoPlatePDF}
+                    disabled={isExporting}
+                    className="px-2 py-0.5 rounded text-[10px] font-bold bg-stone-800 hover:bg-stone-700 text-amber-200 border border-amber-500/40 transition"
+                    title="दोनों प्लेट्स (Plate 1 Text + Plate 2 Motifs) एक साथ 2-पेज PDF डाउनलोड करें"
+                  >
+                    🎨 2-रंग PDF
+                  </button>
+
+                  {/* Direct Imposition PDF Export */}
+                  {cardData.screenPrintImposition !== '1-up' && (
+                    <button
+                      type="button"
+                      onClick={handleExportImpositionPDF}
+                      disabled={isExporting}
+                      className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-800 hover:bg-emerald-700 text-white border border-emerald-500 transition flex items-center gap-1"
+                      title="इम्पोज़िशन बटर पेपर शीट PDF डाउनलोड करें"
+                    >
+                      <Scissors className="w-2.5 h-2.5" />
+                      <span>{cardData.screenPrintImposition?.toUpperCase()} PDF</span>
+                    </button>
+                  )}
+
+                  {/* Mirror Toggle */}
                   <button
                     type="button"
                     onClick={() => setCardData(prev => ({ ...prev, screenPrintMirror: !prev.screenPrintMirror }))}
-                    className={`px-2 py-0.5 rounded text-[10.5px] font-bold transition ${
+                    className={`px-1.5 py-0.5 rounded text-[10px] font-bold transition ${
                       cardData.screenPrintMirror
                         ? 'bg-red-600 text-white'
-                        : 'bg-stone-800 hover:bg-stone-700 text-stone-200 border border-stone-600'
+                        : 'bg-stone-800 hover:bg-stone-700 text-stone-300'
                     }`}
                     title="शीशा प्रभाव / उल्टा प्रिंट (डायरेक्ट इमल्शन एक्सपोज़र हेतु)"
                   >
-                    🪞 शीशा प्रभाव: {cardData.screenPrintMirror ? 'चालू' : 'बंद'}
+                    🪞 {cardData.screenPrintMirror ? 'मिरर ऑन' : 'मिरर'}
                   </button>
+
+                  {/* Invert / Negative Toggle */}
                   <button
                     type="button"
                     onClick={() => setCardData(prev => ({ ...prev, screenPrintInvert: !prev.screenPrintInvert }))}
-                    className={`px-1.5 py-0.5 rounded text-[10.5px] font-bold transition ${
+                    className={`px-1.5 py-0.5 rounded text-[10px] font-bold transition ${
                       cardData.screenPrintInvert
                         ? 'bg-amber-400 text-stone-950'
-                        : 'bg-stone-800 hover:bg-stone-700 text-stone-200'
+                        : 'bg-stone-800 hover:bg-stone-700 text-stone-300'
                     }`}
-                    title="नेगेटिव / रिवर्स फिल्म मोड"
+                    title="नेगेटिव / रिवर्स फिल्म मोड (ब्लॉक मेकिंग)"
                   >
                     {cardData.screenPrintInvert ? 'नेगेटिव' : 'पॉजिटिव'}
                   </button>

@@ -24,11 +24,16 @@ const ScreenPrintMasterWrapper = forwardRef(({
     return <div ref={ref} className={`relative ${className}`}>{children}</div>;
   }
 
+  const isFoilMode = Boolean(data.screenPrintFoilMode);
   const isMirror = Boolean(data.screenPrintMirror);
-  const isInvert = Boolean(data.screenPrintInvert);
+  const isInvert = Boolean(data.screenPrintInvert || isFoilMode);
+  const plate = data.screenPrintPlate || 'all'; // 'all', 'text', 'motifs'
+  const imposition = data.screenPrintImposition || '1-up'; // '1-up', '2-up', '4-up'
+  const sheetSize = data.screenPrintSheetSize || 'a4'; // 'natural', 'a4', '12x18'
+  const showCutMarks = data.screenPrintShowCutMarks !== false;
   const showCropMarks = data.screenPrintCropMarks !== false;
   const showMasterInfo = data.screenPrintMasterInfo !== false;
-  const showPaperEffect = data.screenPrintPaperEffect !== false;
+  const showPaperEffect = data.screenPrintPaperEffect !== false && !isFoilMode && !isInvert;
 
   const currentSize =
     type === 'envelope'
@@ -78,21 +83,51 @@ const ScreenPrintMasterWrapper = forwardRef(({
             color: isInvert ? '#cccccc' : '#111111'
           }}
         >
-          <div className="flex items-center gap-1.5 font-bold">
+          <div className="flex items-center gap-1.5 font-bold flex-wrap">
             <span className="inline-block px-1 rounded bg-black text-white text-[9px] font-sans">
               MASTER
             </span>
-            <span>{isMirror ? '🪞 बटर पेपर (मिरर एक्सपोज़र)' : '🖨️ बटर पेपर (पॉजिटिव मास्टर)'}</span>
+
+            {/* Mode / Plate Status Badge */}
+            {isFoilMode ? (
+              <span className="bg-amber-400 text-stone-950 px-2 py-0.5 rounded text-[10px] font-black">
+                ⬛ हॉट फॉयल ब्लॉक डाई मास्टर (Negative Reverse)
+              </span>
+            ) : plate === 'text' ? (
+              <span className="bg-red-700 text-white px-2 py-0.5 rounded text-[10px] font-bold">
+                🔴 प्लेट 1: केवल टेक्स्ट मास्टर (Red Ink Screen)
+              </span>
+            ) : plate === 'motifs' ? (
+              <span className="bg-amber-600 text-white px-2 py-0.5 rounded text-[10px] font-bold">
+                🟡 प्लेट 2: केवल मोटिफ व बॉर्डर (Gold Ink Screen)
+              </span>
+            ) : (
+              <span>{isMirror ? '🪞 बटर पेपर (मिरर एक्सपोज़र)' : '🖨️ बटर पेपर (पॉजिटिव मास्टर)'}</span>
+            )}
+
             <span className="opacity-60">|</span>
             <span>जॉब: {jobName}</span>
+
+            {/* Imposition Badge */}
+            {imposition !== '1-up' && (
+              <span className="bg-emerald-800 text-emerald-100 px-1.5 py-0.5 rounded text-[9.5px] font-bold">
+                ✂️ {imposition === '2-up' ? '2-Up लेआउट (50% बचत)' : '4-Up लेआउट (75% बचत)'} ({sheetSize.toUpperCase()})
+              </span>
+            )}
           </div>
 
-          <div className="flex items-center gap-2">
-            <span>साइज़: {currentSize.name.split('(')[0].trim()} ({currentSize.widthMm}×{currentSize.heightMm}mm)</span>
+          <div className="flex items-center gap-2 flex-wrap">
+            <span>कार्ड: {currentSize.name.split('(')[0].trim()} ({currentSize.widthMm}×{currentSize.heightMm}mm)</span>
             <span className="opacity-60">|</span>
+            {imposition !== '1-up' && (
+              <>
+                <span>शीट: {sheetSize === '12x18' ? '12×18 इंच' : 'A4 (210×297mm)'}</span>
+                <span className="opacity-60">|</span>
+              </>
+            )}
             <span className="font-bold text-red-600">स्केल: 100% (Do Not Scale)</span>
             <span className="opacity-60">|</span>
-            <span>600 DPI</span>
+            <span>600/1200 DPI</span>
             <span className="opacity-60">|</span>
             <span>{today}</span>
           </div>
@@ -222,21 +257,89 @@ const ScreenPrintMasterWrapper = forwardRef(({
           </>
         )}
 
-        {/* 3. Inner Flippable / Invertible Card Content */}
+        {/* 3. Inner Content Layout (1-Up, 2-Up, or 4-Up Imposition) */}
         <div
           className="screen-print-inner-flip transition-transform duration-200"
           style={{
             transform: isMirror ? 'scaleX(-1)' : 'none'
           }}
         >
-          {children}
+          {imposition === '1-up' ? (
+            /* Standard 1-Up Single Card Master */
+            <div>{children}</div>
+          ) : imposition === '2-up' ? (
+            /* 2-Up Dual Card Imposition Layout (Side-by-Side with ✂️ Center Cut Line) */
+            <div className="imposition-2up-layout flex flex-col md:flex-row items-center justify-center gap-4 relative">
+              {/* Card Copy 1 */}
+              <div className="relative">
+                {children}
+              </div>
+
+              {/* Center Cutting Mark Divider */}
+              {showCutMarks && (
+                <div className="flex md:flex-col items-center justify-between self-stretch py-2 px-2 select-none pointer-events-none">
+                  <div className="w-6 h-6 rounded-full bg-white border border-stone-400 flex items-center justify-center text-xs shadow-xs z-20">
+                    ✂️
+                  </div>
+                  <div className="flex-1 border-t-2 md:border-t-0 md:border-l-2 border-dashed border-stone-500 my-1 min-h-[50px] min-w-[30px]" />
+                  <div className="text-[9.5px] font-mono tracking-widest uppercase md:rotate-90 my-2 bg-white px-1.5 py-0.5 border border-stone-300 rounded font-bold shadow-xs text-stone-800 z-20">
+                    ✂️ CUT LINE ✂️
+                  </div>
+                  <div className="flex-1 border-t-2 md:border-t-0 md:border-l-2 border-dashed border-stone-500 my-1 min-h-[50px] min-w-[30px]" />
+                  <div className="w-6 h-6 rounded-full bg-white border border-stone-400 flex items-center justify-center text-xs shadow-xs z-20">
+                    ✂️
+                  </div>
+                </div>
+              )}
+
+              {/* Card Copy 2 (Clone) */}
+              <div className="relative">
+                {React.cloneElement(children, { key: 'imposition-clone-1' })}
+              </div>
+            </div>
+          ) : (
+            /* 4-Up Quad Card Imposition Layout (2x2 Grid with Cross Cut Lines) */
+            <div className="imposition-4up-layout relative grid grid-cols-1 md:grid-cols-2 gap-5 p-1 justify-items-center">
+              {/* Card 1 (Top-Left) */}
+              <div className="relative">{children}</div>
+
+              {/* Card 2 (Top-Right) */}
+              <div className="relative">{React.cloneElement(children, { key: 'imposition-clone-1' })}</div>
+
+              {/* Card 3 (Bottom-Left) */}
+              <div className="relative">{React.cloneElement(children, { key: 'imposition-clone-2' })}</div>
+
+              {/* Card 4 (Bottom-Right) */}
+              <div className="relative">{React.cloneElement(children, { key: 'imposition-clone-3' })}</div>
+
+              {/* Horizontal & Vertical Cross Cut Guides */}
+              {showCutMarks && (
+                <>
+                  <div className="imposition-cut-line-v left-1/2 hidden md:block" />
+                  <div className="imposition-cut-line-h top-1/2 hidden md:block" />
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-white border-2 border-stone-400 hidden md:flex items-center justify-center text-xs font-bold shadow-sm z-30 pointer-events-none">
+                    ✂️
+                  </div>
+                </>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
-      {/* 4. Mirror Warning Ribbon (Only when mirror is ON) */}
+      {/* 4. Warning Ribbons */}
       {isMirror && (
         <div className="mt-2 text-center text-[10px] font-sans font-bold text-amber-900 bg-amber-100/90 py-1 px-2 rounded border border-amber-300">
           ⚠️ ध्यान दें: यह शीशा प्रभाव (Mirror Image) है। प्रिंटर से निकलने के बाद टोनर सीधे स्क्रीन जाली (इमल्शन) पर रखा जाएगा।
+        </div>
+      )}
+
+      {isFoilMode && (
+        <div className="mt-2 text-center text-[10.5px] font-sans font-bold text-white bg-red-950 py-1.5 px-3 rounded border border-amber-400 flex items-center justify-center gap-2">
+          <span>⬛ हॉट डाई ब्लॉक मेकर गाइड:</span>
+          <span className="font-normal text-amber-200">
+            100% सॉलिड ब्लैक बैकग्राउंड • केवल व्हाइट आर्टवर्क नाइट्रिक एसिड में इच (Etch) होगा।
+          </span>
         </div>
       )}
     </div>

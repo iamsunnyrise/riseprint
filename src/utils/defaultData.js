@@ -426,6 +426,12 @@ export const DEFAULT_CARD_DATA = {
   screenPrintTonerBoost: true,     // डार्क टोनर बूस्ट (पिनहोल रोकने हेतु एक्स्ट्रा डार्क ब्लैक)
   screenPrintPaperEffect: true,    // एडिटर प्रीव्यू में पारभासी बटर पेपर टेक्सचर दिखाना
   screenPrintGaneshaStyle: 'lineart', // 'lineart' (क्लासिक रेखाचित्र) | 'silhouette' (सॉलिड गोल्ड बैज सिलुएट)
+  // ✂️ Pre-Press 2-Up/4-Up Imposition & 2-Color Screen Plate Separation Suite
+  screenPrintImposition: '1-up',   // '1-up' (सिंगल) | '2-up' (डबल - 50% बटर पेपर बचत) | '4-up' (क्वाड)
+  screenPrintSheetSize: 'a4',      // 'natural' (कार्ड साइज़) | 'a4' (210x297mm) | '12x18' (305x457mm)
+  screenPrintPlate: 'all',         // 'all' (फुल कंपोजिट) | 'text' (प्लेट 1: केवल टेक्स्ट) | 'motifs' (प्लेट 2: केवल बॉर्डर व मोटिफ)
+  screenPrintFoilMode: false,      // हॉट फॉयल डाई व जिंक ब्लॉक मेकिंग मास्टर (रिवर्स नेगेटिव)
+  screenPrintShowCutMarks: true,   // सेंटर कटिंग गाइड (✂️ व डैश लाइन)
 
   // 📤 Custom Images & Photos (कस्टम फोटो सेटिंग्स - फीचर 7)
   // 1. Deity / Kuldevi Photo (इष्टदेवता / कुलदेवी)

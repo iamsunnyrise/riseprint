@@ -39,8 +39,8 @@ export default function InvitationBody({ data }) {
 
   return (
     <div className="w-full flex flex-col justify-between flex-1 py-1">
-      {/* 1. Top Formal Salutation & Center Sacred Shloka */}
-      <div className="grid grid-cols-12 items-center gap-2 px-3">
+      {/* 1. Top Formal Salutation & Center Sacred Shloka (Text Plate) */}
+      <div className="dtp-plate-text grid grid-cols-12 items-center gap-2 px-3">
         {/* Left Formal Salutation (Personalized if guest selected) */}
         {(() => {
           const activeGuest = data.activeGuestId && data.guestList
@@ -165,8 +165,8 @@ export default function InvitationBody({ data }) {
 
         return (
           <div className="flex items-center justify-between gap-1 my-2 px-2 sm:px-3">
-            {/* Left Party (32% width - First Party: वधू if वधू पक्ष, वर if वर पक्ष) */}
-            <div className="w-[32%] text-left leading-tight" style={{ color: inkColor }}>
+            {/* Left Party (32% width - First Party: वधू if वधू पक्ष, वर if वर पक्ष) (Text Plate) */}
+            <div className="dtp-plate-text w-[32%] text-left leading-tight" style={{ color: inkColor }}>
               <div
                 className="text-base sm:text-lg font-extrabold tracking-wide mb-1"
                 style={{ fontFamily: `'${headingFont}', 'Rozha One', serif` }}
@@ -187,8 +187,8 @@ export default function InvitationBody({ data }) {
               </div>
             </div>
 
-            {/* Center Motifs Section (36% width - Perfectly Proportioned) */}
-            <div className="w-[36%] flex items-center justify-center gap-1 px-1 flex-shrink-0">
+            {/* Center Motifs Section (36% width - Perfectly Proportioned) (Motif Plate) */}
+            <div className="dtp-plate-motif w-[36%] flex items-center justify-center gap-1 px-1 flex-shrink-0">
               {data.showCouplePhoto && data.couplePhotoPlacement !== 'dedicated-banner' ? (
                 <CouplePhotoFrame
                   photoUrl={data.couplePhotoUrl}
@@ -229,8 +229,8 @@ export default function InvitationBody({ data }) {
               )}
             </div>
 
-            {/* Right Party (32% width - Second Party: वर if वधू पक्ष, वधू if वर पक्ष) */}
-            <div className="w-[32%] text-right leading-tight" style={{ color: inkColor }}>
+            {/* Right Party (32% width - Second Party: वर if वधू पक्ष, वधू if वर पक्ष) (Text Plate) */}
+            <div className="dtp-plate-text w-[32%] text-right leading-tight" style={{ color: inkColor }}>
               <div
                 className="text-base sm:text-lg font-extrabold tracking-wide mb-1"
                 style={{ fontFamily: `'${headingFont}', 'Rozha One', serif` }}
@@ -256,7 +256,7 @@ export default function InvitationBody({ data }) {
 
       {/* Dedicated Royal Couple Photo Banner (when dedicated-banner is chosen) */}
       {data.showCouplePhoto && data.couplePhotoPlacement === 'dedicated-banner' && (
-        <div className="w-full flex items-center justify-center my-1.5">
+        <div className="dtp-plate-motif w-full flex items-center justify-center my-1.5">
           <CouplePhotoFrame
             photoUrl={data.couplePhotoUrl}
             frame={data.couplePhotoFrame}
@@ -269,8 +269,8 @@ export default function InvitationBody({ data }) {
         </div>
       )}
 
-      {/* 3. Central Starburst / Announcement Seal */}
-      <div className="w-full my-1">
+      {/* 3. Central Starburst / Announcement Seal (Motif Plate) */}
+      <div className="dtp-plate-motif w-full my-1">
         <StarburstBadge
           line1={starburstLine1}
           line2={starburstLine2}

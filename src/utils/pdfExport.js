@@ -459,3 +459,118 @@ export async function downloadScreenPrintPNG(element, sizeKey = '7x9', type = 'c
   link.click();
   setTimeout(() => document.body.removeChild(link), 1000);
 }
+
+/**
+ * ✂️ Pre-Press Imposition Sheet PDF Export (2-Up / 4-Up Butter Paper Master)
+ * Saves 50% to 75% on Gateway Tracing Paper and Screen Making Costs.
+ */
+export async function downloadImpositionPDF(element, options = {}) {
+  const type = options.type || 'card';
+  const target = resolvePrintElement(element, type);
+  if (!target) {
+    throw new Error('इम्पोज़िशन मास्टर तत्व नहीं मिला।');
+  }
+
+  const masterContainer = target.closest('.screen-print-master-container') || target;
+  const sheetSize = options.sheetSize || 'a4';
+  const imposition = options.imposition || '2-up';
+  const isInvert = Boolean(options.isInvert);
+
+  // Standard Paper Dimensions in millimeters
+  let sheetWidthMm = 210;
+  let sheetHeightMm = 297;
+  if (sheetSize === '12x18') {
+    sheetWidthMm = 305; // 12 inches
+    sheetHeightMm = 457; // 18 inches
+  }
+
+  const canvas = await captureElementToCanvas(masterContainer, {
+    scale: 3.5,
+    backgroundColor: isInvert ? '#000000' : '#ffffff'
+  });
+
+  const imgData = canvas.toDataURL('image/png');
+  const isLandscape = canvas.width > canvas.height;
+
+  const pdfWidth = isLandscape ? Math.max(sheetWidthMm, sheetHeightMm) : Math.min(sheetWidthMm, sheetHeightMm);
+  const pdfHeight = isLandscape ? Math.min(sheetWidthMm, sheetHeightMm) : Math.max(sheetWidthMm, sheetHeightMm);
+
+  const pdf = new jsPDF({
+    orientation: isLandscape ? 'landscape' : 'portrait',
+    unit: 'mm',
+    format: [pdfWidth, pdfHeight]
+  });
+
+  pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
+  const filename = `Imposition_${imposition.toUpperCase()}_Sheet_${sheetSize.toUpperCase()}_Master.pdf`;
+  savePdfSafely(pdf, filename);
+}
+
+/**
+ * 🎨 2-Color Screen Printing Plate Separation PDF Export (2-Page Multi-Screen Master)
+ * Page 1: Plate 1 (Red Ink Screen - Text Only)
+ * Page 2: Plate 2 (Gold Ink Screen - Motifs & Borders Only)
+ * Both pages share identical coordinates and registration crosshairs for 100% precision.
+ */
+export async function downloadTwoPlateSeparationPDF(element, cardData, options = {}) {
+  const type = options.type || 'card';
+  const target = resolvePrintElement(element, type);
+  if (!target) {
+    throw new Error('स्क्रीन प्रिंट मास्टर तत्व नहीं मिला।');
+  }
+
+  const masterContainer = target.closest('.screen-print-master-container') || target;
+  const config = type === 'envelope'
+    ? (ENVELOPE_SIZES[cardData.envelopeSizeKey] || ENVELOPE_SIZES['standard'])
+    : (CARD_SIZES[cardData.sizeKey] || CARD_SIZES['7x9']);
+
+  const paddingMm = 14;
+  const widthMm = config.widthMm + (paddingMm * 2);
+  const heightMm = config.heightMm + (paddingMm * 2);
+
+  const pdf = new jsPDF({
+    orientation: widthMm > heightMm ? 'landscape' : 'portrait',
+    unit: 'mm',
+    format: [widthMm, heightMm]
+  });
+
+  // Target element reference for toggling classes
+  const cardEl = target.id === 'wedding-card-element' || target.id === 'wedding-envelope-element'
+    ? target
+    : target.querySelector('#wedding-card-element, #wedding-envelope-element') || target;
+
+  // --- Page 1: Plate 1 (Text Only / Red Ink Screen) ---
+  cardEl.classList.remove('screen-plate-motifs-only');
+  cardEl.classList.add('screen-plate-text-only');
+  await new Promise(r => setTimeout(r, 60));
+
+  const canvasPlate1 = await captureElementToCanvas(masterContainer, {
+    scale: 3.5,
+    backgroundColor: '#ffffff'
+  });
+  const imgPlate1 = canvasPlate1.toDataURL('image/png');
+  pdf.addImage(imgPlate1, 'PNG', 0, 0, widthMm, heightMm, undefined, 'FAST');
+
+  // --- Page 2: Plate 2 (Motifs & Borders Only / Gold Ink Screen) ---
+  cardEl.classList.remove('screen-plate-text-only');
+  cardEl.classList.add('screen-plate-motifs-only');
+  await new Promise(r => setTimeout(r, 60));
+
+  const canvasPlate2 = await captureElementToCanvas(masterContainer, {
+    scale: 3.5,
+    backgroundColor: '#ffffff'
+  });
+  const imgPlate2 = canvasPlate2.toDataURL('image/png');
+  
+  pdf.addPage([widthMm, heightMm], widthMm > heightMm ? 'landscape' : 'portrait');
+  pdf.addImage(imgPlate2, 'PNG', 0, 0, widthMm, heightMm, undefined, 'FAST');
+
+  // Reset classes back to original state
+  cardEl.classList.remove('screen-plate-text-only', 'screen-plate-motifs-only');
+  if (cardData.screenPrintPlate === 'text') cardEl.classList.add('screen-plate-text-only');
+  if (cardData.screenPrintPlate === 'motifs') cardEl.classList.add('screen-plate-motifs-only');
+
+  const filename = `2_Color_Screen_Plates_Plate1_Text_Plate2_Gold.pdf`;
+  savePdfSafely(pdf, filename);
+}
+

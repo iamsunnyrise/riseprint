@@ -59,6 +59,10 @@ const WeddingEnvelope = forwardRef(({ data, scale = 1 }, ref) => {
             : ''
         } ${
           isScreenPrint && data.screenPrintTonerBoost ? 'screen-print-toner-boost' : ''
+        } ${
+          isScreenPrint && data.screenPrintPlate === 'text' ? 'screen-plate-text-only' : ''
+        } ${
+          isScreenPrint && data.screenPrintPlate === 'motifs' ? 'screen-plate-motifs-only' : ''
         }`}
         style={{
           width: `${baseWidth}px`,
@@ -81,8 +85,8 @@ const WeddingEnvelope = forwardRef(({ data, scale = 1 }, ref) => {
           />
         )}
 
-      {/* Traditional Ornate Outer Envelope Border */}
-      <div className="absolute inset-3 border-2 pointer-events-none" style={{ borderColor: inkColor }}>
+      {/* Traditional Ornate Outer Envelope Border (Motif Plate) */}
+      <div className="dtp-plate-motif absolute inset-3 border-2 pointer-events-none" style={{ borderColor: inkColor }}>
         <div className="absolute inset-1 border" style={{ borderColor: `${inkColor}60` }} />
         {/* Corner Flourish Ornaments */}
         <div className="absolute top-1 left-1 text-sm font-bold" style={{ color: inkColor }}>❖</div>
@@ -96,9 +100,9 @@ const WeddingEnvelope = forwardRef(({ data, scale = 1 }, ref) => {
         
         {/* 1. Auspicious Envelope Header */}
         <div className="flex items-center justify-between border-b pb-3 mb-3" style={{ borderColor: `${inkColor}40` }}>
-          {/* Top-Left: Divine 3D Ganesha or Custom Deity Badge */}
+          {/* Top-Left: Divine 3D Ganesha or Custom Deity Badge (Motif Plate) */}
           {data.envelopeShowGanesha !== false && (
-            <div className="flex-shrink-0">
+            <div className="dtp-plate-motif flex-shrink-0">
               <GaneshaColorBadge
                 isScreenPrint={isScreenPrint}
                 customImage={data.customDeityImage}
@@ -107,8 +111,8 @@ const WeddingEnvelope = forwardRef(({ data, scale = 1 }, ref) => {
             </div>
           )}
 
-          {/* Top-Center: Invocations & Grand Title */}
-          <div className="flex-1 text-center px-4">
+          {/* Top-Center: Invocations & Grand Title (Text Plate) */}
+          <div className="dtp-plate-text flex-1 text-center px-4">
             <div className="text-xs sm:text-sm font-black tracking-widest mb-0.5">
               {data.envelopeTopInvocation || '॥ श्री गणेशाय नमः ॥'}
             </div>
@@ -132,8 +136,8 @@ const WeddingEnvelope = forwardRef(({ data, scale = 1 }, ref) => {
             </div>
           </div>
 
-          {/* Top-Right: 3D Royal Shubh Vivah Postal Seal / Ornament */}
-          <div className="flex-shrink-0 flex items-center justify-center">
+          {/* Top-Right: 3D Royal Shubh Vivah Postal Seal / Ornament (Motif Plate) */}
+          <div className="dtp-plate-motif flex-shrink-0 flex items-center justify-center">
             {data.envelopeShowSwastik !== false ? (
               <div
                 className="select-none relative flex items-center justify-center transition-transform duration-200 hover:scale-105 flex-shrink-0"
