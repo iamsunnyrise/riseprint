@@ -548,7 +548,23 @@ export const DEFAULT_CARD_DATA = {
   customWidthMm: 178,
   customHeightMm: 228,
   customWidthInches: 7,
-  customHeightInches: 9
+  customHeightInches: 9,
+
+  // 📋 Digital Job Slip, Token & Billing Defaults (जॉब स्लिप व बिलिंग)
+  jobCardId: 'JOB-1082',
+  jobCardOrderDate: new Date().toISOString().split('T')[0],
+  jobCardDeliveryDate: '2026-04-22',
+  jobCardDeliveryTime: 'शाम 05:00 बजे',
+  jobCardModelCode: 'शाही मॉडल #502 (महरून)',
+  jobCardQuantity: 250,
+  jobCardEnvelopeQuantity: 250,
+  jobCardRatePerUnit: 18,
+  jobCardScreenMakingCharge: 200,
+  jobCardExtraCharge: 0,
+  jobCardAdvancePaid: 1500,
+  jobCardPaymentMode: 'UPI', // 'UPI', 'Cash', 'GPay', 'PhonePe', 'Due'
+  jobCardStatus: 'received', // 'received', 'proof_sent', 'proof_approved', 'butter_printed', 'screen_printing', 'ready_delivered'
+  jobCardSpecialInstructions: '25 लिफाफों पर VIP नाम अलग से प्रिंट होगा। बटर शीट 600 DPI डार्क टोनर पर निकालें।'
 };
 
 /**

@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import {
   RefreshCw,
   Printer,
@@ -22,6 +22,7 @@ export default function QuickAccessToolbar({
   onOpenDtpModal,
   onOpenDigitalModal,
   onOpenDraftProofModal,
+  onOpenJobSlipModal,
   onExportPDF,
   onExportPNG,
   onExportCorelDrawSVG,
@@ -113,6 +114,17 @@ export default function QuickAccessToolbar({
 
       {/* Right: Key Workflow Actions (Draft Proof, Digital Card, Quick Export) */}
       <div className="flex items-center gap-1.5 flex-shrink-0">
+        {/* 📋 Digital Job Slip & Billing Button */}
+        <button
+          type="button"
+          onClick={onOpenJobSlipModal}
+          className="flex items-center gap-1 px-2.5 py-1 rounded text-[11px] font-bold bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-500/40 transition shadow-xs cursor-pointer"
+          title="डिजिटल जॉब स्लिप, टोकन व बिलिंग सिस्टम (Job Card)"
+        >
+          <span>📋</span>
+          <span className="hidden sm:inline">जॉब स्लिप / बिल</span>
+        </button>
+
         {/* 📑 Draft Proof & WhatsApp Button */}
         <button
           type="button"

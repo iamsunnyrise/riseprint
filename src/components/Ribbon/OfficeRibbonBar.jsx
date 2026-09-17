@@ -53,6 +53,7 @@ export default function OfficeRibbonBar({
   onOpenDraftProofModal,
   onOpenDigitalModal,
   onOpenDtpModal,
+  onOpenJobSlipModal,
   isExporting
 }) {
   const ribbonTabs = [
@@ -187,6 +188,15 @@ export default function OfficeRibbonBar({
                   >
                     <span className="text-amber-600 font-bold text-sm mb-0.5">⚡</span>
                     <span className="text-[10.5px] font-semibold">DTP कनवर्टर</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={onOpenJobSlipModal}
+                    className="flex flex-col items-center justify-center p-2 rounded bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-950 font-bold transition min-w-[65px] shadow-2xs"
+                    title="डिजिटल जॉब स्लिप, टोकन व बिलिंग सिस्टम"
+                  >
+                    <span className="text-sm mb-0.5">📋</span>
+                    <span className="text-[10.5px]">जॉब स्लिप</span>
                   </button>
                 </div>
                 <span className="text-[10px] text-center text-stone-500 font-semibold mt-1">
@@ -862,6 +872,14 @@ export default function OfficeRibbonBar({
                   >
                     <Sparkles className="w-4 h-4 text-red-950 fill-current mb-0.5" />
                     <span className="text-[10.5px]">डिजिटल इनवाइट</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={onOpenJobSlipModal}
+                    className="flex flex-col items-center justify-center p-2 rounded bg-stone-900 hover:bg-black text-amber-300 font-bold transition min-w-[85px] shadow-xs border border-amber-400/50"
+                  >
+                    <span className="text-base">📋</span>
+                    <span className="text-[10.5px]">जॉब स्लिप / बिल</span>
                   </button>
                 </div>
                 <span className="text-[10px] text-center text-stone-500 font-semibold mt-1">

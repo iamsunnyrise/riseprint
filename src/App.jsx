@@ -52,6 +52,7 @@ import BlankCardMatcherForm from './components/Editor/BlankCardMatcherForm';
 import HindiKeyboardHelper from './components/Controls/HindiKeyboardHelper';
 import DtpFontConverterModal from './components/Controls/DtpFontConverterModal';
 import DraftProofModal from './components/Controls/DraftProofModal';
+import JobSlipModal from './components/Controls/JobSlipModal';
 import { useHindiTyping } from './context/HindiTypingContext';
 
 // Office Ribbon & Workspace Suite
@@ -91,6 +92,7 @@ export default function App() {
   const [isDigitalModalOpen, setIsDigitalModalOpen] = useState(false);
   const [isDtpModalOpen, setIsDtpModalOpen] = useState(false);
   const [isDraftProofModalOpen, setIsDraftProofModalOpen] = useState(false);
+  const [isJobSlipModalOpen, setIsJobSlipModalOpen] = useState(false);
   const { isHindiTyping, toggleHindiTyping } = useHindiTyping();
 
   const cardRef = useRef(null);
@@ -476,6 +478,7 @@ export default function App() {
           }
           setIsDraftProofModalOpen(true);
         }}
+        onOpenJobSlipModal={() => setIsJobSlipModalOpen(true)}
         onExportPDF={handleExportPDF}
         onExportPNG={handleExportPNG}
         onExportCorelDrawSVG={handleExportCorelDrawSVG}
@@ -506,6 +509,7 @@ export default function App() {
         onOpenDraftProofModal={() => setIsDraftProofModalOpen(true)}
         onOpenDigitalModal={() => setIsDigitalModalOpen(true)}
         onOpenDtpModal={() => setIsDtpModalOpen(true)}
+        onOpenJobSlipModal={() => setIsJobSlipModalOpen(true)}
         isExporting={isExporting}
       />
 
@@ -844,6 +848,14 @@ export default function App() {
         onChange={setCardData}
         onExportDraftPNG={handleExportDraftPNG}
         isExporting={isExporting}
+      />
+
+      {/* 📋 Digital Job Slip, Token & Billing System Modal */}
+      <JobSlipModal
+        isOpen={isJobSlipModalOpen}
+        onClose={() => setIsJobSlipModalOpen(false)}
+        data={cardData}
+        onChange={setCardData}
       />
     </div>
   );
