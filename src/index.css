@@ -111,6 +111,57 @@ img.screen-print-motif-lineart {
   -webkit-text-stroke: 0.2px #000000;
 }
 
+/* 🖨️ Indian Printer Toner Density Levels & Pure Black D-Max */
+.screen-print-active,
+.screen-print-active * {
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+
+/* Micro-Matra Stroke Protection (सूक्ष्म मात्रा सुरक्षा कवच) */
+/* Fortifies fine Devanagari ligatures: 'ि', 'ी', 'ु', 'ू', '्', '्र', 'र्', 'ं' during screen washing */
+.printer-matra-protection,
+.printer-matra-protection p,
+.printer-matra-protection span,
+.printer-matra-protection div,
+.printer-matra-protection h1,
+.printer-matra-protection h2,
+.printer-matra-protection h3 {
+  -webkit-text-stroke: 0.25px #000000 !important;
+  text-rendering: geometricPrecision !important;
+}
+
+/* 100% Solid Black Standard D-Max 3.4 (Zero Halftone Grey Dithering) */
+.toner-density-100 {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 120% Ultra-Dark Boost (for high-mesh screen frames & light exposure) */
+.toner-density-boost,
+.toner-density-boost p,
+.toner-density-boost span,
+.toner-density-boost div,
+.toner-density-boost h1,
+.toner-density-boost h2,
+.toner-density-boost h3 {
+  -webkit-text-stroke: 0.35px #000000 !important;
+  text-rendering: geometricPrecision !important;
+}
+
+/* 150% Super-Bold Extreme Density (for aging 12A drums or heavy bond tracing) */
+.toner-density-extreme,
+.toner-density-extreme p,
+.toner-density-extreme span,
+.toner-density-extreme div,
+.toner-density-extreme h1,
+.toner-density-extreme h2,
+.toner-density-extreme h3 {
+  -webkit-text-stroke: 0.5px #000000 !important;
+  text-rendering: geometricPrecision !important;
+  font-weight: 700 !important;
+}
+
 /* Negative Film Mode */
 .screen-print-negative {
   filter: invert(1) hue-rotate(180deg) !important;

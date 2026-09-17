@@ -1,5 +1,5 @@
 import React, { forwardRef } from 'react';
-import { CARD_SIZES, ENVELOPE_SIZES } from '../../utils/defaultData';
+import { CARD_SIZES, ENVELOPE_SIZES, INDIAN_PRINTER_PRESETS } from '../../utils/defaultData';
 
 /**
  * Screen Print Master Wrapper (स्क्रीन व ऑफसेट प्रिंटिंग मास्टर रैपर)
@@ -11,6 +11,8 @@ import { CARD_SIZES, ENVELOPE_SIZES } from '../../utils/defaultData';
  * - Mirror Image Flip (scaleX(-1)) for direct toner-to-emulsion contact
  * - Negative Inversion Mode (White on Pure Solid Black)
  * - Gateway 90 GSM Translucent Butter Paper texture simulation in preview
+ * - 100% Toner Density Presets for popular Indian printers (HP 1020, Canon 2900B, Epson L805, etc.)
+ * - Micro-Matra Stroke Protection (+0.25pt) preventing Devanagari ligature water washouts
  */
 const ScreenPrintMasterWrapper = forwardRef(({
   children,
@@ -34,6 +36,13 @@ const ScreenPrintMasterWrapper = forwardRef(({
   const showCropMarks = data.screenPrintCropMarks !== false;
   const showMasterInfo = data.screenPrintMasterInfo !== false;
   const showPaperEffect = data.screenPrintPaperEffect !== false && !isFoilMode && !isInvert;
+
+  const printerId = data.selectedPrinterPreset || 'hp-1020';
+  const currentPrinter =
+    INDIAN_PRINTER_PRESETS.find((p) => p.id === printerId) ||
+    INDIAN_PRINTER_PRESETS[0];
+  const tonerLevel = data.tonerDensityLevel || '100';
+  const isMatraProtection = data.matraProtectionStroke !== false;
 
   const currentSize =
     type === 'envelope'
@@ -114,6 +123,37 @@ const ScreenPrintMasterWrapper = forwardRef(({
                 ✂️ {imposition === '2-up' ? '2-Up लेआउट (50% बचत)' : '4-Up लेआउट (75% बचत)'} ({sheetSize.toUpperCase()})
               </span>
             )}
+
+            {/* Printer Profile & D-Max Badge */}
+            <span className="opacity-60">|</span>
+            <span
+              className="px-1.5 py-0.5 rounded font-bold text-[9.5px]"
+              style={{
+                backgroundColor: isInvert ? '#222222' : '#f0ece1',
+                color: isInvert ? '#ffffff' : '#000000',
+                border: '1px solid',
+                borderColor: isInvert ? '#444444' : '#d5cebe'
+              }}
+              title={currentPrinter.description}
+            >
+              🖨️ {currentPrinter.shortName} ({currentPrinter.cartridge})
+            </span>
+
+            <span
+              className="px-1.5 py-0.5 rounded font-bold text-[9.5px]"
+              style={{
+                backgroundColor: isInvert ? '#333333' : '#000000',
+                color: '#fef08a'
+              }}
+            >
+              {currentPrinter.dMaxLevel.split(' ')[0]} {tonerLevel === 'extreme' ? '150% MAX' : tonerLevel === 'boost' ? '120% D-Max' : '100% Solid'}
+            </span>
+
+            {isMatraProtection && (
+              <span className="bg-emerald-900 text-emerald-100 px-1.5 py-0.5 rounded text-[9.5px] font-bold">
+                🛡️ मात्रा कवच ON
+              </span>
+            )}
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
@@ -127,7 +167,7 @@ const ScreenPrintMasterWrapper = forwardRef(({
             )}
             <span className="font-bold text-red-600">स्केल: 100% (Do Not Scale)</span>
             <span className="opacity-60">|</span>
-            <span>600/1200 DPI</span>
+            <span>{currentPrinter.resolution.split(' ')[0]}</span>
             <span className="opacity-60">|</span>
             <span>{today}</span>
           </div>
@@ -259,7 +299,15 @@ const ScreenPrintMasterWrapper = forwardRef(({
 
         {/* 3. Inner Content Layout (1-Up, 2-Up, or 4-Up Imposition) */}
         <div
-          className="screen-print-inner-flip transition-transform duration-200"
+          className={`screen-print-inner-flip transition-transform duration-200 ${
+            isMatraProtection ? 'printer-matra-protection' : ''
+          } ${
+            tonerLevel === 'extreme'
+              ? 'toner-density-extreme'
+              : tonerLevel === 'boost'
+              ? 'toner-density-boost'
+              : 'toner-density-100'
+          }`}
           style={{
             transform: isMirror ? 'scaleX(-1)' : 'none'
           }}

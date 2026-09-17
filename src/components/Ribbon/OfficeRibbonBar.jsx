@@ -26,9 +26,10 @@ import {
   Grid,
   Columns,
   Eye,
-  Settings
+  Settings,
+  ShieldCheck
 } from 'lucide-react';
-import { CARD_SIZES, ENVELOPE_SIZES, CARD_TEMPLATES, COLOR_THEMES, PRODUCT_TYPES } from '../../utils/defaultData';
+import { CARD_SIZES, ENVELOPE_SIZES, CARD_TEMPLATES, COLOR_THEMES, PRODUCT_TYPES, INDIAN_PRINTER_PRESETS } from '../../utils/defaultData';
 
 export default function OfficeRibbonBar({
   activeRibbonTab,
@@ -55,6 +56,7 @@ export default function OfficeRibbonBar({
   onOpenDtpModal,
   onOpenJobSlipModal,
   onOpenSpellCheckModal,
+  onOpenPrinterModal,
   isExporting
 }) {
   const ribbonTabs = [
@@ -870,6 +872,77 @@ export default function OfficeRibbonBar({
                 </button>
                 <span className="text-[10px] text-center text-stone-500 font-semibold mt-1">
                   100% वेक्टर कर्व्स
+                </span>
+              </div>
+
+              {/* Group 5: Indian Printer Presets Quick Switcher */}
+              <div className="flex flex-col justify-between pr-2.5 border-r border-stone-300 flex-shrink-0">
+                <div className="flex items-center gap-1.5">
+                  <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-1">
+                      <select
+                        value={cardData.selectedPrinterPreset || 'hp-1020'}
+                        onChange={(e) => {
+                          const p = INDIAN_PRINTER_PRESETS.find((item) => item.id === e.target.value);
+                          updateCard({
+                            screenPrintMode: true,
+                            selectedPrinterPreset: e.target.value,
+                            tonerDensityLevel: p?.recommendedSettings?.tonerDensityLevel || '100',
+                            matraProtectionStroke: p?.recommendedSettings?.matraProtectionStroke ?? true,
+                            screenPrintTonerBoost: p?.recommendedSettings?.screenPrintTonerBoost ?? true
+                          });
+                        }}
+                        className="text-xs bg-white border border-stone-300 rounded px-2 py-1 font-bold text-stone-900 focus:outline-none focus:ring-1 focus:ring-amber-500 max-w-[155px]"
+                        title="भारतीय लोकप्रिय प्रिंटर टोनर प्रोफाइल"
+                      >
+                        {INDIAN_PRINTER_PRESETS.map((printer) => (
+                          <option key={printer.id} value={printer.id}>
+                            {printer.shortName} ({printer.cartridge})
+                          </option>
+                        ))}
+                      </select>
+
+                      <button
+                        type="button"
+                        onClick={onOpenPrinterModal}
+                        className="px-1.5 py-1 rounded bg-amber-100 hover:bg-amber-200 border border-amber-300 text-amber-950 font-bold text-[10px] transition flex items-center gap-0.5 shadow-2xs"
+                        title="विंडोज प्रिंटर ड्राइवर गाइड"
+                      >
+                        <span>⚙️ गाइड</span>
+                      </button>
+                    </div>
+
+                    <div className="flex items-center justify-between text-[9.5px]">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          updateCard({
+                            matraProtectionStroke: !(cardData.matraProtectionStroke !== false)
+                          })
+                        }
+                        className={`px-1.5 py-0.5 rounded font-bold transition flex items-center gap-1 ${
+                          cardData.matraProtectionStroke !== false
+                            ? 'bg-emerald-100 text-emerald-900 border border-emerald-300'
+                            : 'bg-stone-100 text-stone-600 border border-stone-200'
+                        }`}
+                        title="सूक्ष्म मात्रा सुरक्षा कवच (+0.25pt)"
+                      >
+                        <ShieldCheck className="w-2.5 h-2.5" />
+                        <span>मात्रा कवच: {cardData.matraProtectionStroke !== false ? 'ON' : 'OFF'}</span>
+                      </button>
+
+                      <span className="text-stone-500 font-mono font-bold">
+                        {(cardData.tonerDensityLevel || '100') === 'extreme'
+                          ? '150% MAX'
+                          : (cardData.tonerDensityLevel || '100') === 'boost'
+                          ? '120% डार्क'
+                          : '100% Solid'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <span className="text-[10px] text-center text-stone-500 font-semibold mt-0.5">
+                  100% टोनर डेंसिटी प्रीसेट
                 </span>
               </div>
             </>

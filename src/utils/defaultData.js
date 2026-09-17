@@ -487,6 +487,10 @@ export const DEFAULT_CARD_DATA = {
   screenPrintPlate: 'all',         // 'all' (फुल कंपोजिट) | 'text' (प्लेट 1: केवल टेक्स्ट) | 'motifs' (प्लेट 2: केवल बॉर्डर व मोटिफ)
   screenPrintFoilMode: false,      // हॉट फॉयल डाई व जिंक ब्लॉक मेकिंग मास्टर (रिवर्स नेगेटिव)
   screenPrintShowCutMarks: true,   // सेंटर कटिंग गाइड (✂️ व डैश लाइन)
+  // 🖨️ भारतीय लोकप्रिय प्रिंटर्स (100% टोनर डेंसिटी प्रीसेट्स)
+  selectedPrinterPreset: 'hp-1020', // 'hp-1020', 'canon-2900', 'epson-l805', 'brother-2321', 'konica-heavy'
+  tonerDensityLevel: '100',         // '100' (100% सॉलिड D-Max 3.4), 'boost' (120% अल्ट्रा डार्क), 'extreme' (150% सुपर बोल्ड)
+  matraProtectionStroke: true,      // बारीक मात्रा सुरक्षा कवच (+0.25pt स्ट्रोक सुरक्षा)
 
   // 📤 Custom Images & Photos (कस्टम फोटो सेटिंग्स - फीचर 7)
   // 1. Deity / Kuldevi Photo (इष्टदेवता / कुलदेवी)
@@ -899,6 +903,158 @@ export const MUSIC_TRACK_PRESETS = [
     subtitle: 'अपने कंप्यूटर या फोन से अपनी पसंद का गाना बजाएं',
     icon: '📤',
     badge: 'अपनी पसंद'
+  }
+];
+
+/**
+ * 🖨️ Indian Popular Printers & 100% Toner Density Presets (भारतीय लोकप्रिय प्रिंटर्स व टोनर डेंसिटी)
+ * Pre-configured hardware/driver profiles for the top 5 laser & inkjet printers used across Indian DTP & Screen Printing shops.
+ */
+export const INDIAN_PRINTER_PRESETS = [
+  {
+    id: 'hp-1020',
+    name: 'HP LaserJet 1020 Plus / 1005 / P1108',
+    shortName: 'HP 1020 Plus',
+    brand: 'HP',
+    cartridge: '12A / 88A Universal',
+    techType: 'Monochrome Laser',
+    resolution: '600 DPI (REt)',
+    mediaType: 'Rough / Heavy / Bond (90-120 GSM)',
+    dMaxLevel: 'D-Max 3.4 (100% Solid Black)',
+    badge: 'भारतीय प्रेस नंबर 1',
+    description: 'भारत के 80% DTP व स्क्रीन प्रिंटिंग अड्डों की पहली पसंद। 12A कार्ट्रिज का गाढ़ा टोनर 90 GSM गेटवे बटर पेपर पर शत-प्रतिशत अपारदर्शी ब्लैक देता है।',
+    driverSteps: [
+      'प्रिंट डायलॉग (Ctrl+P) में "HP LaserJet 1020 Properties" पर क्लिक करें।',
+      '"Paper/Quality" टैब में जाएं और Paper Type = "Rough" अथवा "Heavy (90-105g/m²)" चुनें (फ्यूजिंग रोलर अधिक गर्म होकर टोनर को बटर पेपर पर मजबूती से चिपकाएगा)।',
+      '"Finishing" या "Quality" टैब में EconoMode = "OFF" (अक्षम) सुनिश्चित करें।',
+      'Toner Darkness स्लाइडर को "5" (अधिकतम / Darkest) पर सेट करें।',
+      'Resolution Enhancement (REt) को "Light" या "Standard" पर रखें।'
+    ],
+    recommendedMesh: '120 से 140 मेश नायलॉन जाली',
+    econoModeDisabled: true,
+    recommendedDarkness: 'Darkness 5 (Maximum)',
+    recommendedPaperWeight: 'Rough / Heavy Bond (90-105 GSM)',
+    recommendedSettings: {
+      tonerDensityLevel: '100',
+      matraProtectionStroke: true,
+      screenPrintTonerBoost: true
+    }
+  },
+  {
+    id: 'canon-2900',
+    name: 'Canon imageCLASS LBP2900B / LBP3000 / MF3010',
+    shortName: 'Canon LBP2900B',
+    brand: 'Canon',
+    cartridge: 'EP-303 / FX-9 / 12A',
+    techType: 'Laser CAPT High-Res',
+    resolution: '2400 × 600 DPI (AIR)',
+    mediaType: 'Heavy Paper (105-163 g/m²)',
+    dMaxLevel: 'D-Max 3.5 (ऑप्टिकल डेंसिटी)',
+    badge: 'चावड़ी बाजार च्वाइस',
+    description: 'कैनन का सर्वप्रिय लेज़र इंजन। हाई रेज़ोल्यूशन CAPT ड्राइवर से बारीक हिंदी अक्षरों व श्लोक की किनारी अत्यंत तीखी व बिना फटे निकलती है।',
+    driverSteps: [
+      'Canon LBP2900 "Printing Preferences" खोलें।',
+      '"Page Setup" में Media Type = "Heavy Paper (105-163 g/m²)" या "Transparency" चुनें।',
+      '"Quality" टैब में जाएं -> Objective = "General/Text (High Resolution)" चुनें।',
+      '"Details" बटन दबाकर Toner Density स्लाइडर को "Darkest" (दाहिनी ओर पूरा 100%) कर दें।',
+      'Toner Save को "OFF" रखें और Halftone को "Text/Lines High Contrast" पर सेट करें।'
+    ],
+    recommendedMesh: '140 से 160 मेश (बारीक उर्दू व हिंदी श्लोक हेतु)',
+    econoModeDisabled: true,
+    recommendedDarkness: 'Darkest (100% Fill)',
+    recommendedPaperWeight: 'Heavy Paper (105-163 g/m²)',
+    recommendedSettings: {
+      tonerDensityLevel: 'boost',
+      matraProtectionStroke: true,
+      screenPrintTonerBoost: true
+    }
+  },
+  {
+    id: 'epson-l805',
+    name: 'Epson EcoTank L805 / L8050 / L130 / L3250',
+    shortName: 'Epson EcoTank L805',
+    brand: 'Epson',
+    cartridge: 'All-Black Ultra Pigment / Dye',
+    techType: 'Micro Piezo Film Positive Inkjet',
+    resolution: '5760 × 1440 Optimized DPI',
+    mediaType: 'Epson Matte / Film Positive OHP',
+    dMaxLevel: 'D-Max 3.8+ (अल्ट्रा ओपेक)',
+    badge: 'फिल्म पॉजिटिव / इंकजेट बटर',
+    description: 'पारदर्शी OHP फिल्म या गेटवे बटर पेपर पर इंकजेट फिल्म पॉजिटिव निकालने हेतु। रिच कंपोजिट ब्लैक से स्क्रीन पर UV लाइट का 0% लीकेज होता है।',
+    driverSteps: [
+      'Epson Printer Preferences में जाएं।',
+      'Paper Type में "Epson Matte" अथवा "Premium Glossy" चुनें।',
+      'Quality में "High" अथवा "Best Quality" चुनें (Draft कभी न चुनें)।',
+      '"More Options" टैब में जाएं और "High Speed (Bidirectional)" को बंद (Uncheck) करें।',
+      'Color Correction में "Custom" -> Advanced -> "Grayscale" या "Composite Rich Black" चुनें।'
+    ],
+    recommendedMesh: '120 से 180 मेश (मल्टीकलर हाफटोन व फाइन वर्क)',
+    econoModeDisabled: true,
+    recommendedDarkness: 'Best Quality / High Density',
+    recommendedPaperWeight: 'Epson Matte / Tracing Film',
+    recommendedSettings: {
+      tonerDensityLevel: 'extreme',
+      matraProtectionStroke: true,
+      screenPrintTonerBoost: true
+    }
+  },
+  {
+    id: 'brother-2321',
+    name: 'Brother HL-L2321D / L2361DN / DCP-L2541DW',
+    shortName: 'Brother HL-L2321D',
+    brand: 'Brother',
+    cartridge: 'TN-2365 High-Yield',
+    techType: 'Electrophotographic Laser',
+    resolution: 'HQ1200 (2400 × 600 DPI)',
+    mediaType: 'Thick Paper / Bond (90-105 GSM)',
+    dMaxLevel: 'D-Max 3.3 (HQ डार्क)',
+    badge: 'फास्ट डुप्लेक्स लेज़र',
+    description: 'आधुनिक प्रिंटिंग दुकानों का किफायती वर्कहॉर्स। अलग ड्रम व टोनर यूनिट होने के कारण लगातार 500 बटर पेपर बिना फेड हुए निकालता है।',
+    driverSteps: [
+      'Brother Printing Preferences खोलें।',
+      '"Basic" टैब में Media Type = "Thick Paper" चुनें।',
+      'Print Quality = "HQ 1200" चुनें।',
+      '"Advanced" टैब में जाकर "Toner Save Mode" को OFF करें।',
+      '"Color / Grayscale" में Graphics Quality = "Manual" -> Darkness को अधिकतम (+8) करें।'
+    ],
+    recommendedMesh: '120 मेश मानक',
+    econoModeDisabled: true,
+    recommendedDarkness: 'Darkness +8 (Max Manual)',
+    recommendedPaperWeight: 'Thick Paper / Bond',
+    recommendedSettings: {
+      tonerDensityLevel: '100',
+      matraProtectionStroke: true,
+      screenPrintTonerBoost: true
+    }
+  },
+  {
+    id: 'konica-heavy',
+    name: 'Konica Minolta bizhub / Xerox / Canon iR (12×18 Digital)',
+    shortName: 'Konica / Xerox 12×18',
+    brand: 'Konica / Xerox',
+    cartridge: 'Polymerized High-Gloss Toner',
+    techType: 'Heavy Commercial Digital Press',
+    resolution: '1200 × 1200 DPI True PostScript 3',
+    mediaType: '12×18 Inch Gateway Tracing / Heavy 160 GSM',
+    dMaxLevel: 'D-Max 4.0 (प्योर वेक्टर 100% K)',
+    badge: '12×18 जंबो मास्टर',
+    description: 'बड़े डिजिटल प्रिंटिंग प्रेस जहां A3 व 12×18 इंच की बड़ी बटर शीट पर 4-Up कार्ड या CTP मास्टर एक साथ निकाले जाते हैं।',
+    driverSteps: [
+      'प्रिंटर ड्राइवर में Paper Size = "12 x 18" अथवा "A3 Wide" सेट करें।',
+      'Paper Weight / Type = "Heavy 1" या "Tracing Paper (90g/m²)" चुनें ताकि फ्यूज़र हीट धीमी गति से पक्की हो।',
+      'Print Queue में "Pure Black Text" = ON रखें।',
+      'Screening / Halftone = "Vector / Text (No Halftone Dither)" रखें (ग्रे डॉट्स न बनें)।',
+      'Black Overprint = ON करें।'
+    ],
+    recommendedMesh: '100 से 140 मेश जंबो फ्रेम',
+    econoModeDisabled: true,
+    recommendedDarkness: '100% Black Solid (K Only)',
+    recommendedPaperWeight: '12×18 Gateway 90 GSM Tracing',
+    recommendedSettings: {
+      tonerDensityLevel: '100',
+      matraProtectionStroke: true,
+      screenPrintTonerBoost: true
+    }
   }
 ];
 

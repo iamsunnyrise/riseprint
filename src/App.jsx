@@ -59,6 +59,7 @@ import DtpFontConverterModal from './components/Controls/DtpFontConverterModal';
 import DraftProofModal from './components/Controls/DraftProofModal';
 import JobSlipModal from './components/Controls/JobSlipModal';
 import HindiSpellCheckModal from './components/Controls/HindiSpellCheckModal';
+import PrinterCalibrationModal from './components/Controls/PrinterCalibrationModal';
 import { useHindiTyping } from './context/HindiTypingContext';
 
 // Office Ribbon & Workspace Suite
@@ -100,6 +101,7 @@ export default function App() {
   const [isDraftProofModalOpen, setIsDraftProofModalOpen] = useState(false);
   const [isJobSlipModalOpen, setIsJobSlipModalOpen] = useState(false);
   const [isSpellCheckModalOpen, setIsSpellCheckModalOpen] = useState(false);
+  const [isPrinterModalOpen, setIsPrinterModalOpen] = useState(false);
   const { isHindiTyping, toggleHindiTyping } = useHindiTyping();
 
   const cardRef = useRef(null);
@@ -593,6 +595,7 @@ export default function App() {
         onOpenDtpModal={() => setIsDtpModalOpen(true)}
         onOpenJobSlipModal={() => setIsJobSlipModalOpen(true)}
         onOpenSpellCheckModal={() => setIsSpellCheckModalOpen(true)}
+        onOpenPrinterModal={() => setIsPrinterModalOpen(true)}
         isExporting={isExporting}
       />
 
@@ -967,6 +970,14 @@ export default function App() {
       <HindiSpellCheckModal
         isOpen={isSpellCheckModalOpen}
         onClose={() => setIsSpellCheckModalOpen(false)}
+        data={cardData}
+        onChange={setCardData}
+      />
+
+      {/* 🖨️ Indian Printer Toner Density Calibration Modal */}
+      <PrinterCalibrationModal
+        isOpen={isPrinterModalOpen}
+        onClose={() => setIsPrinterModalOpen(false)}
         data={cardData}
         onChange={setCardData}
       />

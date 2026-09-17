@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Printer,
   Sliders,
@@ -13,14 +13,19 @@ import {
   Scissors,
   Palette,
   Flame,
-  FileDown
+  FileDown,
+  ShieldCheck,
+  Wrench
 } from 'lucide-react';
-import { SCREEN_PRINT_PRESETS } from '../../utils/defaultData';
+import { SCREEN_PRINT_PRESETS, INDIAN_PRINTER_PRESETS } from '../../utils/defaultData';
+import PrinterCalibrationModal from '../Controls/PrinterCalibrationModal';
 
 /**
  * Screen Print & Butter Paper Mode Editor Form (स्क्रीन प्रिंटिंग / बटर पेपर सेटिंग्स)
  */
-export default function ScreenPrintForm({ data, onChange }) {
+export default function ScreenPrintForm({ data, onChange, onOpenPrinterGuide }) {
+  const [isCalibrationModalOpen, setIsCalibrationModalOpen] = useState(false);
+
   const updateField = (field, value) => {
     onChange({ ...data, [field]: value });
   };
@@ -29,6 +34,17 @@ export default function ScreenPrintForm({ data, onChange }) {
     onChange({
       ...data,
       ...preset.settings
+    });
+  };
+
+  const selectPrinterPreset = (printer) => {
+    onChange({
+      ...data,
+      screenPrintMode: true,
+      selectedPrinterPreset: printer.id,
+      tonerDensityLevel: printer.recommendedSettings?.tonerDensityLevel || data.tonerDensityLevel || '100',
+      matraProtectionStroke: printer.recommendedSettings?.matraProtectionStroke ?? true,
+      screenPrintTonerBoost: printer.recommendedSettings?.screenPrintTonerBoost ?? true
     });
   };
 
@@ -82,7 +98,140 @@ export default function ScreenPrintForm({ data, onChange }) {
         </div>
       </div>
 
-      {/* 2. ✂️ 2-Up / 4-Up बटर पेपर लेआउट (Imposition Sheet Suite) */}
+      {/* 2. 🖨️ भारतीय लोकप्रिय प्रिंटर्स (100% टोनर डेंसिटी प्रीसेट्स) */}
+      <div className="bg-white p-4 rounded-xl border border-stone-200 shadow-sm space-y-3.5">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2 text-stone-900 font-bold text-sm">
+            <Printer className="w-4 h-4 text-amber-600" />
+            <span>भारतीय प्रिंटर्स (100% टोनर डेंसिटी प्रीसेट्स)</span>
+          </div>
+          <button
+            type="button"
+            onClick={() => setIsCalibrationModalOpen(true)}
+            className="text-[11px] text-amber-950 font-bold bg-amber-100 hover:bg-amber-200 border border-amber-300 px-2.5 py-1 rounded-lg transition flex items-center gap-1 shadow-2xs"
+          >
+            <span>⚙️ ड्राइवर गाइड</span>
+          </button>
+        </div>
+
+        <p className="text-[11px] text-stone-600 leading-snug">
+          भारतीय DTP व स्क्रीन प्रिंटिंग में सर्वाधिक प्रयुक्त 5 लोकप्रिय प्रिंटर्स हेतु 100% सॉलिड D-Max ब्लैक व सूक्ष्म मात्रा सुरक्षा प्रोफाइल।
+        </p>
+
+        {/* 5 Printer Cards Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          {INDIAN_PRINTER_PRESETS.map((printer) => {
+            const isSelected = (data.selectedPrinterPreset || 'hp-1020') === printer.id;
+
+            return (
+              <button
+                key={printer.id}
+                type="button"
+                onClick={() => selectPrinterPreset(printer)}
+                className={`p-2.5 rounded-xl border text-left transition flex flex-col justify-between ${
+                  isSelected
+                    ? 'border-amber-500 bg-amber-50/80 ring-2 ring-amber-500/30 font-bold shadow-xs'
+                    : 'border-stone-200 hover:border-stone-300 bg-stone-50/40 hover:bg-stone-50'
+                }`}
+              >
+                <div>
+                  <div className="flex items-center justify-between gap-1 mb-1">
+                    <span className="text-[9.5px] font-bold px-1.5 py-0.5 rounded bg-stone-200 text-stone-800">
+                      {printer.cartridge}
+                    </span>
+                    {isSelected && (
+                      <span className="text-[9px] bg-emerald-100 text-emerald-800 font-black px-1.5 py-0.2 rounded">
+                        सक्रिय ✓
+                      </span>
+                    )}
+                  </div>
+                  <div className="text-xs font-bold text-stone-900 leading-tight">
+                    {printer.shortName}
+                  </div>
+                  <div className="text-[10px] text-stone-500 mt-0.5 line-clamp-1">
+                    {printer.mediaType.split('/')[0]} • {printer.resolution.split(' ')[0]}
+                  </div>
+                </div>
+
+                <div className="mt-2 pt-1 border-t border-stone-200/60 flex items-center justify-between text-[9.5px]">
+                  <span className="text-amber-700 font-bold">{printer.dMaxLevel.split(' ')[0]} {printer.dMaxLevel.split(' ')[1]}</span>
+                  <span className="text-stone-500">{printer.badge}</span>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Matra Protection Switch */}
+        <div className="flex items-start justify-between p-3 rounded-xl bg-emerald-50/60 border border-emerald-200">
+          <div className="pr-2">
+            <div className="text-xs font-bold text-emerald-950 flex items-center gap-1.5">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-700" />
+              <span>सूक्ष्म मात्रा सुरक्षा कवच (+0.25pt Stroke)</span>
+              <span className="bg-emerald-200 text-emerald-950 text-[9px] px-1.5 py-0.2 rounded font-black uppercase">
+                अनुशंसित
+              </span>
+            </div>
+            <p className="text-[11px] text-emerald-900 mt-0.5 leading-snug">
+              स्क्रीन जाली धोते समय 'ि', 'ी', 'ु', 'ू', '्', '्र', 'र्' जैसी बारीक मात्राओं को पानी के दबाव से कटने व पिनहोल से बचाता है।
+            </p>
+          </div>
+          <input
+            type="checkbox"
+            checked={data.matraProtectionStroke !== false}
+            onChange={(e) => updateField('matraProtectionStroke', e.target.checked)}
+            className="w-4 h-4 text-emerald-600 rounded focus:ring-emerald-500 cursor-pointer mt-1"
+          />
+        </div>
+
+        {/* Toner Optical Darkness Level */}
+        <div className="pt-2 border-t border-stone-100">
+          <div className="flex items-center justify-between mb-1.5">
+            <span className="text-[11px] font-bold text-stone-700">टोनर डेंसिटी स्तर (Optical D-Max):</span>
+            <span className="text-[10px] font-mono font-bold text-stone-600">
+              {(data.tonerDensityLevel || '100') === 'extreme' ? '150% सुपर बोल्ड' : (data.tonerDensityLevel || '100') === 'boost' ? '120% अल्ट्रा डार्क' : '100% मानक सॉलिड'}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-3 gap-1.5">
+            <button
+              type="button"
+              onClick={() => updateField('tonerDensityLevel', '100')}
+              className={`py-1.5 px-2 rounded-lg text-xs text-center border font-bold transition ${
+                (data.tonerDensityLevel || '100') === '100'
+                  ? 'bg-stone-900 text-white border-stone-900 shadow-xs'
+                  : 'bg-stone-50 hover:bg-stone-100 text-stone-700 border-stone-200'
+              }`}
+            >
+              100% मानक D-Max
+            </button>
+            <button
+              type="button"
+              onClick={() => updateField('tonerDensityLevel', 'boost')}
+              className={`py-1.5 px-2 rounded-lg text-xs text-center border font-bold transition ${
+                data.tonerDensityLevel === 'boost'
+                  ? 'bg-amber-500 text-stone-950 border-amber-600 shadow-xs'
+                  : 'bg-stone-50 hover:bg-stone-100 text-stone-700 border-stone-200'
+              }`}
+            >
+              120% बूस्ट डार्क
+            </button>
+            <button
+              type="button"
+              onClick={() => updateField('tonerDensityLevel', 'extreme')}
+              className={`py-1.5 px-2 rounded-lg text-xs text-center border font-bold transition ${
+                data.tonerDensityLevel === 'extreme'
+                  ? 'bg-red-700 text-white border-red-800 shadow-xs'
+                  : 'bg-stone-50 hover:bg-stone-100 text-stone-700 border-stone-200'
+              }`}
+            >
+              150% सुपर बोल्ड
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* 3. ✂️ 2-Up / 4-Up बटर पेपर लेआउट (Imposition Sheet Suite) */}
       <div className="bg-white p-4 rounded-xl border border-stone-200 shadow-sm space-y-3.5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 text-stone-900 font-bold text-sm">
@@ -531,6 +680,14 @@ export default function ScreenPrintForm({ data, onChange }) {
           <li><strong>मिरर प्रिंटिंग:</strong> यदि आपने <em>शीशा प्रभाव (Mirror)</em> चुना है, तो प्रिंट निकलने के बाद टोनर वाली साइड को सीधे स्क्रीन की केमिकल कोटिंग पर रखकर एक्सपोज़ करें ताकि प्रकाश से धारदार किनारा बने।</li>
         </ul>
       </div>
+
+      {/* 🖨️ Printer Driver Calibration Modal */}
+      <PrinterCalibrationModal
+        isOpen={isCalibrationModalOpen}
+        onClose={() => setIsCalibrationModalOpen(false)}
+        data={data}
+        onChange={onChange}
+      />
     </div>
   );
 }
