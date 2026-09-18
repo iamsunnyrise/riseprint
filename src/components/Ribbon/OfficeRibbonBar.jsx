@@ -27,9 +27,10 @@ import {
   Columns,
   Eye,
   Settings,
-  ShieldCheck
+  ShieldCheck,
+  Ruler
 } from 'lucide-react';
-import { CARD_SIZES, ENVELOPE_SIZES, CARD_TEMPLATES, COLOR_THEMES, PRODUCT_TYPES, INDIAN_PRINTER_PRESETS } from '../../utils/defaultData';
+import { CARD_SIZES, ENVELOPE_SIZES, CARD_TEMPLATES, COLOR_THEMES, PRODUCT_TYPES, INDIAN_PRINTER_PRESETS, MARGIN_PRESETS } from '../../utils/defaultData';
 
 export default function OfficeRibbonBar({
   activeRibbonTab,
@@ -57,6 +58,7 @@ export default function OfficeRibbonBar({
   onOpenJobSlipModal,
   onOpenSpellCheckModal,
   onOpenPrinterModal,
+  onOpenCustomSizeModal,
   isExporting
 }) {
   const ribbonTabs = [
@@ -488,15 +490,25 @@ export default function OfficeRibbonBar({
                 </div>
               </div>
 
-              {/* Group 2: Page Size */}
+              {/* Group 2: Page Size (कार्ड व लिफाफा आकार + कस्टम नाप) */}
               <div className="flex flex-col justify-between pr-2.5 border-r border-stone-300 flex-shrink-0">
                 <div className="flex items-center gap-1.5">
                   <div className="flex flex-col gap-1">
-                    <label className="text-[10.5px] font-bold text-stone-700">कार्ड का आकार:</label>
+                    <div className="flex items-center justify-between">
+                      <label className="text-[10.5px] font-bold text-stone-700">कार्ड का आकार:</label>
+                      <button
+                        type="button"
+                        onClick={onOpenCustomSizeModal}
+                        className="text-[10px] text-red-700 hover:underline font-bold"
+                        title="कस्टम नाप व मार्जिन मोडल खोलें"
+                      >
+                        📐 कस्टम नाप...
+                      </button>
+                    </div>
                     <select
                       value={cardData.sizeKey || '7x9'}
                       onChange={(e) => updateCard({ sizeKey: e.target.value })}
-                      className="text-xs bg-white border border-stone-300 rounded px-2 py-1 font-semibold focus:outline-none focus:ring-1 focus:ring-red-600 max-w-[150px] truncate"
+                      className="text-xs bg-white border border-stone-300 rounded px-2 py-1 font-semibold focus:outline-none focus:ring-1 focus:ring-red-600 max-w-[155px] truncate"
                     >
                       {Object.entries(CARD_SIZES).map(([key, sz]) => (
                         <option key={key} value={key}>
@@ -504,7 +516,51 @@ export default function OfficeRibbonBar({
                         </option>
                       ))}
                     </select>
+
+                    {/* Quick custom width/height inputs when sizeKey === 'custom' */}
+                    {cardData.sizeKey === 'custom' && (
+                      <div className="flex items-center gap-1 mt-0.5 bg-amber-50/80 p-0.5 rounded border border-amber-200">
+                        <span className="text-[9.5px] font-bold text-stone-600">W:</span>
+                        <input
+                          type="number"
+                          step="0.1"
+                          min="2"
+                          max="30"
+                          value={cardData.customWidthInches || 7}
+                          onChange={(e) => {
+                            const val = Number(e.target.value) || 7;
+                            updateCard({
+                              sizeKey: 'custom',
+                              customWidthInches: val,
+                              customWidthMm: Math.round(val * 25.4)
+                            });
+                          }}
+                          className="w-11 bg-white border border-stone-300 rounded px-1 py-0.5 text-center font-mono font-bold text-[10px]"
+                          title="चौड़ाई (Inches)"
+                        />
+                        <span className="text-[9.5px] font-bold text-stone-600">″×H:</span>
+                        <input
+                          type="number"
+                          step="0.1"
+                          min="2"
+                          max="30"
+                          value={cardData.customHeightInches || 9}
+                          onChange={(e) => {
+                            const val = Number(e.target.value) || 9;
+                            updateCard({
+                              sizeKey: 'custom',
+                              customHeightInches: val,
+                              customHeightMm: Math.round(val * 25.4)
+                            });
+                          }}
+                          className="w-11 bg-white border border-stone-300 rounded px-1 py-0.5 text-center font-mono font-bold text-[10px]"
+                          title="ऊंचाई (Inches)"
+                        />
+                        <span className="text-[9.5px] font-bold text-stone-600">″</span>
+                      </div>
+                    )}
                   </div>
+
                   <div className="flex flex-col gap-1">
                     <label className="text-[10.5px] font-bold text-stone-700">लिफाफा आकार:</label>
                     <select
@@ -521,7 +577,60 @@ export default function OfficeRibbonBar({
                   </div>
                 </div>
                 <span className="text-[10px] text-center text-stone-500 font-semibold mt-1">
-                  पृष्ठ आयाम (Dimensions)
+                  पृष्ठ आयाम ({cardData.sizeKey === 'custom' ? `${cardData.customWidthMm || 178}×${cardData.customHeightMm || 228}mm` : 'Dimensions'})
+                </span>
+              </div>
+
+              {/* Group 3: Margins (मार्जिन सेटिंग्स) */}
+              <div className="flex flex-col justify-between pr-2.5 border-r border-stone-300 flex-shrink-0">
+                <div className="flex flex-col gap-1">
+                  <div className="flex items-center justify-between">
+                    <label className="text-[10.5px] font-bold text-stone-700 flex items-center gap-1">
+                      <Sliders className="w-3 h-3 text-red-700" />
+                      <span>प्रिंट मार्जिन:</span>
+                    </label>
+                    <button
+                      type="button"
+                      onClick={onOpenCustomSizeModal}
+                      className="text-[10px] text-red-700 hover:underline font-bold"
+                      title="कस्टम मार्जिन डायलॉग"
+                    >
+                      कस्टम...
+                    </button>
+                  </div>
+                  <select
+                    value={cardData.cardMarginPreset || 'normal'}
+                    onChange={(e) => {
+                      const selPreset = MARGIN_PRESETS.find(p => p.id === e.target.value);
+                      if (e.target.value === 'custom') {
+                        onOpenCustomSizeModal && onOpenCustomSizeModal();
+                      } else if (selPreset && selPreset.valueMm !== null) {
+                        updateCard({
+                          cardMarginPreset: selPreset.id,
+                          cardMarginTopMm: selPreset.valueMm,
+                          cardMarginBottomMm: selPreset.valueMm,
+                          cardMarginLeftMm: selPreset.valueMm,
+                          cardMarginRightMm: selPreset.valueMm,
+                          cardMarginLinked: true
+                        });
+                      }
+                    }}
+                    className="text-xs bg-white border border-stone-300 rounded px-2 py-1 font-semibold focus:outline-none focus:ring-1 focus:ring-red-600 max-w-[145px] truncate"
+                  >
+                    {MARGIN_PRESETS.map((preset) => (
+                      <option key={preset.id} value={preset.id}>
+                        {preset.name}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="flex items-center justify-between text-[9.5px] font-mono text-stone-600">
+                    <span>सुरक्षित: {cardData.cardMarginTopMm ?? 8}mm</span>
+                    <span className="text-stone-400">|</span>
+                    <span>{((cardData.cardMarginTopMm ?? 8) / 25.4).toFixed(2)}″</span>
+                  </div>
+                </div>
+                <span className="text-[10px] text-center text-stone-500 font-semibold mt-0.5">
+                  सुरक्षित छपाई मार्जिन
                 </span>
               </div>
 

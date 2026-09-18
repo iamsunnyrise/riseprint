@@ -11,7 +11,7 @@ import {
   Users,
   Layers
 } from 'lucide-react';
-import { CARD_SIZES, ENVELOPE_SIZES } from '../../utils/defaultData';
+import { CARD_SIZES, ENVELOPE_SIZES, getCardEffectiveDimensions, getCardEffectiveMargins } from '../../utils/defaultData';
 
 export default function OfficeStatusBar({
   cardData,
@@ -20,8 +20,9 @@ export default function OfficeStatusBar({
   zoomScale,
   setZoomScale
 }) {
-  const currentCardSize = CARD_SIZES[cardData.sizeKey] || CARD_SIZES['7x9'];
+  const currentCardSize = getCardEffectiveDimensions(cardData);
   const currentEnvelopeSize = ENVELOPE_SIZES[cardData.envelopeSizeKey] || ENVELOPE_SIZES['standard'];
+  const margins = getCardEffectiveMargins(cardData);
 
   const guestCount = cardData.guestList?.length || 0;
 
@@ -59,6 +60,14 @@ export default function OfficeStatusBar({
               ? `${currentEnvelopeSize.widthMm} × ${currentEnvelopeSize.heightMm} mm (${currentEnvelopeSize.name})`
               : `${currentCardSize.widthMm} × ${currentCardSize.heightMm} mm (${currentCardSize.name})`}
           </span>
+        </div>
+
+        <span className="text-stone-600 hidden sm:inline">|</span>
+
+        {/* Safe Margin Indicator */}
+        <div className="hidden sm:flex items-center gap-1 text-amber-300 font-mono" title={`सुरक्षित मार्जिन: ऊपर ${margins.topMm}mm, नीचे ${margins.bottomMm}mm, बायां ${margins.leftMm}mm, दायां ${margins.rightMm}mm`}>
+          <span>🏷️</span>
+          <span>मार्जिन: {margins.isLinked ? `${margins.topMm}mm` : `${margins.topMm}/${margins.bottomMm}/${margins.leftMm}/${margins.rightMm}mm`}</span>
         </div>
 
         <span className="text-stone-600 hidden sm:inline">|</span>

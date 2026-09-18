@@ -12,7 +12,7 @@ import BaalManuharBadge from '../Motifs/BaalManuharBadge';
 import GaneshaColorBadge from '../Motifs/GaneshaColorBadge';
 import GaneshaLineArt from '../Motifs/GaneshaLineArt';
 import { QRCodeSVG } from 'qrcode.react';
-import { CARD_SIZES } from '../../utils/defaultData';
+import { CARD_SIZES, getCardEffectiveDimensions, getCardEffectiveMargins } from '../../utils/defaultData';
 import { getPaperTextureStyle, getPaperVignetteStyle } from '../../utils/paperTextures';
 import { Scissors } from 'lucide-react';
 import ShokSandeshCard from './ShokSandeshCard';
@@ -39,13 +39,9 @@ const WeddingCard = forwardRef(({ data, scale = 1 }, ref) => {
   const foldType = data?.cardFoldType || 'single';
   const showCreases = data?.showFoldCreaseGuides !== false;
 
-  // Resolve current size
-  const currentSize = CARD_SIZES[data.sizeKey] || {
-    widthInches: (data.customWidthMm || 178) / 25.4,
-    heightInches: (data.customHeightMm || 228) / 25.4,
-    widthMm: data.customWidthMm || 178,
-    heightMm: data.customHeightMm || 228
-  };
+  // Resolve current size & margins dynamically
+  const currentSize = getCardEffectiveDimensions(data);
+  const effectiveMargins = getCardEffectiveMargins(data);
 
   const widthInches = currentSize.widthInches || 7;
   const heightInches = currentSize.heightInches || 9;
@@ -59,7 +55,14 @@ const WeddingCard = forwardRef(({ data, scale = 1 }, ref) => {
   }
 
   // Calculate proportional height based on dimensions
-  const calculatedHeight = Math.max(500, (baseWidth * heightInches) / widthInches);
+  const calculatedHeight = Math.round((baseWidth * heightInches) / widthInches);
+
+  // Calculate safe margin padding in pixels based on card's scale
+  const pxPerMm = baseWidth / (currentSize.widthMm || 178);
+  const marginTopPx = Math.round(effectiveMargins.topMm * pxPerMm);
+  const marginBottomPx = Math.round(effectiveMargins.bottomMm * pxPerMm);
+  const marginLeftPx = Math.round(effectiveMargins.leftMm * pxPerMm);
+  const marginRightPx = Math.round(effectiveMargins.rightMm * pxPerMm);
 
   const effectiveData = isScreenPrint
     ? {
@@ -127,8 +130,19 @@ const WeddingCard = forwardRef(({ data, scale = 1 }, ref) => {
         {/* Auspicious Central Background Watermark */}
         <CardBackgroundWatermark data={effectiveData} isScreenPrint={isScreenPrint} />
 
-        {/* LAYOUT OPTION 1: STANDARD SINGLE LEAF (1-पल्ला) */}
-        {foldType === 'single' && (
+        {/* Margin Wrapper: Safe Printing Area (मार्जिन सुरक्षित प्रिंटिंग क्षेत्र) */}
+        <div
+          className="relative w-full h-full flex flex-col flex-1"
+          style={{
+            paddingTop: `${marginTopPx}px`,
+            paddingBottom: `${marginBottomPx}px`,
+            paddingLeft: `${marginLeftPx}px`,
+            paddingRight: `${marginRightPx}px`,
+            boxSizing: 'border-box'
+          }}
+        >
+          {/* LAYOUT OPTION 1: STANDARD SINGLE LEAF (1-पल्ला) */}
+          {foldType === 'single' && (
           <OuterCardBorder
             color={effectiveData.inkColor}
             goldColor={isScreenPrint ? '#000000' : '#cda339'}
@@ -418,6 +432,7 @@ const WeddingCard = forwardRef(({ data, scale = 1 }, ref) => {
             </div>
           </div>
         )}
+        </div>
 
         {/* 5. Pre-Press Draft Proof Watermark & Disclaimer Overlay */}
         <DraftProofOverlay data={effectiveData} />

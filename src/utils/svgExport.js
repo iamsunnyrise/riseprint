@@ -1,4 +1,4 @@
-﻿import html2canvas from 'html2canvas';
+import html2canvas from 'html2canvas';
 import { CARD_SIZES, ENVELOPE_SIZES } from './defaultData';
 
 /**
@@ -125,7 +125,7 @@ export async function generateCorelDrawSVG(targetElement, options = {}) {
   const sizeKey = options.sizeKey || '7x9';
   const currentSize = type === 'envelope'
     ? (ENVELOPE_SIZES[options.envelopeSizeKey] || ENVELOPE_SIZES['standard'])
-    : (CARD_SIZES[sizeKey] || CARD_SIZES['7x9']);
+    : ((sizeKey === 'custom' && options.customDimensions) ? options.customDimensions : (CARD_SIZES[sizeKey] || CARD_SIZES['7x9']));
 
   const widthMm = currentSize.widthMm || 178;
   const heightMm = currentSize.heightMm || 229;

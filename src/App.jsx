@@ -61,6 +61,7 @@ import DraftProofModal from './components/Controls/DraftProofModal';
 import JobSlipModal from './components/Controls/JobSlipModal';
 import HindiSpellCheckModal from './components/Controls/HindiSpellCheckModal';
 import PrinterCalibrationModal from './components/Controls/PrinterCalibrationModal';
+import CustomSizeModal from './components/Controls/CustomSizeModal';
 import { useHindiTyping } from './context/HindiTypingContext';
 
 // Office Ribbon & Workspace Suite
@@ -69,7 +70,7 @@ import OfficeRibbonBar from './components/Ribbon/OfficeRibbonBar';
 import OfficeStatusBar from './components/Ribbon/OfficeStatusBar';
 import DocumentRuler from './components/Workspace/DocumentRuler';
 
-import { DEFAULT_CARD_DATA, CARD_SIZES, ENVELOPE_SIZES, CARD_TEMPLATES, PRODUCT_TYPES } from './utils/defaultData';
+import { DEFAULT_CARD_DATA, CARD_SIZES, ENVELOPE_SIZES, CARD_TEMPLATES, PRODUCT_TYPES, getCardEffectiveDimensions } from './utils/defaultData';
 import {
   downloadCardPDF,
   downloadCardPNG,
@@ -103,6 +104,7 @@ export default function App() {
   const [isJobSlipModalOpen, setIsJobSlipModalOpen] = useState(false);
   const [isSpellCheckModalOpen, setIsSpellCheckModalOpen] = useState(false);
   const [isPrinterModalOpen, setIsPrinterModalOpen] = useState(false);
+  const [isCustomSizeModalOpen, setIsCustomSizeModalOpen] = useState(false);
   const { isHindiTyping, toggleHindiTyping } = useHindiTyping();
 
   const cardRef = useRef(null);
@@ -150,12 +152,13 @@ export default function App() {
       setIsExporting(true);
       const cardEl = cardRef.current || document.getElementById('wedding-card-element');
       const envEl = envelopeRef.current || document.getElementById('wedding-envelope-element');
+      const effDims = getCardEffectiveDimensions(cardData);
 
       if (cardData.screenPrintMode) {
         setExportMessage('600 DPI बटर पेपर / स्क्रीन प्रिंट मास्टर PDF तैयार हो रही है...');
         const targetRef = previewMode === 'envelope' ? envEl : cardEl;
         const sizeKey = previewMode === 'envelope' ? cardData.envelopeSizeKey : cardData.sizeKey;
-        await downloadScreenPrintPDF(targetRef, sizeKey, previewMode, cardData.screenPrintMirror, cardData.screenPrintInvert);
+        await downloadScreenPrintPDF(targetRef, sizeKey, previewMode, cardData.screenPrintMirror, cardData.screenPrintInvert, effDims);
       } else if (previewMode === 'envelope') {
         setExportMessage('300 DPI लिफाफा PDF तैयार हो रही है...');
         await downloadEnvelopePDF(envEl, cardData.envelopeSizeKey, cardData.envelopeTitle || 'Vivah_Lifafa');
@@ -185,10 +188,7 @@ export default function App() {
           'visiting-card': 'विज़िटिंग कार्ड'
         };
         setExportMessage(`300 DPI ${productLabels[pType] || 'कार्ड'} PDF तैयार हो रही है...`);
-        await downloadCardPDF(cardEl, cardData.sizeKey, name1, name2, {
-          widthMm: cardData.customWidthMm,
-          heightMm: cardData.customHeightMm
-        });
+        await downloadCardPDF(cardEl, cardData.sizeKey, name1, name2, effDims);
       }
       
       confetti({
@@ -218,13 +218,15 @@ export default function App() {
       setExportMessage('कार्ड + लिफाफा दोनों की संयुक्त 2-पेज PDF तैयार हो रही है...');
       const cardEl = cardRef.current || document.getElementById('wedding-card-element');
       const envEl = envelopeRef.current || document.getElementById('wedding-envelope-element');
+      const effDims = getCardEffectiveDimensions(cardData);
 
       await downloadCombinedCardAndEnvelopePDF(
         cardEl,
         envEl,
         cardData.sizeKey,
         cardData.envelopeSizeKey,
-        cardData.groomName
+        cardData.groomName,
+        effDims
       );
 
       confetti({
@@ -321,7 +323,8 @@ export default function App() {
   };
 
   const handlePrint = () => {
-    triggerBrowserPrint(previewMode, cardData.sizeKey, cardData.envelopeSizeKey);
+    const effDims = getCardEffectiveDimensions(cardData);
+    triggerBrowserPrint(previewMode, cardData.sizeKey, cardData.envelopeSizeKey, effDims);
   };
 
   // CorelDRAW Ready SVG (Convert to Curves / Text to Path) Export
@@ -333,10 +336,12 @@ export default function App() {
         ? (envelopeRef.current || document.getElementById('wedding-envelope-element'))
         : (cardRef.current || document.getElementById('wedding-card-element'));
       const clientName = cardData.groomName || 'Wedding_Card';
+      const effDims = getCardEffectiveDimensions(cardData);
       await downloadCorelDrawSVG(targetEl, `${clientName}_CorelDRAW_Curves`, {
         type: previewMode,
         sizeKey: cardData.sizeKey,
         envelopeSizeKey: cardData.envelopeSizeKey,
+        customDimensions: effDims,
         title: clientName
       });
       confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 } });
@@ -458,7 +463,7 @@ export default function App() {
     }
   };
 
-  const currentCardSize = CARD_SIZES[cardData.sizeKey] || CARD_SIZES['7x9'];
+  const currentCardSize = getCardEffectiveDimensions(cardData);
   const currentEnvelopeSize = ENVELOPE_SIZES[cardData.envelopeSizeKey] || ENVELOPE_SIZES['standard'];
 
   const productType = cardData.productType || 'wedding';
@@ -597,6 +602,7 @@ export default function App() {
         onOpenJobSlipModal={() => setIsJobSlipModalOpen(true)}
         onOpenSpellCheckModal={() => setIsSpellCheckModalOpen(true)}
         onOpenPrinterModal={() => setIsPrinterModalOpen(true)}
+        onOpenCustomSizeModal={() => setIsCustomSizeModalOpen(true)}
         isExporting={isExporting}
       />
 
@@ -979,6 +985,14 @@ export default function App() {
       <PrinterCalibrationModal
         isOpen={isPrinterModalOpen}
         onClose={() => setIsPrinterModalOpen(false)}
+        data={cardData}
+        onChange={setCardData}
+      />
+
+      {/* 📐 Custom Card Size & Safe Print Margin Calibrator Modal */}
+      <CustomSizeModal
+        isOpen={isCustomSizeModalOpen}
+        onClose={() => setIsCustomSizeModalOpen(false)}
         data={cardData}
         onChange={setCardData}
       />

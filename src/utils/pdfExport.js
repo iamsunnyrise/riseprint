@@ -1,6 +1,6 @@
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-import { CARD_SIZES, ENVELOPE_SIZES } from './defaultData';
+import { CARD_SIZES, ENVELOPE_SIZES, getCardEffectiveDimensions } from './defaultData';
 
 /**
  * Robust helper to resolve the print target element in the DOM.
@@ -135,32 +135,40 @@ export async function downloadCardPDF(cardElement, sizeKey = '7x9', groomName = 
   }
 
   const cardConfig = CARD_SIZES[sizeKey] || CARD_SIZES['7x9'];
-  const widthMm = (sizeKey === 'custom' && customDimensions?.widthMm) ? customDimensions.widthMm : cardConfig.widthMm;
-  const heightMm = (sizeKey === 'custom' && customDimensions?.heightMm) ? customDimensions.heightMm : cardConfig.heightMm;
+  const widthMm = (sizeKey === 'custom' && customDimensions?.widthMm) ? Number(customDimensions.widthMm) : cardConfig.widthMm;
+  const heightMm = (sizeKey === 'custom' && customDimensions?.heightMm) ? Number(customDimensions.heightMm) : cardConfig.heightMm;
 
   const canvas = await captureElementToCanvas(element, { scale: 3 });
   const imgData = canvas.toDataURL('image/jpeg', 0.98);
 
-  // Maintain 100% exact aspect ratio:
-  // If card height matches nominal standard, use exact nominal heightMm.
-  // If card has extra optional sections (e.g. Baal Manuhar, Venue QR), dynamically scale heightMm proportionally
-  // so the card is NEVER squashed, flattened, or distorted!
-  const renderedAspect = canvas.height / canvas.width;
-  const nominalAspect = heightMm / widthMm;
-  const actualHeightMm = Math.abs(renderedAspect - nominalAspect) < 0.03
-    ? heightMm
-    : Math.round((widthMm * renderedAspect) * 10) / 10;
+  // Exact 1:1 user-specified size for custom cards, or aspect-ratio preserved height for templates
+  let finalWidthMm = widthMm;
+  let finalHeightMm = heightMm;
+
+  if (sizeKey === 'custom') {
+    // 100% Exact User-Calibrated Physical Dimensions (e.g. 6.5x9.5" = 165x241mm)
+    finalWidthMm = widthMm;
+    finalHeightMm = heightMm;
+  } else {
+    // For standard templates, maintain aspect ratio if optional sections lengthen the card
+    const renderedAspect = canvas.height / canvas.width;
+    const nominalAspect = heightMm / widthMm;
+    finalHeightMm = Math.abs(renderedAspect - nominalAspect) < 0.03
+      ? heightMm
+      : Math.round((widthMm * renderedAspect) * 10) / 10;
+  }
 
   const pdf = new jsPDF({
-    orientation: widthMm > actualHeightMm ? 'landscape' : 'portrait',
+    orientation: finalWidthMm > finalHeightMm ? 'landscape' : 'portrait',
     unit: 'mm',
-    format: [widthMm, actualHeightMm]
+    format: [finalWidthMm, finalHeightMm]
   });
 
-  pdf.addImage(imgData, 'JPEG', 0, 0, widthMm, actualHeightMm, undefined, 'FAST');
+  pdf.addImage(imgData, 'JPEG', 0, 0, finalWidthMm, finalHeightMm, undefined, 'FAST');
 
   const namePart = groomName ? groomName.replace(/\s+/g, '_') : 'Card';
-  const filename = `Vivah_Nimantran_${namePart}_${sizeKey}.pdf`;
+  const sizeLabel = sizeKey === 'custom' ? `${finalWidthMm}x${finalHeightMm}mm` : sizeKey;
+  const filename = `Vivah_Nimantran_${namePart}_${sizeLabel}.pdf`;
   savePdfSafely(pdf, filename);
 }
 
@@ -237,7 +245,7 @@ export async function downloadEnvelopePNG(envelopeElement, envelopeSizeKey = 'st
 /**
  * Combined PDF: Page 1 Wedding Card + Page 2 Matching Envelope
  */
-export async function downloadCombinedCardAndEnvelopePDF(cardElement, envelopeElement, sizeKey = '7x9', envelopeSizeKey = 'standard', groomName = '') {
+export async function downloadCombinedCardAndEnvelopePDF(cardElement, envelopeElement, sizeKey = '7x9', envelopeSizeKey = 'standard', groomName = '', customDimensions = null) {
   const cardTarget = resolvePrintElement(cardElement, 'card');
   const envTarget = resolvePrintElement(envelopeElement, 'envelope');
 
@@ -248,7 +256,7 @@ export async function downloadCombinedCardAndEnvelopePDF(cardElement, envelopeEl
     throw new Error('संयुक्त PDF हेतु शादी का लिफाफा नहीं मिला।');
   }
 
-  const cardConfig = CARD_SIZES[sizeKey] || CARD_SIZES['7x9'];
+  const cardConfig = (sizeKey === 'custom' && customDimensions) ? customDimensions : (CARD_SIZES[sizeKey] || CARD_SIZES['7x9']);
   const envelopeConfig = ENVELOPE_SIZES[envelopeSizeKey] || ENVELOPE_SIZES['standard'];
 
   // 1. Render Card Canvas (Scale 3)
@@ -257,9 +265,11 @@ export async function downloadCombinedCardAndEnvelopePDF(cardElement, envelopeEl
 
   const cardAspect = cardCanvas.height / cardCanvas.width;
   const cardNominalAspect = cardConfig.heightMm / cardConfig.widthMm;
-  const cardActualHeightMm = Math.abs(cardAspect - cardNominalAspect) < 0.03
+  const cardActualHeightMm = sizeKey === 'custom'
     ? cardConfig.heightMm
-    : Math.round((cardConfig.widthMm * cardAspect) * 10) / 10;
+    : (Math.abs(cardAspect - cardNominalAspect) < 0.03
+        ? cardConfig.heightMm
+        : Math.round((cardConfig.widthMm * cardAspect) * 10) / 10);
 
   // 2. Render Envelope Canvas (Scale 3)
   const envCanvas = await captureElementToCanvas(envTarget, { scale: 3 });
@@ -366,12 +376,13 @@ export async function downloadBulkPersonalizedEnvelopesPDF(
 /**
  * Trigger Browser Print with Dynamic Page Dimensions
  */
-export function triggerBrowserPrint(targetType = 'card', sizeKey = '7x9', envelopeSizeKey = 'standard') {
+export function triggerBrowserPrint(targetType = 'card', sizeKey = '7x9', envelopeSizeKey = 'standard', customDimensions = null) {
   const config = targetType === 'envelope'
     ? (ENVELOPE_SIZES[envelopeSizeKey] || ENVELOPE_SIZES['standard'])
-    : (CARD_SIZES[sizeKey] || CARD_SIZES['7x9']);
+    : ((sizeKey === 'custom' && customDimensions) ? customDimensions : (CARD_SIZES[sizeKey] || CARD_SIZES['7x9']));
 
-  const { widthInches, heightInches } = config;
+  const widthInches = config.widthInches || Number(((config.widthMm || 178) / 25.4).toFixed(2));
+  const heightInches = config.heightInches || Number(((config.heightMm || 228) / 25.4).toFixed(2));
 
   let styleEl = document.getElementById('dynamic-print-style');
   if (!styleEl) {
@@ -401,7 +412,7 @@ export function triggerBrowserPrint(targetType = 'card', sizeKey = '7x9', envelo
 /**
  * Ultra-High Resolution Pure Black PDF for Screen Printing / Butter Paper
  */
-export async function downloadScreenPrintPDF(element, sizeKey = '7x9', type = 'card', isMirror = false, isInvert = false) {
+export async function downloadScreenPrintPDF(element, sizeKey = '7x9', type = 'card', isMirror = false, isInvert = false, customDimensions = null) {
   const target = resolvePrintElement(element, type);
   if (!target) {
     throw new Error('स्क्रीन प्रिंट मास्टर तत्व नहीं मिला।');
@@ -410,12 +421,12 @@ export async function downloadScreenPrintPDF(element, sizeKey = '7x9', type = 'c
   const masterContainer = target.closest('.screen-print-master-container') || target;
   const config = type === 'envelope'
     ? (ENVELOPE_SIZES[sizeKey] || ENVELOPE_SIZES['standard'])
-    : (CARD_SIZES[sizeKey] || CARD_SIZES['7x9']);
+    : ((sizeKey === 'custom' && customDimensions) ? customDimensions : (CARD_SIZES[sizeKey] || CARD_SIZES['7x9']));
 
   // Add margin for crop marks and registration crosshairs
   const paddingMm = 14;
-  const widthMm = config.widthMm + (paddingMm * 2);
-  const heightMm = config.heightMm + (paddingMm * 2);
+  const widthMm = (config.widthMm || 178) + (paddingMm * 2);
+  const heightMm = (config.heightMm || 228) + (paddingMm * 2);
 
   const canvas = await captureElementToCanvas(masterContainer, {
     scale: 3.5,
@@ -433,7 +444,8 @@ export async function downloadScreenPrintPDF(element, sizeKey = '7x9', type = 'c
   pdf.addImage(imgData, 'PNG', 0, 0, widthMm, heightMm, undefined, 'FAST');
 
   const modeStr = isMirror ? 'Mirror_Tracing' : 'Positive_Master';
-  const filename = `ScreenPrint_${modeStr}_${type}_${sizeKey}.pdf`;
+  const sizeLabel = (sizeKey === 'custom' && customDimensions) ? `${config.widthMm}x${config.heightMm}mm` : sizeKey;
+  const filename = `ScreenPrint_${modeStr}_${type}_${sizeLabel}.pdf`;
   savePdfSafely(pdf, filename);
 }
 
@@ -523,11 +535,11 @@ export async function downloadTwoPlateSeparationPDF(element, cardData, options =
   const masterContainer = target.closest('.screen-print-master-container') || target;
   const config = type === 'envelope'
     ? (ENVELOPE_SIZES[cardData.envelopeSizeKey] || ENVELOPE_SIZES['standard'])
-    : (CARD_SIZES[cardData.sizeKey] || CARD_SIZES['7x9']);
+    : getCardEffectiveDimensions(cardData);
 
   const paddingMm = 14;
-  const widthMm = config.widthMm + (paddingMm * 2);
-  const heightMm = config.heightMm + (paddingMm * 2);
+  const widthMm = (config.widthMm || 178) + (paddingMm * 2);
+  const heightMm = (config.heightMm || 228) + (paddingMm * 2);
 
   const pdf = new jsPDF({
     orientation: widthMm > heightMm ? 'landscape' : 'portrait',

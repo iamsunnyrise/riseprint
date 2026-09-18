@@ -104,6 +104,67 @@ export const CARD_SIZES = {
   }
 };
 
+/**
+ * 📏 Standard Indian Press Margin Presets (भारतीय प्रिंटिंग प्रेस मार्जिन प्रीसेट्स)
+ */
+export const MARGIN_PRESETS = [
+  { id: 'zero', name: '📄 शून्य मार्जिन (0 mm)', shortName: '0 mm (ब्लीड)', valueMm: 0, description: 'किनारे तक फुल ब्लीड' },
+  { id: 'compact', name: '📐 संकरा / न्यूनतम (5 mm)', shortName: '5 mm (संकरा)', valueMm: 5, description: 'स्क्रीन प्रिंटिंग न्यूनतम सुरक्षित दूरी' },
+  { id: 'normal', name: '🏷️ सामान्य / मानक (8 mm)', shortName: '8 mm (मानक)', valueMm: 8, description: 'भारतीय शादी कार्ड हेतु सबसे उपयुक्त' },
+  { id: 'wide', name: '👑 शाही / चौड़ा (12 mm)', shortName: '12 mm (शाही)', valueMm: 12, description: 'बड़ा सुरुचिपूर्ण बॉर्डर स्पेस' },
+  { id: 'extra-wide', name: '🏛️ अतिरिक्त चौड़ा (16 mm)', shortName: '16 mm (जंबो)', valueMm: 16, description: 'जंबो व बॉक्स कार्ड हेतु' },
+  { id: 'custom', name: '⚙️ कस्टम मार्जिन...', shortName: 'कस्टम', valueMm: null, description: 'ऊपर, नीचे, दाएं, बाएं स्वतंत्र सेटिंग' }
+];
+
+/**
+ * 📐 Get Effective Card Dimensions (Resolves custom width/height if sizeKey === 'custom')
+ */
+export function getCardEffectiveDimensions(cardData) {
+  if (!cardData) return CARD_SIZES['7x9'];
+  if (cardData.sizeKey === 'custom') {
+    const widthMm = Number(cardData.customWidthMm) || 178;
+    const heightMm = Number(cardData.customHeightMm) || 228;
+    const widthInches = Number(cardData.customWidthInches) || Number((widthMm / 25.4).toFixed(2));
+    const heightInches = Number(cardData.customHeightInches) || Number((heightMm / 25.4).toFixed(2));
+    return {
+      id: 'custom',
+      name: `📐 कस्टम (${widthInches}" × ${heightInches}" / ${widthMm}×${heightMm}mm)`,
+      shortName: `कस्टम ${widthInches}"×${heightInches}"`,
+      widthInches,
+      heightInches,
+      widthMm,
+      heightMm,
+      aspectRatio: `${widthInches}/${heightInches}`,
+      foldType: cardData.cardFoldType || 'single',
+      panels: cardData.cardFoldType === 'tri-fold' ? 3 : cardData.cardFoldType === 'bi-fold' ? 2 : 1,
+      description: 'दुकानदार द्वारा सेट किया गया सटीक कस्टम साइज'
+    };
+  }
+  return CARD_SIZES[cardData.sizeKey] || CARD_SIZES['7x9'];
+}
+
+/**
+ * 📏 Get Effective Card Margins (in millimeters)
+ */
+export function getCardEffectiveMargins(cardData) {
+  if (!cardData) return { topMm: 8, bottomMm: 8, leftMm: 8, rightMm: 8, isLinked: true, preset: 'normal' };
+  const isLinked = cardData.cardMarginLinked !== false;
+  const topMm = typeof cardData.cardMarginTopMm === 'number' ? cardData.cardMarginTopMm : 8;
+  const bottomMm = isLinked ? topMm : (typeof cardData.cardMarginBottomMm === 'number' ? cardData.cardMarginBottomMm : 8);
+  const leftMm = isLinked ? topMm : (typeof cardData.cardMarginLeftMm === 'number' ? cardData.cardMarginLeftMm : 8);
+  const rightMm = isLinked ? topMm : (typeof cardData.cardMarginRightMm === 'number' ? cardData.cardMarginRightMm : 8);
+
+  return {
+    topMm,
+    bottomMm,
+    leftMm,
+    rightMm,
+    isLinked,
+    preset: cardData.cardMarginPreset || 'normal'
+  };
+}
+
+
 export const ENVELOPE_SIZES = {
   'standard': {
     id: 'standard',
@@ -553,6 +614,14 @@ export const DEFAULT_CARD_DATA = {
   customHeightMm: 228,
   customWidthInches: 7,
   customHeightInches: 9,
+
+  // 📏 Precision Margin Settings (प्रिसिजन मार्जिन सेटिंग्स - चारों ओर का मार्जिन)
+  cardMarginTopMm: 8,       // ऊपरी मार्जिन (mm)
+  cardMarginBottomMm: 8,    // निचला मार्जिन (mm)
+  cardMarginLeftMm: 8,      // बायां मार्जिन (mm)
+  cardMarginRightMm: 8,     // दायां मार्जिन (mm)
+  cardMarginLinked: true,   // चारों ओर समान मार्जिन लॉक
+  cardMarginPreset: 'normal', // 'zero' (0mm), 'compact' (5mm), 'normal' (8mm), 'wide' (12mm), 'extra-wide' (16mm), 'custom'
 
   // 📋 Digital Job Slip, Token & Billing Defaults (जॉब स्लिप व बिलिंग)
   jobCardId: 'JOB-1082',

@@ -1,5 +1,5 @@
 import React, { forwardRef } from 'react';
-import { CARD_SIZES, ENVELOPE_SIZES, INDIAN_PRINTER_PRESETS } from '../../utils/defaultData';
+import { CARD_SIZES, ENVELOPE_SIZES, INDIAN_PRINTER_PRESETS, getCardEffectiveDimensions } from '../../utils/defaultData';
 
 /**
  * Screen Print Master Wrapper (स्क्रीन व ऑफसेट प्रिंटिंग मास्टर रैपर)
@@ -47,7 +47,7 @@ const ScreenPrintMasterWrapper = forwardRef(({
   const currentSize =
     type === 'envelope'
       ? ENVELOPE_SIZES[data.envelopeSizeKey] || ENVELOPE_SIZES['standard']
-      : CARD_SIZES[data.sizeKey] || CARD_SIZES['7x9'];
+      : getCardEffectiveDimensions(data);
 
   const today = new Date().toLocaleDateString('hi-IN', {
     day: '2-digit',
